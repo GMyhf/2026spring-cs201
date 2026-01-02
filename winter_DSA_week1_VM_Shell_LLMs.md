@@ -1,4 +1,4 @@
-#  20250908-Week1-虚拟机，Shell&本地大语言模型
+#  Winter-Week1-虚拟机，Shell&本地大语言模型
 
 *Updated 2025-09-15 15:23 GMT+8*  
  *Compiled by Hongfei Yan (2025 Fall)*    
