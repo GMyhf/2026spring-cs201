@@ -1,6 +1,6 @@
 # Week1 DSA & OOP
 
-*Updated 2026-03-03 01:04 GMT+8*  
+*Updated 2026-03-03 14:26 GMT+8*  
 *Compiled by Hongfei Yan (2025 spring)*    
 https://github.com/GMyhf/2026spring-cs201/
 
@@ -10,7 +10,7 @@ Logs:
 
 > 熟练掌握 Linux 系统、Shell 命令、OJ 测试数据处理、Markdown 编写及 GitHub 使用，是必备的基础技能。
 >
-> [2026spring 数算（DS Algo）每日选作](https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spring.md)
+> 2026spring 数算每日选作, https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spring.md
 >
 > LeetCode 热题 100，https://leetcode.cn/studyplan/top-100-liked/
 > 包括：哈希，双指针，滑动窗口，矩阵，<mark>链表，二叉树，图论</mark>，回溯，二分查找，栈，堆，贪心算法，动态规划，技巧
@@ -26,6 +26,10 @@ Logs:
 > 服务对象：面向全校师生开放使用
 >
 > <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/202603022239595.png" alt="image-20260302223933371" style="zoom:50%;" />
+>
+> 课程微信群：
+>
+> <img src="/Users/hfyan/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_hkklp9z39u0a22_139d/temp/RWTemp/2026-03/2da8b5e87929bcf9e7a47aadd1c01950.jpg" alt="2da8b5e87929bcf9e7a47aadd1c01950" style="zoom: 33%;" />
 >
 > 
 
