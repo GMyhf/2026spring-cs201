@@ -1,6 +1,6 @@
 # 2026spring-cs201: DS Alog （数据结构与算法）
 
-*Updated 2026-01-02 21:39 GMT+8*  
+*Updated 2026-03-04 21:39 GMT+8*  
  *Compiled by Hongfei Yan (2026 Winter)*  
  https://github.com/GMyhf/2026spring-cs201/
 
@@ -31,8 +31,8 @@
 
 - **上课时间**：1–15 周，每周二 7–9 节（15:10–18:00）
 - **上课地点**：理教 410（150 座位）
-- **机考**：第15周 周三 7–8 节
-  - 时间：2026年6月10日 15:08–17:00
+- **机考**：第14或者15周 周三 7–8 节
+  - 时间：2026年6月3日或10日 15:08–17:00
   - 地点：5号（71 台机器）、6号（90 台机器）机房
 - **笔试**：
   - 时间：2026年6月23日（周二）14:00–16:00
@@ -53,8 +53,8 @@
 - **开发工具建议**：
   - PyCharm
   - VS Code
-  - [Python开发环境搭建（Mac & Windows）](https://github.com/GMyhf/2025fall-cs101/blob/main/Python_Development_Setup_Mac_Windows.md)
-  - [在 VS Code 中编写第一个 C++ 程序](https://github.com/GMyhf/2025fall-cs101/blob/main/Writing_First_C%2B%2B_Program_in_VS-Code.md)
+  - [Python开发环境搭建（Mac & Windows）](https://github.com/GMyhf/2026spring-cs201/blob/main/Python_Development_Setup_Mac_Windows.md)
+  - [在 VS Code 中编写第一个 C++ 程序](https://github.com/GMyhf/2026spring-cs201/blob/main/Writing_First_C%2B%2B_Program_in_VS-Code.md)
 - **学习平台**：
   登录 **小北智学平台**（[https://zx.pku.edu.cn](https://zx.pku.edu.cn/)），找到 *“数据结构与算法B（闫宏飞）”* 课程卡片并加入，即可开启 **AI 助教问答式自学**。
 - **课程知识库**：
