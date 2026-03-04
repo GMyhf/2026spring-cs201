@@ -10,7 +10,8 @@
 
 题解与题库：
 
-- [2024fall-CS101 LeetCode题解](https://github.com/GMyhf/2024fall-cs101/blob/main/2024fall_LeetCode_problems.md)
+- [2024fall-CS101 LeetCode题解,包括Easy, Medium题目](https://github.com/GMyhf/2024fall-cs101/blob/main/2024fall_LeetCode_problems.md)
+- [2024fall-CS101 LeetCode题解,包括Tough题目](https://github.com/GMyhf/2024fall-cs101/blob/main/2024fall_LeetCode_tough_problems.md)
 - [2024spring-CS201 DSA题解](https://github.com/GMyhf/2024spring-cs201/blob/main/2024spring_dsa_problems.md)
 - [2020fall-CS101 OpenJudge题解](https://github.com/GMyhf/2020fall-cs101/blob/main/2020fall_cs101.openjudge.cn_problems.md)
 - [2020fall-CS101 Codeforces题解](https://github.com/GMyhf/2020fall-cs101/blob/main/2020fall_Codeforces_problems.md)
