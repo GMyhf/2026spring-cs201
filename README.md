@@ -8,7 +8,7 @@
 
 ## 1 题解 & 教材资源
 
-题解与题库，https://fuynaloft.github.io/sol101/。包括：
+题解与题库，https://fuynaloft.github.io/sol101/ 。包括：
 
 - [2024fall-CS101 LeetCode题解,包括Easy, Medium题目](https://github.com/GMyhf/2024fall-cs101/blob/main/2024fall_LeetCode_problems.md)
 - [2024fall-CS101 LeetCode题解,包括Tough题目](https://github.com/GMyhf/2024fall-cs101/blob/main/2024fall_LeetCode_tough_problems.md)
