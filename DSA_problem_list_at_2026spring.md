@@ -1,13 +1,8 @@
 ## 2026spring 数算（DS Algo）每日选作
-*Updated 2026-03-04 15:48 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
+*Updated 2026-03-05 11:23 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
 https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spring.md
 
-题解在
-[dsa_problems](https://github.com/GMyhf/2024spring-cs201/blob/main/2024spring_dsa_problems.md),
-[cs101.openjudge.cn_problems](https://github.com/GMyhf/2020fall-cs101/blob/main/2020fall_cs101.openjudge.cn_problems.md),
-[Codeforces_problems](https://github.com/GMyhf/2020fall-cs101/blob/main/2020fall_Codeforces_problems.md),
-[sunnywhy_problems](https://github.com/GMyhf/2024spring-cs201/blob/main/sunnywhy_problems.md),
-[LeetCode_problems](https://github.com/GMyhf/2024fall-cs101/blob/main/2024fall_LeetCode_problems.md)
+题解，https://fuynaloft.github.io/sol101/
 
 <!--
 |  |       |       | Medium |          |
