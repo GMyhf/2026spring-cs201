@@ -1,5 +1,5 @@
 ## 2026spring 数算（DS Algo）每日选作
-*Updated 2026-03-05 23:55 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
+*Updated 2026-03-06 11:34 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
 https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spring.md
 
 题解，https://fuynaloft.github.io/sol101/
@@ -19,7 +19,7 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | 0309 | 1545. 找出第 N 个二进制字符串中的第 K 位 | dfs | Medium | https://leetcode.cn/problems/find-kth-bit-in-nth-binary-string/          |
 | 0309 |       |       | Easy |          |
 | 0308 | 01019:Number Sequence| binary search | Tough | http://cs101.openjudge.cn/practice/01019/          |
-| 0308 |       |       | Easy |          |
+| 0308 | 20169:排队    | DSU       | Easy | http://cs101.openjudge.cn/practice/20169/          |
 | 0307 | 07207:神奇的幻方  | matrix      | Medium | http://cs101.openjudge.cn/practice/07207/          |
 | 0307 | 05467:多项式加法  | dict   | Easy | http://cs101.openjudge.cn/practice/05467/          |
 | 0306 | 1461. 检查一个字符串是否包含所有长度为 K 的二进制子串  | bit manipulation   | Medium | https://leetcode.cn/problems/check-if-a-string-contains-all-binary-codes-of-size-k/          |
