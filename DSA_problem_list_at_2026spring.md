@@ -19,9 +19,9 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | 0311 | 2195.EIdiot First Search | <mark>dfs and similar, dp, trees</mark> | Tough | https://codeforces.com/problemset/problem/2195/E           |
 | 0311 |       |       | Easy |          |
 | 0310 | 647.回文子串 | <mark>two pointers</mark>/中心扩散, dp/马拉车 | Medium | https://leetcode.cn/problems/palindromic-substrings/          |
-| 0310 |       |       | Easy |          |
+| 0310 | M304.二维区域和检索 - 矩阵不可变 | prefix sum  | Medium | https://leetcode.cn/problems/range-sum-query-2d-immutable/          |
 | 0309 | 1545. 找出第 N 个二进制字符串中的第 K 位 | dfs | Medium | https://leetcode.cn/problems/find-kth-bit-in-nth-binary-string/          |
-| 0309 | E303.区域和检索 - 数组不可变    | prefix sum | Easy | https://leetcode.cn/problems/range-sum-query-immutable/         |
+| 0309 | E303.区域和检索 - 数组不可变    | <mark>prefix sum</mark> | Easy | https://leetcode.cn/problems/range-sum-query-immutable/         |
 | 0308 | 01019:Number Sequence| <mark>binary search</mark> | Tough | http://cs101.openjudge.cn/practice/01019/          |
 | 0308 | 20169:排队    | <mark>DSU</mark>       | Easy | http://cs101.openjudge.cn/practice/20169/          |
 | 0307 | 07207:神奇的幻方  | <mark>matrix</mark>      | Medium | http://cs101.openjudge.cn/practice/07207/          |
