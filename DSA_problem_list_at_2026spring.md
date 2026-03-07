@@ -14,17 +14,17 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 
 | 日期       | 问题编号与名称                 | 标签                                 | 难度 | 链接                                             |
 | ---------- | ------------------------------ | ------------------------------------ | ---- | ------------------------------------------------ |
-| 0312 | 1888.使二进制字符串字符交替的最少反转次数 | sliding window | Medium2 | https://leetcode.cn/problems/minimum-number-of-flips-to-make-the-binary-string-alternating/ |
+| 0312 | 1888.使二进制字符串字符交替的最少反转次数 | <mark>sliding window</mark> | Medium2 | https://leetcode.cn/problems/minimum-number-of-flips-to-make-the-binary-string-alternating/ |
 |  |       |       | Easy |          |
-| 0311 | 2195.EIdiot First Search | dfs and similar, dp, trees | Tough | https://codeforces.com/problemset/problem/2195/E           |
+| 0311 | 2195.EIdiot First Search | <mark>dfs and similar, dp, trees</mark> | Tough | https://codeforces.com/problemset/problem/2195/E           |
 | 0311 |       |       | Easy |          |
-| 0310 | 647.回文子串 | two pointers/中心扩散, dp/马拉车 | Medium | https://leetcode.cn/problems/palindromic-substrings/          |
+| 0310 | 647.回文子串 | <mark>two pointers</mark>/中心扩散, dp/马拉车 | Medium | https://leetcode.cn/problems/palindromic-substrings/          |
 | 0310 |       |       | Easy |          |
 | 0309 | 1545. 找出第 N 个二进制字符串中的第 K 位 | dfs | Medium | https://leetcode.cn/problems/find-kth-bit-in-nth-binary-string/          |
 | 0309 |       |       | Easy |          |
-| 0308 | 01019:Number Sequence| binary search | Tough | http://cs101.openjudge.cn/practice/01019/          |
-| 0308 | 20169:排队    | DSU       | Easy | http://cs101.openjudge.cn/practice/20169/          |
-| 0307 | 07207:神奇的幻方  | matrix      | Medium | http://cs101.openjudge.cn/practice/07207/          |
+| 0308 | 01019:Number Sequence| <mark>binary search</mark> | Tough | http://cs101.openjudge.cn/practice/01019/          |
+| 0308 | 20169:排队    | <mark>DSU</mark>       | Easy | http://cs101.openjudge.cn/practice/20169/          |
+| 0307 | 07207:神奇的幻方  | <mark>matrix</mark>      | Medium | http://cs101.openjudge.cn/practice/07207/          |
 | 0307 | 05467:多项式加法  | dict   | Easy | http://cs101.openjudge.cn/practice/05467/          |
 | 0306 | 1461.检查一个字符串是否包含所有长度为 K 的二进制子串  | bit manipulation   | Medium | https://leetcode.cn/problems/check-if-a-string-contains-all-binary-codes-of-size-k/          |
 | 0306 | 3827.统计单比特整数| bit manipulation  | Easy | https://leetcode.cn/problems/count-monobit-integers/          |
@@ -32,7 +32,7 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | 0305 | 868.二进制间距  | bit manipulation | Easy | https://leetcode.cn/problems/binary-gap/          |
 | 0304 | 1680.连接连续二进制数字 | bit manipulation | Medium | https://leetcode.cn/problems/concatenation-of-consecutive-binary-numbers/          |
 | 0304 | 1356.根据数字二进制下 1 的数目排序 | bit manipulation | Easy | https://leetcode.cn/problems/sort-integers-by-the-number-of-1-bits/          |
-| 0303 | 155.最小栈 | OOP, 辅助栈 | Medium | https://leetcode.cn/problems/min-stack/ |
-| 0303 |  190.颠倒二进制位  | bit manipulation   | Easy |  https://leetcode.cn/problems/reverse-bits/        |
+| 0303 | <mark>155.最小栈</mark> | OOP, 辅助栈 | Medium | https://leetcode.cn/problems/min-stack/ |
+| 0303 |  190.颠倒二进制位  | <mark>bit manipulation</mark>   | Easy |  https://leetcode.cn/problems/reverse-bits/        |
 | 0302 | 27300:模型整理 | sortings, AI   | Mediium   |  http://cs101.openjudge.cn/pctbook/M27300   |
 | 0302 | 27653:Fraction类 | OOP   | Easy  | http://cs101.openjudge.cn/pctbook/E27653/  |
