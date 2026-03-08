@@ -1,5 +1,5 @@
 ## 2026spring 数算（DS Algo）每日选作
-*Updated 2026-03-07 12:12 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
+*Updated 2026-03-08 23:45 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
 https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spring.md
 
 题解，https://fuynaloft.github.io/sol101/ ✅
@@ -17,7 +17,7 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | 0312 | 1888.使二进制字符串字符交替的最少反转次数 | <mark>sliding window</mark> | Medium2 | https://leetcode.cn/problems/minimum-number-of-flips-to-make-the-binary-string-alternating/ |
 |  |       |       | Easy |          |
 | 0311 | 2195.EIdiot First Search | <mark>dfs and similar, dp, trees</mark> | Tough | https://codeforces.com/problemset/problem/2195/E           |
-| 0311 |       |       | Easy |          |
+| 0311 | 1364A.XXXXX  | two pointers  | Medium | https://codeforces.com/problemset/problem/1364/A          |
 | 0310 | 647.回文子串 | <mark>two pointers</mark>/中心扩散, dp/马拉车 | Medium | https://leetcode.cn/problems/palindromic-substrings/          |
 | 0310 | M304.二维区域和检索 - 矩阵不可变 | prefix sum  | Medium | https://leetcode.cn/problems/range-sum-query-2d-immutable/          |
 | 0309 | 1545. 找出第 N 个二进制字符串中的第 K 位 | dfs | Medium | https://leetcode.cn/problems/find-kth-bit-in-nth-binary-string/          |
