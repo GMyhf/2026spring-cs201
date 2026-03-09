@@ -1,13 +1,565 @@
-# 树状数组（Binary Indexed Tree）
+# Week2 树状数组（Binary Indexed Tree）
 
-*Updated 2026-03-08 23:06 GMT+8*
+*Updated 2026-03-09 23:06 GMT+8*
  *Compiled by Hongfei Yan (2025 Spring)*
 
 
 
-# 术语
 
-## 前缀和（Prefix Sum）
+
+# 1 位运算（Bit Manipulation）
+
+- **类别**：**编程技巧**
+- **说明**：位运算是利用二进制位进行操作（如 &、|、^、<<、>> 等）来高效解决问题的方法。它本身不是算法或数据结构，但广泛用于**优化算法**、**状态压缩**、**哈希**、**奇偶判断**等场景。
+- **典型应用**：Lowbit、判断是否为 2 的幂、集合表示（状态压缩 DP）等。
+
+
+
+## E190.颠倒二进制位
+
+bit manipulation, https://leetcode.cn/problems/reverse-bits/
+
+颠倒给定的 32 位有符号整数的二进制位。
+
+ 
+
+**示例 1：**
+
+**输入：**n = 43261596
+
+**输出：**964176192
+
+**解释：**
+
+| 整数      | 二进制                           |
+| --------- | -------------------------------- |
+| 43261596  | 00000010100101000001111010011100 |
+| 964176192 | 00111001011110000010100101000000 |
+
+**示例 2：**
+
+**输入：**n = 2147483644
+
+**输出：**1073741822
+
+**解释：**
+
+| 整数       | 二进制                           |
+| ---------- | -------------------------------- |
+| 2147483644 | 01111111111111111111111111111100 |
+| 1073741822 | 00111111111111111111111111111110 |
+
+ 
+
+**提示：**
+
+- `0 <= n <= 2^31 - 2`
+- `n` 为偶数
+
+ 
+
+**进阶**: 如果多次调用这个函数，你将如何优化你的算法？
+
+
+
+<mark>**位运算（更贴近底层）**</mark>
+
+```python
+class Solution:
+    def reverseBits(self, n: int) -> int:
+        res = 0
+        for i in range(32):
+            res = (res << 1) | (n & 1)
+            n >>= 1
+        return res
+```
+
+**优点**：不依赖字符串操作，纯位运算，效率更高。展示对位操作的理解。
+
+**说明**：
+
+- 每次取 `n` 的最低位（`n & 1`），放到 `res` 的末尾。
+- `res` 左移腾出位置，`n` 右移取出下一位。
+- 循环 32 次确保处理全部位。
+
+
+
+## M1680.连接连续二进制数字
+
+bit manipulation, https://leetcode.cn/problems/concatenation-of-consecutive-binary-numbers/
+
+给你一个整数 `n` ，请你将 `1` 到 `n` 的二进制表示连接起来，并返回连接结果对应的 **十进制** 数字对 `10^9 + 7` 取余的结果。
+
+ 
+
+**示例 1：**
+
+```
+输入：n = 1
+输出：1
+解释：二进制的 "1" 对应着十进制的 1 。
+```
+
+**示例 2：**
+
+```
+输入：n = 3
+输出：27
+解释：二进制下，1，2 和 3 分别对应 "1" ，"10" 和 "11" 。
+将它们依次连接，我们得到 "11011" ，对应着十进制的 27 。
+```
+
+**示例 3：**
+
+```
+输入：n = 12
+输出：505379714
+解释：连接结果为 "1101110010111011110001001101010111100" 。
+对应的十进制数字为 118505380540 。
+对 109 + 7 取余后，结果为 505379714 。
+```
+
+ 
+
+**提示：**
+
+- `1 <= n <= 10^5`
+
+
+
+这道题要求我们将从 $1$ 到 $n$ 的所有整数的二进制表示连接起来，并将结果对 $10^9 + 7$ 取余。
+
+**算法思路**
+
+对于每一个数字 $i$，当我们将其二进制表示拼接到当前的结果 $ans$ 后面时，相当于将当前的 $ans$ 向左移动 $i$ 的二进制长度，然后再把 $i$ 加上去。
+也就是说：`ans = ((ans << length) | i) % MOD`
+
+我们不需要对每个数都去计算它的二进制长度，因为一个数的二进制长度 `length` 只有在遇到 $2$ 的幂（即 $1, 2, 4, 8, 16, \dots$）时才会增加 $1$。
+<mark>判断一个数 $i$ 是否是 $2$ 的幂，可以使用非常经典的位运算技巧：`i & (i - 1) == 0`。</mark>如果条件成立，说明 $i$ 是 $2$ 的幂，我们将 `length` 增加 $1$。
+
+这样，我们就可以在一个 $O(n)$ 的循环中以极小的常数完成所有运算。
+
+**Python 3 代码**
+
+```python
+class Solution:
+    def concatenatedBinary(self, n: int) -> int:
+        MOD = 10**9 + 7
+        ans = 0
+        length = 0
+        
+        for i in range(1, n + 1):
+            # 当 i 是 2 的幂时，其二进制长度增加 1
+            if i & (i - 1) == 0:
+                length += 1
+            
+            # 将当前结果左移 length 位，并加上当前的数字 i（由于左移后低位全为0，可以使用按位或 | 代替加法 +）
+            ans = ((ans << length) | i) % MOD
+            
+        return ans
+```
+
+**复杂度分析**
+
+- **时间复杂度:** $O(n)$，我们只需要从 $1$ 遍历到 $n$，每一步只进行基础的位运算、加法以及取余等常数时间的操作，对于 $n \le 10^5$ 的数据量可以在几毫秒内执行完毕。
+- **空间复杂度:** $O(1)$，仅使用了几个变量来记录当前长度、余数等信息，不需要额外的存储空间。
+
+
+
+## M1461.检查一个字符串是否包含所有长度为 K 的二进制子串
+
+bit manipulation, https://leetcode.cn/problems/check-if-a-string-contains-all-binary-codes-of-size-k/
+
+给你一个二进制字符串 `s` 和一个整数 `k` 。如果所有长度为 `k` 的二进制字符串都是 `s` 的子串，请返回 `true` ，否则请返回 `false` 。
+
+ 
+
+**示例 1：**
+
+```
+输入：s = "00110110", k = 2
+输出：true
+解释：长度为 2 的二进制串包括 "00"，"01"，"10" 和 "11"。它们分别是 s 中下标为 0，1，3，2 开始的长度为 2 的子串。
+```
+
+**示例 2：**
+
+```
+输入：s = "0110", k = 1
+输出：true
+解释：长度为 1 的二进制串包括 "0" 和 "1"，显然它们都是 s 的子串。
+```
+
+**示例 3：**
+
+```
+输入：s = "0110", k = 2
+输出：false
+解释：长度为 2 的二进制串 "00" 没有出现在 s 中。
+```
+
+ 
+
+**提示：**
+
+- `1 <= s.length <= 5 * 10^5`
+- `s[i]` 不是`'0'` 就是 `'1'`
+- `1 <= k <= 20`
+
+
+
+这道题的核心任务是判断在给定的二进制字符串 `s` 中，是否包含了所有可能出现的长度为 `k` 的二进制子串。
+
+长度为 `k` 的二进制子串共有 $2^k$ 种组合。为了验证是否所有组合都在 `s` 中出现过，最直观且高效的方法是：**遍历 `s` 中所有的长度为 `k` 的子串，将其放入集合（Set）中去重，最后判断集合的大小是否等于 $2^k$。**
+
+在此思路上，我们可以进行一次**早停优化（Early Exit）**：
+
+- 字符串 `s` 中长度为 `k` 的子串最多有 `len(s) - k + 1` 个。
+- 如果哪怕这 `len(s) - k + 1` 个子串各不相同，它的总数依然小于 $2^k$，那么必然无法包含所有的组合，可以直接返回 `False`，避免后续多余的计算。
+
+---
+
+<mark>**方法：滚动哈希 / 位运算（进阶思路）**</mark>
+
+可以不利用切片生成新的字符串，而是将长度为 $k$ 的二进制字串看做一个十进制整数。比如子串 `"101"` 可以用 `5` 表示。使用位运算能够做到 $O(1)$ 地更新哈希值（即滑动窗口右移一位，左移抛弃最高位，末位加上新进来的字符）。
+
+```python
+class Solution:
+    def hasAllCodes(self, s: str, k: int) -> bool:
+        # 同样进行早停优化
+        req = 1 << k
+        if len(s) - k + 1 < req:
+            return False
+        
+        # seen 使用 bytearray 充当布尔数组，速度比 list 快，占用空间也很小
+        seen = bytearray(req)
+        seen = [0]*req
+        
+        # 初始化前 k-1 个字符组成的数值
+        num = int(s[:k-1], 2) if k > 1 else 0
+        mask = req - 1
+        count = 0
+        
+        # 滑动窗口遍历
+        for i in range(k - 1, len(s)):
+            # 移位，按位与去最高位，加上新进来的最后一位字符
+            num = ((num << 1) & mask) | (1 if s[i] == '1' else 0)
+            
+            # 如果是第一次见到这个数字组合
+            if not seen[num]:
+                seen[num] = 1
+                count += 1
+                # 当不同组合凑齐 2^k 种，说明包含了所有情况
+                if count == req:
+                    return True
+                    
+        return False
+```
+
+**复杂度分析（方法二）**
+
+- **时间复杂度**：$O(N)$，位运算滚动更新只需要 $O(1)$ 时间，整体只需线性扫描一遍。
+- **空间复杂度**：$O(2^k)$，布尔数组固定开辟 $2^k$ 个位置的空间。相比集合存字符串极大地节省了内存占用。
+
+
+
+## T30201: 旅行售货商问题
+
+bitmask dp, http://cs101.openjudge.cn/practice/30201/
+
+一个国家有 n 个城市，每两个城市之间都开设有航班，从城市 i 到城市 j 的航班价格为 cost[i, j] ，而且往、返航班的价格相同。
+
+售货商要从一个城市出发，途径每个城市 1 次（且每个城市只能经过 1 次），最终返回出发地，而且他的交通工具只有航班，请求出他旅行的最小开销。
+
+**输入**
+
+输入的第 1 行是一个正整数 n （3 <= n <= 18）
+然后有 n 行，每行有 n 个正整数，构成一个 n * n 的矩阵，矩阵的第 i 行第 j 列为城市 i 到城市 j 的航班价格。1 <= cost[i,j] <= 10^4
+
+**输出**
+
+输出数据为一个正整数 m，表示旅行售货商的最小开销
+
+样例输入
+
+```
+4
+0 4 1 3
+4 0 2 1
+1 2 0 5
+3 1 5 0
+```
+
+样例输出
+
+```
+7
+```
+
+提示：dp, dfs
+
+来源：2025fall-cs101 yan
+
+
+
+除了用状压dp，还可以有三个层次的优化：I/O 与数据结构优化（基础）、逻辑剪枝（中级）以及Python 特性优化（高级）。
+
+> 详细解读优化的三个层次
+>
+> **1. I/O 与数据结构优化（基础）**
+>
+> - **sys.stdin.read**: 原代码在循环里用 input()，每次都要处理缓冲区。用 read().split() 将所有数据一次性读入内存并切分，配合迭代器 iter() 和 next()，是 Python 刷题处理大量数据的标准做法。
+> - **列表 vs 字典**: 原代码用 d = {} 存图。字典查询需要哈希计算，而列表（数组）是基于内存偏移量的直接访问。在高频访问场景下，列表要快得多。
+>
+> **2.逻辑剪枝（中级）**
+>
+> - **range(1, size, 2)**: 这是一个非常漂亮的逻辑剪枝。因为我们规定从城市 0 出发，所以任何合法的状态 mask，其二进制最低位（第0位）必须是 1。这意味着 mask 必然是**奇数**。直接让循环步长为 2，**循环次数瞬间减少一半**。
+> - **range(1, n)**: 内层循环寻找下一个城市 v 时，不需要考虑 0。因为 TSP 规定中间过程不走重复路，0 是起点，只有在遍历完所有节点后，计算 ans 时才考虑回到 0。
+>
+> **3.Python 特性优化（高级 - 提速关键）**
+>
+> - **去处 min() 函数**: 这是 Python 算法题优化的“杀手锏”。`dp[new][k] = min(dp[new][k], val)` 看起来很简洁。但 Python 的函数调用栈开销很大。在千万级别的循环中，这会严重拖慢速度。改成 `if val < dp[new][k]: dp[new][k] = val` 虽然代码多了两行，但运行速度会有质的飞跃。
+> - **局部变量缓存**: `curr_dist = dp[mask][u]`。在 Python 中，访问 `dp[mask][u]` 需要两次列表索引操作。把它存为局部变量 curr_dist，后续计算只读这个变量，减少了索引查找开销。
+
+运行时间：3867ms
+
+```python
+import sys
+
+def solve():
+    # 1. 快速 I/O
+    input = sys.stdin.read
+    data = input().split()
+    iterator = iter(data)
+    
+    try:
+        n = int(next(iterator))
+    except StopIteration:
+        return
+
+    # 2. 使用二维列表代替字典，并预处理为整数
+    # 直接读取 n*n 个数据构建矩阵
+    dist = []
+    for _ in range(n):
+        row = [int(next(iterator)) for _ in range(n)]
+        dist.append(row)
+
+    # 3. 初始化 DP
+    # 状态上限 1<<n
+    size = 1 << n
+    inf = float("inf")
+    # 这里的 dp[i][j] 表示：状态掩码为 i，当前停留在 j 城市
+    dp = [[inf] * n for _ in range(size)]
+    
+    # 起点固定为 0，初始状态掩码为 1 (二进制 ...001)，花费 0
+    dp[1][0] = 0
+
+    # 4. 逻辑优化：只遍历奇数 mask
+    # 因为起点 0 永远在路径中，所以 mask 的第 0 位永远是 1，即 mask 永远是奇数
+    for i in range(1, size, 2):
+        # 优化：如果当前状态 i 下，所有结尾可能都不可达，直接跳过（但在 TSP 稠密图中较少见）
+        
+        for j in range(n):
+            # 如果状态 i 下不可能停在 j，跳过
+            # 或者 if not (i >> j) & 1: continue (隐含条件，通常由 inf 判断即可)
+            if dp[i][j] == inf:
+                continue
+            
+            curr_dist = dp[i][j]
+            
+            # 5. 内层循环优化
+            # k 从 1 开始，因为中间过程不可能回到起点 0
+            for k in range(1, n):
+                # 如果 k 已经在状态 i 中，跳过
+                if (i >> k) & 1:
+                    continue
+                
+                new_mask = i | (1 << k)
+                new_cost = curr_dist + dist[j][k]
+                
+                # 6. 移除 min() 函数调用，手动比较更快
+                if new_cost < dp[new_mask][k]:
+                    dp[new_mask][k] = new_cost
+
+    # 7. 计算最终回路
+    ans = inf
+    # 最终状态必然是 (1<<n) - 1，即全 1
+    final_mask = size - 1
+    
+    # 此时停留在 i，需要从 i 回到 0
+    for i in range(1, n):
+        cost = dp[final_mask][i] + dist[i][0]
+        if cost < ans:
+            ans = cost
+
+    print(ans)
+
+if __name__ == '__main__':
+    solve()
+```
+
+> 36行第2个for循环，`for j in range(n):`
+>
+> 这一层循环的意思是：**枚举当前所在的“终点城市”**。为了彻底理解，需要结合 DP 状态定义来看。
+>
+> **1. 核心含义**
+>
+> `dp[i][j]` 的定义是：
+>
+> *   **`i`**：经过了哪些城市（状态/集合）。
+> *   **`j`**：**目前停留在哪个城市**。
+>
+> 第 2 个循环 `for j in range(n)` 就是在遍历这个 **“目前停留的城市”**。
+>
+> **2. 为什么要遍历它？（举例说明）**
+>
+> 假设有 3 个城市：0, 1, 2。
+> 外层循环 `i` 到了状态 `111`（二进制），表示 `{0, 1, 2}` 这三个城市都去过了。
+>
+> 虽然大家都去过这三个城市，但**“怎么走的”**以及**“最后停在哪里”**是不同的，这对下一步去哪里至关重要。
+>
+> *   **情况 A**：路径是 $0 \to 1 \to 2$。
+>     *   此时 `j = 2`（当前在 2 号城市）。
+>     *   如果你下一步要去 3 号城市，路费是 `distance[2][3]`。
+> *   **情况 B**：路径是 $0 \to 2 \to 1$。
+>     *   此时 `j = 1`（当前在 1 号城市）。
+>     *   如果你下一步要去 3 号城市，路费是 `distance[1][3]`。
+>
+> **结论**：
+> 只知道“去过哪些城市（`i`）”是不够的，必须知道“现在脚踩在哪个城市（`j`）”，才能算出“去下一个城市（`k`）”的距离。
+>
+> **3. 代码逻辑链条**
+>
+> 这个循环的作用起到了承上启下的连接作用：
+>
+> 1. **承上（检查合法性）**：
+>
+>    ```python
+>    if dp[i][j] == float("inf"):
+>        continue
+>    ```
+>
+>    不是所有城市都能作为当前状态的终点。比如，如果集合 `i` 里根本没有城市 `j`，或者从起点根本走不到 `j`，这个状态就是无效的，直接跳过。
+>
+> 2. **启下（状态转移）**：
+>
+>    ```python
+>    dp[newi][k] = min(..., dp[i][j] + d[j][k])
+>    ```
+>
+>    这里用到了 `j`。我们要从 **“当前点 `j`”** 走到 **“下一个点 `k`”**。如果没有这层 `j` 的循环，我们就不知道这笔路费 `d[j][k]` 里的起点是谁。
+>
+> **总结**
+>
+> 第 2 个循环就是在问：
+> **“在已经去过集合 `i` 的所有方案中，如果我们最后停在了城市 `0`、或者城市 `1`、……或者城市 `n-1`，分别会怎么样？”**
+
+
+
+**Q：为什么在openjudge.cn上提交代码，套在函数中的程序，运行更快？**
+
+把程序套在函数里面，就不超时了。因为：局部变量（函数内部定义的变量）存储在 局部命名空间（local namespace） 中，通过 索引直接访问（LOAD_FAST 指令），速度非常快。
+全局变量（模块级别定义的变量）存储在 全局字典（globals dict） 中，每次访问都需要 哈希查找（LOAD_GLOBAL 指令），开销更大。 @李睿安
+
+
+
+> 运行时间：4135ms
+>
+> ```python
+> def solve():
+>  n = int(input().strip())
+>  cost = []
+>  for _ in range(n):
+>      row = list(map(int, input().split()))
+>      cost.append(row)
+> 
+>  # 如果只有1个城市？但题目保证 n>=3
+>  INF = float('inf')
+>  # dp[mask][i]: mask 是已访问的城市集合，i 是当前所在城市（0 <= i < n）
+>  # mask 是一个整数，bit j 为1 表示城市 j 已访问
+>  total_masks = 1 << n
+>  dp = [[INF] * n for _ in range(total_masks)]
+> 
+>  # 起点设为城市0
+>  dp[1][0] = 0  # 只访问了城市0，当前在0，花费0
+> 
+>  # 遍历所有状态
+>  for mask in range(1, total_masks, 2):
+>      for u in range(n):
+>          if dp[mask][u] == INF:
+>              continue
+>          # 尝试从 u 到未访问的城市 v
+>          for v in range(n):
+>              if mask & (1 << v):
+>                  continue  # v 已访问，跳过
+>              new_mask = mask | (1 << v)
+>              new_cost = dp[mask][u] + cost[u][v]
+>              if new_cost < dp[new_mask][v]:
+>                  dp[new_mask][v] = new_cost
+> 
+>  # 所有城市都访问完的状态是 (1 << n) - 1
+>  full_mask = total_masks - 1
+>  ans = INF
+>  for i in range(1, n):  # 从其他城市回到起点0
+>      if dp[full_mask][i] != INF:
+>          ans = min(ans, dp[full_mask][i] + cost[i][0])
+> 
+>  print(ans)
+> 
+> if __name__ == '__main__':
+>  solve()
+> ```
+>
+> 
+>
+> 运行时间：6252ms
+>
+> ```python
+> n = int(input().strip())
+> cost = []
+> for _ in range(n):
+>  row = list(map(int, input().split()))
+>  cost.append(row)
+> 
+> # 如果只有1个城市？但题目保证 n>=3
+> INF = float('inf')
+> # dp[mask][i]: mask 是已访问的城市集合，i 是当前所在城市（0 <= i < n）
+> # mask 是一个整数，bit j 为1 表示城市 j 已访问
+> total_masks = 1 << n
+> dp = [[INF] * n for _ in range(total_masks)]
+> 
+> # 起点设为城市0
+> dp[1][0] = 0  # 只访问了城市0，当前在0，花费0
+> 
+> # 遍历所有状态
+> for mask in range(1, total_masks, 2):
+>  for u in range(n):
+>      if dp[mask][u] == INF:
+>          continue
+>      # 尝试从 u 到未访问的城市 v
+>      for v in range(n):
+>          if mask & (1 << v):
+>              continue  # v 已访问，跳过
+>          new_mask = mask | (1 << v)
+>          new_cost = dp[mask][u] + cost[u][v]
+>          if new_cost < dp[new_mask][v]:
+>              dp[new_mask][v] = new_cost
+> 
+> # 所有城市都访问完的状态是 (1 << n) - 1
+> full_mask = total_masks - 1
+> ans = INF
+> for i in range(1, n):  # 从其他城市回到起点0
+>  if dp[full_mask][i] != INF:
+>      ans = min(ans, dp[full_mask][i] + cost[i][0])
+> 
+> print(ans)
+> ```
+
+
+
+
+
+# 2 前缀和（Prefix Sum）
 
 - **类别**：**技巧 / 预处理方法**
 - **说明**：前缀和本身不是一种完整的算法或数据结构，而是一种常用的**预处理技巧**，用于快速计算数组区间和。它通常配合数组使用，通过 O(n) 预处理实现 O(1) 的区间查询。
@@ -15,36 +567,7 @@
 
 ------
 
-## 位运算（Bit Manipulation）
-
-- **类别**：**编程技巧**
-- **说明**：位运算是利用二进制位进行操作（如 &、|、^、<<、>> 等）来高效解决问题的方法。它本身不是算法或数据结构，但广泛用于**优化算法**、**状态压缩**、**哈希**、**奇偶判断**等场景。
-- **典型应用**：Lowbit、判断是否为 2 的幂、集合表示（状态压缩 DP）等。
-
-## 树状数组（Binary Indexed Tree, BIT）
-
-- **类别**：**数据结构**
-- **说明**：树状数组是一种用于高效处理**前缀和查询**与**单点更新**的数据结构，支持 O(log n) 的更新和查询。虽然名字中有“树”，但它通常用数组实现，结构隐含在索引的二进制表示中。
-- **典型应用**：动态前缀和、逆序对计数、区间更新+单点查询（配合差分）等。
-
-------
-
-## 归并排序（Merge Sort）
-
-- **类别**：**算法（排序算法 / 分治算法）**
-- **说明**：归并排序是一种经典的**分治算法**，时间复杂度稳定为 O(n log n)，可用于排序，也可用于解决如**逆序对计数**等问题。
-- **典型应用**：排序、求逆序对、外部排序等。
-
-
-
-> E190.颠倒二进制位
-> bit manipulation, https://leetcode.cn/problems/reverse-bits/
-
-
-
-# 前缀和题目
-
-## 示例E303.区域和检索 - 数组不可变
+## E303.区域和检索 - 数组不可变
 
 prefix sum, https://leetcode.cn/problems/range-sum-query-immutable/
 
@@ -274,7 +797,7 @@ list(accumulate(nums, operator.mul))
 
 
 
-### 顺便掌握：示例M304.二维区域和检索 - 矩阵不可变
+## 顺便掌握：M304.二维区域和检索 - 矩阵不可变
 
 prefix sum, https://leetcode.cn/problems/range-sum-query-2d-immutable/
 
@@ -418,6 +941,14 @@ class NumMatrix:
 
 
 
+
+# 3 动态前缀和：树状数组（Binary Indexed Tree, BIT）
+
+- **类别**：**数据结构**
+- **说明**：树状数组是一种用于高效处理**前缀和查询**与**单点更新**的数据结构，支持 O(log n) 的更新和查询。虽然名字中有“树”，但它通常用数组实现，结构隐含在索引的二进制表示中。
+- **典型应用**：动态前缀和、逆序对计数、区间更新+单点查询（配合差分）等。
+
+------
 
 ## M307.区域和检索 - 数组可修改？
 
@@ -568,228 +1099,7 @@ class NumArray:
 
 
 
-
-
-# 位运算题目
-
-## 示例。。。
-
-
-
-
-
-# 动态前缀和：树状数组
-
-树状数组或二叉索引树（英语：Binary Indexed Tree），又以其发明者命名为Fenwick树，最早由Peter M. Fenwick于1994年以A New Data Structure for Cumulative Frequency Tables为题发表。其初衷是解决数据压缩里的累积频率（Cumulative Frequency）的计算问题，现多用于高效计算数列的<mark>前缀和， 区间和</mark>。
-
-一般来说，如果在查询的过程中元素可能发生改变（例如插入、修改或删除），就称这种查询为<mark>在线查询</mark>;如果在查询过程中元素不发生改变，就称为**离线查询**。
-
-
-
-> 二叉索引树（树状数组）用于处理对固定大小的数组进行以下多种操作的这类问题。
->
-> - 前缀操作（求和、求积、异或、按位或等）。注意，区间操作也可以通过前缀来解决。例如，从索引L到R的区间和等于到R（包含R）的前缀和减去到L - 1的前缀和。
-> - 更新数组中的一个元素
->
-> 这两种操作的时间复杂度均为$O(logN)$。注意，我们需要$O(NlogN)$的预处理时间和$O(N)$的辅助空间。
->
-> 
->
-> 让我们考虑以下问题来理解二叉索引树（Binary Indexed Tree, BIT）：
-> 我们有一个数组 $arr[0 . . . n-1]$。我们希望实现两个操作：
->
-> 1. 计算前i个元素的和。
-> 2. 修改数组中指定位置的值，即设置 $arr[i] = x$，其中 $0 \leq i \leq n-1$。
->
-> 一个简单的解决方案是从 0 到 i-1 遍历并计算这些元素的总和。要更新一个值，只需执行 $arr[i] = x$。第一个操作的时间复杂度为$O(N)$，而第二个操作的时间复杂度为$O(1)$。另一种简单的解决方案是创建一个额外的数组，并在这个新数组的第i个位置存储前i个元素的总和。这样，给定范围的和可以在$O(1)$时间内计算出来，但是更新操作现在需要$O(N)$时间。当查询操作非常多而更新操作非常少时，这种方法表现良好。
->
-> **我们能否在$O(log N)$时间内同时完成查询和更新操作呢？**
-> 一种高效的解决方案是使用段树（Segment Tree），它能够在$O(logN)$时间内完成这两个操作。
-> 另一种解决方案是二叉索引树（Binary Indexed Tree，也称作Fenwick Tree），同样能够以$O(logN)$的时间复杂度完成查询和更新操作。与段树相比，二叉索引树所需的空间更少，且实现起来更加简单。
-
-
-
-### lowbit 运算
-
-二进制中一个经典应用是 lowbit 运算，即 `lowbit(x) = x & (-x)`。
-
-**整数的二进制表示常用的方式之一是使用补码**
-
-补码是一种表示有符号整数的方法，它将负数的二进制表示转换为正数的二进制表示。补码的优势在于可以使用相同的算术运算规则来处理正数和负数，而不需要特殊的操作。
-
-在补码表示中，最高位用于表示符号位，0表示正数，1表示负数。其他位表示数值部分。
-
-具体将一个整数转换为补码的步骤如下：
-
-1. 如果整数是正数，则补码等于二进制表示本身。
-2. 如果整数是负数，则需要先将其绝对值转换为二进制，然后取反，最后加1。等价于<mark>把二进制最右边的1的左边的每一位都取反</mark>。
-
-例如，假设要将 -12 转换为补码：
-
-1. 12的二进制表示为00001100。
-
-2. 将其取反得到11110011。
-
-3. 加1得到11110100，这就是 -12 的补码表示。
-
-
-通过`lowbit(x) = x & (-x)`就是取 x 的二进制最右边的1和它右边所有的0，因此它一定是2的幂次，即1、2、4、8等。
-
-对 x = 12 = $(00001100)_2$，有 -x = $(11110100)_2$ ，x & (-x) = 4
-
-对 x= 6 = $(110)_2$，有 -x = $(010)_2$，x & (-x) = 2
-
-
-
-### 表示方式
-
-树状数组（Binary Indexed Tree，BIT）用数组形式表示。它其实仍然是一个数组，并且与 sum 数组类似，是一个用来记录和的数组，只不过它存放的不是前 i 个整数之和，而是在 <mark>i 号位之前（含i号位）lowbit(i) 个整数之和</mark>。树状数组的大小等于输入数组的大小，记为n。在下面的代码中，为了便于实现，使用n+1的大小。
-
-如下图 所示，数组A是原始数组，有 A[1]~ A[16]共 16个元素；数组 C是树状数组，其中 C[i]存放数组 A 中i号位之前 lowbit(i) 个元素之和。显然，<mark>C[i]的覆盖长度是 lowbit(i)（也可以理解成管辖范围）</mark>，它是2的幂次，即 1、2、4、8等。
-
-需要注意的是，树状数组仍旧是一个平坦的数组，画成树形是为了让存储的元素更容易观察。
-
-<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20250320134426632.png" alt="image-20250320134426632" style="zoom: 67%;" />
-
-<center>图 树状数组定义图</center>
-
-
-
-```
-C[1] = A[1]  													(长度为 lowbit(1) = 1) 
-C[2] = A[1] + A[2]  									(长度为 lowbit(2) = 2) 
-C[3] = A[3]  													(长度为 lowbit(3) = 1) 
-C[4] = A[1] + A[2] + A[3] + A[4]  		(长度为 lowbit(4) = 4) 
-C[5] = A[5]  													(长度为 lowbit(5) = 1) 
-C[6] = A[5] + A[6]  									(长度为 lowbit(6) = 2) 
-C[7] = A[7]  													(长度为 lowbit(7) = 1) 
-C[8] = A[1] + A[2] + A[3] + A[4] + A[5] + A[6] + A[7] + A[8]  (长度为 lowbit(8) = 8) 
-```
-
-<mark>树状数组的定义非常重要，特别是“C[i]的覆盖长度是 lowbit(i)”这点；另外，树状数组的下标必须从1开始</mark>。接下来思考一下，在这样的定义下，
-怎样解决下面两个问题：
-
-① 设计函数 get_sum(x)，返回前x个数之和 A[1]+...+ A[x]。
-
-② 设计函数 update_bit(x,v)，实现将第x个数加上一个数v的功能，即 A[x]+= v。
-
-先来看第一个问题，即如何设计函数 get_sum(x)，返回前x个数之和。不妨先看个例子。假设想要查询 A[1]+…+A[14]，那么从树状数组的定义出发，它实际是什么东西呢? 回到上图，很容易发现 A[1]+…+A[14] = C[8]+C[12]+ C[14]。又比如要査询 A[1]+…A[11]，从图中同样可以得到 A[1]+…+A[11] = C[8]+C[10]+ C[11]。那么怎样知道 A[1]+…+ A[x]对应的是树状数组中的哪些项呢？事实上这很简单。记 SUM(1,x) = A[1]+……+A[x]，由于 C[x]的覆盖长度是 lowbit(x)，因此
-
-C[x] = A[x-lowbit(x)+1]+...+ A[x]
-
-于是可以得到
-
-```
-SUM(1,x) = A[1] +···+ A[x]
-				=A[1] +···+ A[x-lowbit(x)] + A[x-lowbit(x)+1] +···+ A[x]
-				=SUM(1,x-lowbit(x)) + C[x]
-```
-
-这样就把 SUM(1,x)转换为 SUM(1,x-lowbit(x))了。
-
-接着就能写出 get_sum 函数了，其中BITTree是树状数组。
-
-```python
-def bit_sum(BIT, i):
-    s = 0
-    i += 1  # index in BIT[] is 1 more than the index in arr[]
-
-    while i > 0:  # Traverse ancestors of BIT[index]
-        s += BIT[i]
-        i -= i & (-i)  # Move index to parent node
-    return s
-```
-
-由于 lowbit(i)的作用是定位i的二进制中最右边的1，因此 `i = i- lowbit(i)` 事实上是不断把i的二进制中最右边的1置为0的过程。所以 get_sum 函数的 for 循环执行次数为x的二进制中1的个数。一个数n的二进制表示中设置位的数量是O(logn)。也就是说，get_sum 函数的时间复杂度为 $O(logN)$。从另一个角度理解,结合图会发现，get_sum 函数的过程实际上是在沿着一条不断左上的路径行进（可以想一想 get_sum(14)跟 get_sum(11)的过程）。于是由于“树”高是 $O(logN)$级别,因此可以同样得到 get_sum 函数的时间复杂度就是 $O(logN)$。另外，<mark>如果要求数组下标在区间[x,y]内的数之和，即 A[x] + A[x+1] +…+ A[y]，可以转换成 get_sum(y) - get_sum(x-1)来解决，这是一个很重要的技巧</mark>。
-
-
-
-接着来看第二个问题，即如何设计函数 update(x,v)，实现将第x个数加上一个数v的功
-能。
-来看两个例子。假如要让 A[6]加上一个数 v，那么就要寻找树状数组C中能覆盖了 A[6]的元素，让它们都加上 v。也就是说，如果要让 A[6]加上 v，实际上是要让C[6]、C[8]、C[16]都加上 v。同样，如果要将 A[9]加上一个数 v,实际上就是要让 C[9]、C[10]、C[12]、C[16]都加上 v。于是问题又来了——想要给 A[x]加上v时，怎样去寻找树状数组中的对应项呢?
-
-要让 A[x]加上 v，就是要寻找树状数组 C 中能覆盖 A[x]的那些元素，让它们都加上 v。而从图 1中直观地看，只需要总是寻找离当前的“矩形”C[x]最近的“矩形”C[y]，使得 C[y]能够覆盖 C[x]即可。例如要让 A[6]加上 v，就从 C[6]开始找起：离 C[6]最近的能覆盖 C[6]的“矩形”是 C[8]，离 C[8]最近的能覆盖 C[8]的“矩形”是 C[16]，于是只要把 C[6]、C[8]、C[16]都加上v即可。
-
-那么，如何找到距离当前的 C[x]最近的能覆盖 C[x]的 C[y]呢？首先，可以得到一个显然的结论：lowbit(y)必须大于 lowbit(x)（不然怎么覆盖呢……）。于是问题等价于求一个尽可能小的整数 a，使得 lowbit(x+a)>lowbit(x)。显然，由于 lowbit(x)是取x的二进制最右边的1的位置，因此如果 lowbit(a) < lowbit(x)，lowbit(x+ a)就会小于 lowbit(x)。为此 lowbit(a)必须不小于 lowbit(x)。接着发现，当a取 lowbit(x)时，由于x和a的二进制最右边的1的位置相同,因此x+a会在这个1的位置上产生进位，使得进位过程中的所有连续的1变成0，直到把它们左边第一个0置为1时结束。于是lowbit(x+a)>lowbit(x)显然成立,最小的a就是lowbit(x)。于是 update 函数的做法就很明确了，只要让x不断加上 lowbit(x)，并让每步的 C[x]都加上 v，直到x超过给定的数据范围为止。代码如下：
-
-```python
-def bit_update(BIT, n, i, v):
-    i += 1  # index in BITree[] is 1 more than the index in arr[]
-
-    while i <= n:  # Traverse all ancestors and add 'val'
-        BIT[i] += v
-        i += i & (-i)  # Update index to that of parent
-```
-
-更新函数需要确保所有包含arr[i]在其范围内的BIT节点都被更新。我们通过不断向当前索引添加其最后一位设置位对应的十进制数，在BIT中循环遍历这些节点。
-
-
-
-### **实现** 
-
-首先将BIT[]中的所有值初始化为0。然后对所有的索引调用bit_update()函数。
-
-```python
-# Binary Indexed Tree
-
-def bit_sum(BIT, i):
-    """计算树状数组 BIT 从索引 1 到 i 的前缀和"""
-    s = 0
-    while i > 0:
-        s += BIT[i]
-        i -= i & (-i)  # 回溯至祖先节点
-    return s
-
-
-def bit_update(BIT, i, v):
-    """在树状数组 BIT 中更新索引 i 处的值 v"""
-    while i < len(BIT):
-        BIT[i] += v
-        i += i & (-i)  # 回溯至祖先节点
-
-
-# Constructs and returns a Binary Indexed Tree for given array of size n.
-def construct(arr, n):
-    BIT = [0] * (n + 1)
-    for i in range(n):  # Store the actual values in BIT[] using bit_update()
-        bit_update(BIT, i + 1, arr[i])
-
-    return BIT
-
-
-arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-BIT = construct(arr, len(arr))
-print(f'BIT: ', *BIT)
-print("Sum of elements in arr[0..5] is " + str(bit_sum(BIT, 5)))
-arr[3] += 6
-bit_update(BIT, 3, 6)
-print(f'BIT: ', *BIT)
-print("Sum of elements in arr[0..5]" +
-      " after update is " + str(bit_sum(BIT, 5)))
-
-```
-
-**Output**
-
-```
-BIT:  0 1 3 3 10 5 11 7 36 9 19 11 42 13 27 15 136
-Sum of elements in arr[0..5] is 15
-BIT:  0 1 3 9 16 5 11 7 42 9 19 11 42 13 27 15 142
-Sum of elements in arr[0..5] after update is 21
-```
-
-**Time Complexity:** $O(NlogN)$
-**Auxiliary Space:** $O(N)$
-
-**Can we extend the Binary Indexed Tree to computing the sum of a range in O(Logn) time?** 
-Yes. rangeSum(l, r) = get_sum(r) – get_sum(l-1).
-
-**References:** 
-http://en.wikipedia.org/wiki/Fenwick_tree 
-
-
-
-# 练习20018:蚂蚁王国的越野跑
+## M20018:蚂蚁王国的越野跑
 
 merge sort, binary indexed tree, binary search, , http://cs101.openjudge.cn/practice/20018/
 
@@ -869,10 +1179,10 @@ long long，有符号 64位整数，所占8个字节(Byte)
 > v=[]
 > ans=0
 > for i in range(n):
->     p=int(input())
->     index=bisect_left(v,p)
->     v.insert(index,p)
->     ans+=index
+>  p=int(input())
+>  index=bisect_left(v,p)
+>  v.insert(index,p)
+>  ans+=index
 > print(ans)
 > ```
 >
@@ -1118,3 +1428,235 @@ print(ans)
 2️⃣ 归并排序统计逆序对 O(N log N)
 
 3️⃣ 树状数组统计顺序对 O(N log N)
+
+
+
+# 4 归并排序（Merge Sort）
+
+- **类别**：**算法（排序算法 / 分治算法）**
+- **说明**：归并排序是一种经典的**分治算法**，时间复杂度稳定为 O(n log n)，可用于排序，也可用于解决如**逆序对计数**等问题。
+- **典型应用**：排序、求逆序对、外部排序等。
+
+
+
+## M20018:蚂蚁王国的越野跑
+
+merge sort, binary indexed tree, binary search,  http://cs101.openjudge.cn/practice/20018/
+
+代码放在上面 树状数组 中，即三种解法之一的归并排序求逆序数。
+
+
+
+# 附录：
+
+## A.树状数组的额外说明
+
+树状数组或二叉索引树（英语：Binary Indexed Tree），又以其发明者命名为Fenwick树，最早由Peter M. Fenwick于1994年以A New Data Structure for Cumulative Frequency Tables为题发表。其初衷是解决数据压缩里的累积频率（Cumulative Frequency）的计算问题，现多用于高效计算数列的<mark>前缀和， 区间和</mark>。
+
+一般来说，如果在查询的过程中元素可能发生改变（例如插入、修改或删除），就称这种查询为<mark>在线查询</mark>;如果在查询过程中元素不发生改变，就称为**离线查询**。
+
+
+
+> 二叉索引树（树状数组）用于处理对固定大小的数组进行以下多种操作的这类问题。
+>
+> - 前缀操作（求和、求积、异或、按位或等）。注意，区间操作也可以通过前缀来解决。例如，从索引L到R的区间和等于到R（包含R）的前缀和减去到L - 1的前缀和。
+> - 更新数组中的一个元素
+>
+> 这两种操作的时间复杂度均为$O(logN)$。注意，我们需要$O(NlogN)$的预处理时间和$O(N)$的辅助空间。
+>
+> 
+>
+> 让我们考虑以下问题来理解二叉索引树（Binary Indexed Tree, BIT）：
+> 我们有一个数组 $arr[0 . . . n-1]$。我们希望实现两个操作：
+>
+> 1. 计算前i个元素的和。
+> 2. 修改数组中指定位置的值，即设置 $arr[i] = x$，其中 $0 \leq i \leq n-1$。
+>
+> 一个简单的解决方案是从 0 到 i-1 遍历并计算这些元素的总和。要更新一个值，只需执行 $arr[i] = x$。第一个操作的时间复杂度为$O(N)$，而第二个操作的时间复杂度为$O(1)$。另一种简单的解决方案是创建一个额外的数组，并在这个新数组的第i个位置存储前i个元素的总和。这样，给定范围的和可以在$O(1)$时间内计算出来，但是更新操作现在需要$O(N)$时间。当查询操作非常多而更新操作非常少时，这种方法表现良好。
+>
+> **我们能否在$O(log N)$时间内同时完成查询和更新操作呢？**
+> 一种高效的解决方案是使用段树（Segment Tree），它能够在$O(logN)$时间内完成这两个操作。
+> 另一种解决方案是二叉索引树（Binary Indexed Tree，也称作Fenwick Tree），同样能够以$O(logN)$的时间复杂度完成查询和更新操作。与段树相比，二叉索引树所需的空间更少，且实现起来更加简单。
+
+
+
+### lowbit 运算
+
+二进制中一个经典应用是 lowbit 运算，即 `lowbit(x) = x & (-x)`。
+
+**整数的二进制表示常用的方式之一是使用补码**
+
+补码是一种表示有符号整数的方法，它将负数的二进制表示转换为正数的二进制表示。补码的优势在于可以使用相同的算术运算规则来处理正数和负数，而不需要特殊的操作。
+
+在补码表示中，最高位用于表示符号位，0表示正数，1表示负数。其他位表示数值部分。
+
+具体将一个整数转换为补码的步骤如下：
+
+1. 如果整数是正数，则补码等于二进制表示本身。
+2. 如果整数是负数，则需要先将其绝对值转换为二进制，然后取反，最后加1。等价于<mark>把二进制最右边的1的左边的每一位都取反</mark>。
+
+例如，假设要将 -12 转换为补码：
+
+1. 12的二进制表示为00001100。
+
+2. 将其取反得到11110011。
+
+3. 加1得到11110100，这就是 -12 的补码表示。
+
+
+通过`lowbit(x) = x & (-x)`就是取 x 的二进制最右边的1和它右边所有的0，因此它一定是2的幂次，即1、2、4、8等。
+
+对 x = 12 = $(00001100)_2$，有 -x = $(11110100)_2$ ，x & (-x) = 4
+
+对 x= 6 = $(110)_2$，有 -x = $(010)_2$，x & (-x) = 2
+
+
+
+### 表示方式
+
+树状数组（Binary Indexed Tree，BIT）用数组形式表示。它其实仍然是一个数组，并且与 sum 数组类似，是一个用来记录和的数组，只不过它存放的不是前 i 个整数之和，而是在 <mark>i 号位之前（含i号位）lowbit(i) 个整数之和</mark>。树状数组的大小等于输入数组的大小，记为n。在下面的代码中，为了便于实现，使用n+1的大小。
+
+如下图 所示，数组A是原始数组，有 A[1]~ A[16]共 16个元素；数组 C是树状数组，其中 C[i]存放数组 A 中i号位之前 lowbit(i) 个元素之和。显然，<mark>C[i]的覆盖长度是 lowbit(i)（也可以理解成管辖范围）</mark>，它是2的幂次，即 1、2、4、8等。
+
+需要注意的是，树状数组仍旧是一个平坦的数组，画成树形是为了让存储的元素更容易观察。
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20250320134426632.png" alt="image-20250320134426632" style="zoom: 67%;" />
+
+<center>图 树状数组定义图</center>
+
+
+
+```
+C[1] = A[1]  													(长度为 lowbit(1) = 1) 
+C[2] = A[1] + A[2]  									(长度为 lowbit(2) = 2) 
+C[3] = A[3]  													(长度为 lowbit(3) = 1) 
+C[4] = A[1] + A[2] + A[3] + A[4]  		(长度为 lowbit(4) = 4) 
+C[5] = A[5]  													(长度为 lowbit(5) = 1) 
+C[6] = A[5] + A[6]  									(长度为 lowbit(6) = 2) 
+C[7] = A[7]  													(长度为 lowbit(7) = 1) 
+C[8] = A[1] + A[2] + A[3] + A[4] + A[5] + A[6] + A[7] + A[8]  (长度为 lowbit(8) = 8) 
+```
+
+<mark>树状数组的定义非常重要，特别是“C[i]的覆盖长度是 lowbit(i)”这点；另外，树状数组的下标必须从1开始</mark>。接下来思考一下，在这样的定义下，
+怎样解决下面两个问题：
+
+① 设计函数 get_sum(x)，返回前x个数之和 A[1]+...+ A[x]。
+
+② 设计函数 update_bit(x,v)，实现将第x个数加上一个数v的功能，即 A[x]+= v。
+
+先来看第一个问题，即如何设计函数 get_sum(x)，返回前x个数之和。不妨先看个例子。假设想要查询 A[1]+…+A[14]，那么从树状数组的定义出发，它实际是什么东西呢? 回到上图，很容易发现 A[1]+…+A[14] = C[8]+C[12]+ C[14]。又比如要査询 A[1]+…A[11]，从图中同样可以得到 A[1]+…+A[11] = C[8]+C[10]+ C[11]。那么怎样知道 A[1]+…+ A[x]对应的是树状数组中的哪些项呢？事实上这很简单。记 SUM(1,x) = A[1]+……+A[x]，由于 C[x]的覆盖长度是 lowbit(x)，因此
+
+C[x] = A[x-lowbit(x)+1]+...+ A[x]
+
+于是可以得到
+
+```
+SUM(1,x) = A[1] +···+ A[x]
+				=A[1] +···+ A[x-lowbit(x)] + A[x-lowbit(x)+1] +···+ A[x]
+				=SUM(1,x-lowbit(x)) + C[x]
+```
+
+这样就把 SUM(1,x)转换为 SUM(1,x-lowbit(x))了。
+
+接着就能写出 get_sum 函数了，其中BITTree是树状数组。
+
+```python
+def bit_sum(BIT, i):
+    s = 0
+    i += 1  # index in BIT[] is 1 more than the index in arr[]
+
+    while i > 0:  # Traverse ancestors of BIT[index]
+        s += BIT[i]
+        i -= i & (-i)  # Move index to parent node
+    return s
+```
+
+由于 lowbit(i)的作用是定位i的二进制中最右边的1，因此 `i = i- lowbit(i)` 事实上是不断把i的二进制中最右边的1置为0的过程。所以 get_sum 函数的 for 循环执行次数为x的二进制中1的个数。一个数n的二进制表示中设置位的数量是O(logn)。也就是说，get_sum 函数的时间复杂度为 $O(logN)$。从另一个角度理解,结合图会发现，get_sum 函数的过程实际上是在沿着一条不断左上的路径行进（可以想一想 get_sum(14)跟 get_sum(11)的过程）。于是由于“树”高是 $O(logN)$级别,因此可以同样得到 get_sum 函数的时间复杂度就是 $O(logN)$。另外，<mark>如果要求数组下标在区间[x,y]内的数之和，即 A[x] + A[x+1] +…+ A[y]，可以转换成 get_sum(y) - get_sum(x-1)来解决，这是一个很重要的技巧</mark>。
+
+
+
+接着来看第二个问题，即如何设计函数 update(x,v)，实现将第x个数加上一个数v的功
+能。
+来看两个例子。假如要让 A[6]加上一个数 v，那么就要寻找树状数组C中能覆盖了 A[6]的元素，让它们都加上 v。也就是说，如果要让 A[6]加上 v，实际上是要让C[6]、C[8]、C[16]都加上 v。同样，如果要将 A[9]加上一个数 v,实际上就是要让 C[9]、C[10]、C[12]、C[16]都加上 v。于是问题又来了——想要给 A[x]加上v时，怎样去寻找树状数组中的对应项呢?
+
+要让 A[x]加上 v，就是要寻找树状数组 C 中能覆盖 A[x]的那些元素，让它们都加上 v。而从图 1中直观地看，只需要总是寻找离当前的“矩形”C[x]最近的“矩形”C[y]，使得 C[y]能够覆盖 C[x]即可。例如要让 A[6]加上 v，就从 C[6]开始找起：离 C[6]最近的能覆盖 C[6]的“矩形”是 C[8]，离 C[8]最近的能覆盖 C[8]的“矩形”是 C[16]，于是只要把 C[6]、C[8]、C[16]都加上v即可。
+
+那么，如何找到距离当前的 C[x]最近的能覆盖 C[x]的 C[y]呢？首先，可以得到一个显然的结论：lowbit(y)必须大于 lowbit(x)（不然怎么覆盖呢……）。于是问题等价于求一个尽可能小的整数 a，使得 lowbit(x+a)>lowbit(x)。显然，由于 lowbit(x)是取x的二进制最右边的1的位置，因此如果 lowbit(a) < lowbit(x)，lowbit(x+ a)就会小于 lowbit(x)。为此 lowbit(a)必须不小于 lowbit(x)。接着发现，当a取 lowbit(x)时，由于x和a的二进制最右边的1的位置相同,因此x+a会在这个1的位置上产生进位，使得进位过程中的所有连续的1变成0，直到把它们左边第一个0置为1时结束。于是lowbit(x+a)>lowbit(x)显然成立,最小的a就是lowbit(x)。于是 update 函数的做法就很明确了，只要让x不断加上 lowbit(x)，并让每步的 C[x]都加上 v，直到x超过给定的数据范围为止。代码如下：
+
+```python
+def bit_update(BIT, n, i, v):
+    i += 1  # index in BITree[] is 1 more than the index in arr[]
+
+    while i <= n:  # Traverse all ancestors and add 'val'
+        BIT[i] += v
+        i += i & (-i)  # Update index to that of parent
+```
+
+更新函数需要确保所有包含arr[i]在其范围内的BIT节点都被更新。我们通过不断向当前索引添加其最后一位设置位对应的十进制数，在BIT中循环遍历这些节点。
+
+
+
+### **实现** 
+
+首先将BIT[]中的所有值初始化为0。然后对所有的索引调用bit_update()函数。
+
+```python
+# Binary Indexed Tree
+
+def bit_sum(BIT, i):
+    """计算树状数组 BIT 从索引 1 到 i 的前缀和"""
+    s = 0
+    while i > 0:
+        s += BIT[i]
+        i -= i & (-i)  # 回溯至祖先节点
+    return s
+
+
+def bit_update(BIT, i, v):
+    """在树状数组 BIT 中更新索引 i 处的值 v"""
+    while i < len(BIT):
+        BIT[i] += v
+        i += i & (-i)  # 回溯至祖先节点
+
+
+# Constructs and returns a Binary Indexed Tree for given array of size n.
+def construct(arr, n):
+    BIT = [0] * (n + 1)
+    for i in range(n):  # Store the actual values in BIT[] using bit_update()
+        bit_update(BIT, i + 1, arr[i])
+
+    return BIT
+
+
+arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+BIT = construct(arr, len(arr))
+print(f'BIT: ', *BIT)
+print("Sum of elements in arr[0..5] is " + str(bit_sum(BIT, 5)))
+arr[3] += 6
+bit_update(BIT, 3, 6)
+print(f'BIT: ', *BIT)
+print("Sum of elements in arr[0..5]" +
+      " after update is " + str(bit_sum(BIT, 5)))
+
+```
+
+**Output**
+
+```
+BIT:  0 1 3 3 10 5 11 7 36 9 19 11 42 13 27 15 136
+Sum of elements in arr[0..5] is 15
+BIT:  0 1 3 9 16 5 11 7 42 9 19 11 42 13 27 15 142
+Sum of elements in arr[0..5] after update is 21
+```
+
+**Time Complexity:** $O(NlogN)$
+**Auxiliary Space:** $O(N)$
+
+**Can we extend the Binary Indexed Tree to computing the sum of a range in O(Logn) time?** 
+Yes. rangeSum(l, r) = get_sum(r) – get_sum(l-1).
+
+**References:** 
+http://en.wikipedia.org/wiki/Fenwick_tree 
+
+
+
