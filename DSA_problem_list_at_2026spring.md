@@ -15,11 +15,11 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | 日期       | 问题编号与名称                 | 标签                                 | 难度 | 链接                                             |
 | ---------- | ------------------------------ | ------------------------------------ | ---- | ------------------------------------------------ |
 | 0314 | 20018:蚂蚁王国的越野跑  | merge sort, binary indexed tree, binary search    | Medium2  | http://cs101.openjudge.cn/practice/20018/          |
-|  |       |       |  |          |
+|  |       |       | Medium |          |
 | 0313 | 30201: 旅行售货商问题  | bitmask dp  | Tough | http://cs101.openjudge.cn/practice/30201/       |
-|  |       |       |  |          |
+|  |       |       | Medium |          |
 | 0312 | 1888.使二进制字符串字符交替的最少反转次数 | <mark>sliding window</mark> | Medium2 | https://leetcode.cn/problems/minimum-number-of-flips-to-make-the-binary-string-alternating/ |
-|  |       |       |  |          |
+|  |       |       | Medium |          |
 | 0311 | 2195.EIdiot First Search | <mark>dfs and similar, dp, trees</mark> | Tough | https://codeforces.com/problemset/problem/2195/E           |
 | 0311 | 1364A.XXXXX  | two pointers  | 1200 | https://codeforces.com/problemset/problem/1364/A          |
 | 0310 | 647.回文子串 | <mark>two pointers</mark>/中心扩散, dp/马拉车 | Medium | https://leetcode.cn/problems/palindromic-substrings/          |
