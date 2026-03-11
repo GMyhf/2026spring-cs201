@@ -1,5 +1,5 @@
 ## 2026spring 数算（DS Algo）每日选作
-*Updated 2026-03-09 23:45 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
+*Updated 2026-03-11 12:31 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
 https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spring.md
 
 题解，https://fuynaloft.github.io/sol101/ ✅
@@ -19,7 +19,7 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | 0313 | 30201: 旅行售货商问题  | <mark>bitmask dp</mark>  | Tough | http://cs101.openjudge.cn/practice/30201/       |
 |  |       |       | Medium |          |
 | 0312 | 1888.使二进制字符串字符交替的最少反转次数 | <mark>sliding window</mark> | Medium2 | https://leetcode.cn/problems/minimum-number-of-flips-to-make-the-binary-string-alternating/ |
-|  |       |       | Medium |          |
+| 0312 | 1009.十进制整数的反码  | bit manipulation  | Easy | https://leetcode.cn/problems/complement-of-base-10-integer/description/          |
 | 0311 | 2195.EIdiot First Search | <mark>dfs and similar, dp, trees</mark> | Tough | https://codeforces.com/problemset/problem/2195/E           |
 | 0311 | 1364A.XXXXX  | two pointers  | 1200 | https://codeforces.com/problemset/problem/1364/A          |
 | 0310 | 647.回文子串 | <mark>two pointers</mark>/中心扩散, dp/马拉车 | Medium | https://leetcode.cn/problems/palindromic-substrings/          |
