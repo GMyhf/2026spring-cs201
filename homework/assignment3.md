@@ -1,6 +1,6 @@
-# Assignment #2: 位运算、前缀和、树状数组、归并排序 & 状态压缩
+# Assignment #3: 20260311 cs201 Mock Exam
 
-*Updated 2026-03-10 11:00 GMT+8*
+*Updated 2026-03-11 15:24 GMT+8*
  *Compiled by <mark>同学的姓名、院系</mark> (2026 Spring)*
 
 
@@ -35,32 +35,9 @@
 
 ## 1. 题目
 
-### E868.二进制间距
+### E20742:泰波拿契數
 
-bit manipulation, https://leetcode.cn/problems/binary-gap/
-
-思路：
-
-
-
-代码：
-
-```python
-
-```
-
-
-
-代码运行截图 <mark>（至少包含有"Accepted"）</mark>
-
-
-
-
-
-### M304.二维区域和检索 - 矩阵不可变
-
-prefix sum, https://leetcode.cn/problems/range-sum-query-2d-immutable/
-
+implementation, http://cs101.openjudge.cn/practice/20742/
 
 思路：
 
@@ -80,10 +57,9 @@ prefix sum, https://leetcode.cn/problems/range-sum-query-2d-immutable/
 
 
 
-### M1680.连接连续二进制数字
+### E30571.十进制整数的反码
 
-bit manipulation, https://leetcode.cn/problems/concatenation-of-consecutive-binary-numbers/
-
+bit manipulation, http://cs101.openjudge.cn/practice/E30571/
 
 
 思路：
@@ -104,9 +80,9 @@ bit manipulation, https://leetcode.cn/problems/concatenation-of-consecutive-bina
 
 
 
-### M1461.检查一个字符串是否包含所有长度为 K 的二进制子串
+### E29950:稳定的符文序列
 
-bit manipulation, https://leetcode.cn/problems/check-if-a-string-contains-all-binary-codes-of-size-k/
+two pointers, http://cs101.openjudge.cn/practice/E29950
 
 
 
@@ -128,9 +104,11 @@ bit manipulation, https://leetcode.cn/problems/check-if-a-string-contains-all-bi
 
 
 
-### M30178:数字华容道（Easy Version）
+### M30218:狭路相逢
 
-merge sort, binary indexed tree, http://cs101.openjudge.cn/practice/30178/
+stack, http://cs101.openjudge.cn/practice/M30218/
+
+
 
 思路：
 
@@ -150,9 +128,31 @@ merge sort, binary indexed tree, http://cs101.openjudge.cn/practice/30178/
 
 
 
-### T30201: 旅行售货商问题
+### M02299: Ultra-QuickSort
 
-bitmask dp, http://cs101.openjudge.cn/practice/30201/
+merge sort, http://cs101.openjudge.cn/practice/02299/
+
+思路：
+
+
+
+代码：
+
+```python
+
+```
+
+
+
+代码运行截图 <mark>（至少包含有"Accepted"）</mark>
+
+
+
+
+
+### M29954:逃离紫罗兰监狱
+
+bfs, http://cs101.openjudge.cn/practice/29954 
 
 思路：
 
