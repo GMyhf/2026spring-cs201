@@ -16,7 +16,7 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | ---------- | ------------------------------ | ------------------------------------ | ---- | ------------------------------------------------ |
 | 4~5月 | 3600.升级后最大生成树稳定性    | <mark>binary search</mark>, <mark>minimum spanning tree</mark> | Tough | https://leetcode.cn/problems/maximize-spanning-tree-stability-with-upgrades/          |
 | 3~4月 | 3327.判断 DFS 字符串是否是回文串    | dfs, manacher  | Tough | https://leetcode.cn/problems/check-if-dfs-strings-are-palindromes/          |
-| 0317 |       |       | Medium |          |
+| 0317 | 02406: 字符串乘方   | KMP  | Tough | http://cs101.openjudge.cn/practice/02406/          |
 | 0317 | 39.组合总和   | backtracking    | Medium | https://leetcode.cn/problems/combination-sum/          |
 | 0316 | 17.电话号码的字母组合    | backtracking       | Medium | https://leetcode.cn/problems/letter-combinations-of-a-phone-number/          |
 | 0316 | 1415.长度为 n 的开心字符串中字典序第 k 小的字符串 | math, backtracking | Medium | https://leetcode.cn/problems/the-k-th-lexicographical-string-of-all-happy-strings-of-length-n/          |
