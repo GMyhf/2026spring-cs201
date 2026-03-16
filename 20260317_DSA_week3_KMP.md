@@ -580,6 +580,447 @@ merge sort, binary indexed tree, http://cs101.openjudge.cn/practice/30178/
 
 
 
+### 练习M30178: 数字华容道（Easy Version）
+
+merge sort, binary indexed tree, http://cs101.openjudge.cn/practice/30178/
+
+**总时间限制：2000ms，单个样例点时间限制：1000ms，内存限制：262144kB**
+
+数字华容道的游戏玩法：在一个 $n \times n$ 的方格中放置 $1$ 到 $n^{2}-1$ 的所有数字（每个数字占据一空间），剩下一个空格（输入中用 $0$ 表示）。每次可以将与空格相邻的几个数字平移到空格处。游戏目标是尽可能快的将给定盘面还原到初始状态。（初始状态就是 $1$ 到 $n^{2}-1$ 按顺序填充每一行，空格在右下角的盘面）
+例如一个可能的初始盘面是：
+
+```txt
+1 2 3 4
+5 6 7 8
+9 10 11 12
+15 13 14 0
+```
+
+你的目标是通过平移数字，将盘面变成
+
+```txt
+1 2 3 4
+5 6 7 8
+9 10 11 12
+13 14 15 0
+```
+
+的样子。
+一天，小K正准备玩数字华容道，但是他不小心把盘面中的数字小方格都打翻在地了。虽然他将所有的数字都乱序排入了盘面中，但是这样的盘面是不一定有解的，所以他想请你判断一下这个盘面是否有解。
+
+**输入**
+
+第 $1$ 行：一个整数 $n$ ，$(2\leq n \leq 1000)$ 。（你就不要问小K是怎么把一百万个小方格捡起来的了）
+第 $2$ 行到第 $n+1$ 行： $n$ 个整数，表示盘面。
+
+**输出**
+
+如果盘面有解，输出yes，否则输出no
+
+样例输入
+
+``` txt
+4
+1 2 3 4
+5 6 7 8
+9 10 11 12
+13 14 15 0
+```
+
+样例输出
+
+```txt
+yes
+```
+
+（注：此题与Hard Version唯一的不同之处在于Easy Version的每一个输入文件都只有一个样例，而Hard Version有多个。）
+
+
+
+这是一个经典的数字华容道（N-Puzzle）的可解性判定问题。
+
+**核心思路**
+
+判断盘面是否有解，依赖于**逆序对（Inversions）的数量**和**空格（0）的位置**。
+
+1.  **将盘面展开为一维数组**：忽略空格（0），将剩下的 $N^2-1$ 个数字按顺序排成一列。
+2.  **计算逆序对 ($I$)**：在展开的数组中，如果前面的数字大于后面的数字，则称为一个逆序对。计算总数 $I$。
+3.  **判定规则**：
+    *   **情况 1：$N$ 是奇数**
+        *   如果逆序对数量 $I$ 是**偶数**，则有解。
+        *   否则无解。
+    *   **情况 2：$N$ 是偶数**
+        *   计算空格（0）所在的行号（从上往下数，0-indexed），设为 $r$。
+        *   计算空格距离底部的行数：$dist = (N - 1) - r$。
+        *   如果 $(I + dist)$ 是**偶数**，则有解。
+        *   否则无解。
+
+**算法复杂度**
+
+由于 $N$ 最大为 1000，直接双重循环计算逆序对的时间复杂度为 $O(N^4)$，计算量达到 $10^{12}$，会超时。我们需要使用 **树状数组 (Binary Indexed Tree / Fenwick Tree)** 或 **归并排序** 将计算逆序对的时间复杂度降低到 $O(N^2 \log(N^2))$。
+
+Python 代码实现
+
+```python
+def merge_count(arr):
+    if len(arr) <= 1:
+        return arr, 0
+    mid = len(arr) // 2
+    left, a = merge_count(arr[:mid])
+    right, b = merge_count(arr[mid:])
+    merged = []
+    i = j = 0
+    inv = a + b
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            merged.append(left[i])
+            i += 1
+        else:
+            merged.append(right[j])
+            j += 1
+            inv += len(left) - i
+    merged += left[i:]
+    merged += right[j:]
+    return merged, inv
+
+def main():
+    import sys
+    data = sys.stdin.read().split()
+    if not data:
+        return
+    n = int(data[0])
+    grid = []
+    index = 1
+    blank_row = -1
+    for i in range(n):
+        row = list(map(int, data[index:index+n]))
+        index += n
+        grid.append(row)
+        if 0 in row:
+            blank_row = i
+
+    flat = []
+    for row in grid:
+        for x in row:
+            if x != 0:
+                flat.append(x)
+
+    _, inv = merge_count(flat)
+
+    if n % 2 == 1:
+        ans = "yes" if inv % 2 == 0 else "no"
+    else:
+        ans = "yes" if (inv + blank_row) % 2 == 1 else "no"
+    print(ans)
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+```python
+import sys
+
+# 定义树状数组类，用于快速计算逆序对
+class FenwickTree:
+    def __init__(self, size):
+        self.tree = [0] * (size + 1)
+
+    def update(self, i, delta):
+        while i < len(self.tree):
+            self.tree[i] += delta
+            i += i & (-i)
+
+    def query(self, i):
+        s = 0
+        while i > 0:
+            s += self.tree[i]
+            i -= i & (-i)
+        return s
+
+def solve():
+    # 使用 sys.stdin.read 读取所有输入，处理多行和空格
+    input_data = sys.stdin.read().split()
+    
+    if not input_data:
+        return
+
+    iterator = iter(input_data)
+    try:
+        n = int(next(iterator))
+    except StopIteration:
+        return
+
+    flat_list = []
+    zero_row = -1
+
+    # 读取盘面数据
+    # 同时记录 0 所在的行，并构建去除 0 后的扁平数组
+    for r in range(n):
+        for c in range(n):
+            val = int(next(iterator))
+            if val == 0:
+                zero_row = r  # 记录 0 所在的行号（0-indexed）
+            else:
+                flat_list.append(val)
+
+    # 计算逆序对
+    # 数字范围是 1 到 n*n-1
+    max_val = n * n
+    bit = FenwickTree(max_val)
+    inversions = 0
+    
+    for i, x in enumerate(flat_list):
+        # i 是当前已经遍历过的数字个数
+        # bit.query(x) 是当前遍历过的数字中 <= x 的个数
+        # i - bit.query(x) 就是当前遍历过的数字中 > x 的个数（即逆序对）
+        inversions += (i - bit.query(x))
+        bit.update(x, 1)
+
+    # 根据 N 的奇偶性进行判定
+    if n % 2 == 1:
+        # N 是奇数：逆序对必须是偶数
+        if inversions % 2 == 0:
+            print("yes")
+        else:
+            print("no")
+    else:
+        # N 是偶数：(逆序对 + 0距离底部的行数) 必须是偶数
+        dist_from_bottom = (n - 1) - zero_row
+        if (inversions + dist_from_bottom) % 2 == 0:
+            print("yes")
+        else:
+            print("no")
+
+if __name__ == "__main__":
+    solve()
+```
+
+代码解析
+
+1.  **输入处理**：使用 `sys.stdin.read().split()` 一次性读取所有数据，这比 `input()` 快且能自动处理换行符和空格。
+2.  **树状数组 (BIT)**：
+    *   `update(x, 1)`：将数字 `x` 出现次数加 1。
+    *   `query(x)`：查询小于等于 `x` 的数字出现过多少次。
+    *   `i - query(x)`：利用前缀和思想，计算出比当前数字 `x` 大的已出现数字个数，这正是逆序对的定义。
+3.  **逻辑判定**：
+    *   **奇数阶**：左右移动不改变逆序对，上下移动空格跨越 $N-1$ (偶数) 个数字，逆序对奇偶性不变。目标状态逆序对为 0 (偶数)，所以当前逆序对必须为偶数。
+    *   **偶数阶**：上下移动空格跨越 $N-1$ (奇数) 个数字，逆序对奇偶性改变。每向下移动一行，逆序对奇偶性反转一次。我们需要保证：(当前逆序对 + 将空格移到底部所需的步数) 的奇偶性 == 目标状态(0)的奇偶性。
+
+
+
+
+
+### 练习T数字华容道（Hard Version）
+
+Cycle Decomposition, http://cs101.openjudge.cn/practice/30179/
+
+**总时间限制：1000ms，单个样例点时间限制：500ms，内存限制：65536kB**
+
+数字华容道的游戏玩法：在一个 $n \times n$ 的方格中放置 $1$ 到 $n^{2}-1$ 的所有数字（每个数字占据一空间），剩下一个空格（输入中用 $0$ 表示）。每次可以将与空格相邻的几个数字平移到空格处。游戏目标是尽可能快的将给定盘面还原到初始状态。（初始状态就是 $1$ 到 $n^{2}-1$ 按顺序填充每一行，空格在右下角的盘面）
+例如一个可能的初始盘面是：
+
+```txt
+1 2 3 4
+5 6 7 8
+9 10 11 12
+15 13 14 0
+```
+
+你的目标是通过平移数字，将盘面变成
+
+```txt
+1 2 3 4
+5 6 7 8
+9 10 11 12
+13 14 15 0
+```
+
+的样子。
+
+一天，小K正准备玩数字华容道，但是他不小心把盘面中的数字小方格都打翻在地了。虽然他将所有的数字都乱序排入了盘面中，但是这样的盘面是不一定有解的，所以他想请你判断一下这个盘面是否有解。
+
+**输入**
+
+第 $1$ 行：一个整数 $t$ ，$(1\leq t\leq 100)$，表示样例数目。
+接下来对于每个样例：
+第 $1$ 行：一个整数 $n$ ，$(2\leq n \leq 1000)$ 。（你就不要问小K是怎么把一百万个小方格捡起来的了）
+第 $2$ 行到第 $n+1$ 行： $n$ 个整数，表示盘面。
+数据保证每一个测试点都有 $\max(n^{2}) \times t \leq 10^7$。
+
+**输出**
+
+输出 $t$ 行。对于每一个样例，如果盘面有解，输出yes，否则输出no
+
+样例输入
+
+``` txt
+2
+4
+1 2 3 4
+5 6 7 8
+9 10 11 12
+13 14 15 0
+2
+2 1
+3 0
+```
+
+样例输出
+
+```txt
+yes
+no
+```
+
+（注：此题与Easy Version唯一的不同之处在于Hard Version的每一个输入文件都有多个样例，而Easy Version只有一个。）
+
+提示：
+
+tags: math, cycle decomposition
+hint: 一个经典的智力问题。
+现在有100个囚犯被囚禁，典狱长准备和他们玩一个游戏：有一百张写有 $1-100$ 号码的纸条被倒扣在一百个编号 $1-100$ 的盒子中。每个囚犯可以打开 $50$ 个盒子，但是所有囚犯在打开完盒子后不能与其他囚犯交流。如果所有囚犯都能找到自己的号码对应的纸条，他们就能成功逃脱。否则他们就都会被囚禁终生。如果每个囚犯都只是随机的打开 $50$ 个盒子，则他们能逃生的概率仅为 $0.5^{100}$ ，微乎其微。但是一个聪明的囚犯提出了一个方案：每个人都打开自己的号码对应的盒子，找到下面纸条上的号码，然后打开对应号码的盒子，如此往复，直到找到自己的号码为止。这样做可以显著的将逃生概率增加到 $30\%$ 左右。 
+数学上，我们可以把从一个数移动到这个数对应位置的下一个数，如此往复，最终连会自己的结构称为循环（cycle）。比如说 2 3 1就是一个循环，它实际表示了$$
+2\to 3\to 1 \to 2
+$$在囚犯问题中，所有号码相当于组成了一个全排列。所有囚犯寻找自己号码的过程就相当于在全排列的各个不同循环中移动一圈。可以证明，一个全排列可以被唯一分解为许多不相交（不共用元素）的循环。
+循环的性质：一个有 $n$ 个数的循环可以通过 $n-1$ 次元素交换变回递增的序列。比如循环 2 3 1 就可以通过先交换 $2$ 和 $3$ ，再交换 $3$ 和 $1$ 得到递增序列 1 2 3。
+
+
+
+针对数字华容道（$N$-Puzzle）问题，判定是否有解的标准结论如下：
+
+1. **当 $N$ 为奇数时**：盘面有解 $\iff$ 逆序对数（或交换次数）为**偶数**。
+2. **当 $N$ 为偶数时**：盘面有解 $\iff$ **（逆序对数 + 空格所在行从下往上的行号）** 为**奇数**。
+   *（注：这里的行号是从 $1$ 开始计数的，目标状态空格在右下角，即第 $1$ 行）*
+
+**重点：**
+
+1.  **内存管理**：$N=1000$ 时 $N^2=10^6$。使用 `array.array` 存储 $10^6$ 个整数仅需 4MB，比 `list` 节省约 90% 内存。
+2.  **输入效率**：$10^7$ 个数字的读取对 Python 来说极具挑战。使用 `itertools.islice` 配合 `map(int, ...)` 是最快的方式。
+
+**优化后的代码：**
+
+```python
+import sys
+import array
+import itertools
+
+def solve():
+    # 1. 使用生成器处理输入，避免一次性加载导致内存超限
+    def get_tokens():
+        for line in sys.stdin:
+            for word in line.split():
+                yield word
+    
+    tokens = get_tokens()
+    
+    # 获取测试用例数量 t
+    first_token = next(tokens, None)
+    if first_token is None:
+        return
+    t = int(first_token)
+    
+    # 将标准库函数映射为局部变量，提高循环内的调用速度
+    write = sys.stdout.write
+    
+    for _ in range(t):
+        n_str = next(tokens, None)
+        if n_str is None:
+            break
+        n = int(n_str)
+        total = n * n
+        
+        # 2. 使用 array.array 节省内存 ('I' 表示无符号 4 字节整数)
+        # 预分配空间比动态 extend 更快
+        grid_full = array.array('I', map(int, itertools.islice(tokens, total)))
+        
+        # 3. 寻找 0 的位置并计算行号
+        zero_idx = -1
+        for i in range(total):
+            if grid_full[i] == 0:
+                zero_idx = i
+                break
+        
+        # 空格所在行（从下往上数，最底下一行是第 1 行）
+        # zero_idx // n 是从上往下数的行索引 (0 ~ n-1)
+        row_from_bottom = n - (zero_idx // n)
+        
+        # 4. 构造不含 0 的紧凑序列用于计算置换环
+        # 为了极速处理，手动将 0 后的元素前移
+        grid = array.array('I', [0] * (total - 1))
+        for i in range(zero_idx):
+            grid[i] = grid_full[i]
+        for i in range(zero_idx + 1, total):
+            grid[i-1] = grid_full[i]
+            
+        # 释放大数组内存
+        del grid_full
+        
+        # 5. 置换环分解计算交换次数的奇偶性
+        # 时间复杂度 O(N^2)，对 Python 1s 限制来说 $10^7$ 次操作是极限
+        num_elements = total - 1
+        visited = bytearray(num_elements)
+        cycles = 0
+        
+        # 局部变量优化
+        g = grid
+        v = visited
+        
+        for i in range(num_elements):
+            if not v[i]:
+                cycles += 1
+                curr = i
+                while not v[curr]:
+                    v[curr] = 1
+                    # 目标状态值 v 在索引 v-1 处
+                    curr = g[curr] - 1
+        
+        # 交换次数 parity = (总数 - 环数) % 2
+        swaps_even = (num_elements - cycles) % 2 == 0
+        
+        # 6. 核心判定逻辑
+        if n % 2 == 1:
+            # N为奇数：交换次数必须为偶数
+            write("yes\n" if swaps_even else "no\n")
+        else:
+            # N为偶数：(交换次数 + 空格行号) 必须为奇数
+            # 逻辑等价于：swaps_even 的布尔值必须与 (row_from_bottom 为奇数) 的布尔值一致
+            row_odd = (row_from_bottom % 2 == 1)
+            if swaps_even == row_odd:
+                write("yes\n")
+            else:
+                write("no\n")
+        
+        # 显式清理
+        del grid
+        del v
+
+if __name__ == "__main__":
+    solve()
+```
+
+**关键点说明：**
+
+*   **内存（Memory）**：通过 `array.array` 和 `bytearray`，即使在 $N=1000$ 的情况下，核心数据结构占用的内存仅约 5MB。加上 Python 解释器本身的开销，总内存会稳定在 30MB-40MB 左右，远低于 64MB 的限制。
+*   **时间（Time）**：
+    *   使用 `itertools.islice` 和 `map` 绕过了 Python 慢速的显式 `for` 循环读取。
+    *   置换环分解通过 `bytearray` 进行标记，时间复杂度为 $O(N^2)$。由于题目保证总元素 $\sum N^2 \leq 10^7$，在 Python 中通过局部变量优化后，可以在 1 秒内完成。
+*   **偶数阶判定逻辑**：
+    *   目标状态的空格行号是 1（奇数），逆序对是 0（偶数），和为奇数。
+    *   因此，任何状态只要 `(交换次数 + 从下往上行号)` 的和为奇数，即为有解。
+    *   代码中的 `if swaps_even == row_odd` 完美涵盖了：
+        *   `偶数 + 奇数 = 奇数` (True == True)
+        *   `奇数 + 偶数 = 奇数` (False == False)
+
+
+
+
+
+
+
+
+
 ## B. KMP, Manacher: Symmetry Power
 
 Q: 我一直感觉KMP与Manacher算法很像，都是利用预处理好的信息，提高效率。Mancher算法更难理解，因为它的预处理也是online动态进行的，KMP的预处理只要一次。
