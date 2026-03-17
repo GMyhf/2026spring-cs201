@@ -1,8 +1,8 @@
-# Week3 KMP
+# Week3 KMP & 集合论与位运算优化
 
 —— 一个人能走多远不取决于顺境中能走多快，取决于在逆境中能否找回曾经的自己。
 
-*Updated 2026-03-13 18:24 GMT+8*  
+*Updated 2026-03-17 12:10 GMT+8*  
 *Compiled by Hongfei Yan (2025 Spring)*    
 
 
@@ -19,7 +19,9 @@
 
 
 
-# 1. 算法背景：告别“暴力”与“重复”
+# 1 KMP
+
+## 1.1 算法背景：告别“暴力”与“重复”
 
 在 KMP 诞生之前，程序员们习惯于用“暴力”解决问题。1970年，Knuth、Morris 与 Pratt 独立发现了这个线性算法，Matiyasevich 也曾从自动机理论角度得出类似结论。它的出现，标志着字符串处理从 $O(m \times n)$ 时代跨入了 O(m + n) 时代。
 
@@ -34,7 +36,7 @@
 
 
 
-# 2. 核心预处理：LPS（最长相等前后缀）表
+## 1.2 核心预处理：LPS（最长相等前后缀）表
 
 KMP 的核心在于：**在匹配之前，先让模式串进行“自省”。** 我们需要计算 **LPS（Longest Proper Prefix which is also Suffix）**。
 
@@ -62,7 +64,7 @@ KMP 的核心在于：**在匹配之前，先让模式串进行“自省”。**
 
 
 
-# 3. 指针的华尔兹：双指针（I & J）协作流程
+## 1.3 指针的华尔兹：双指针（I & J）协作流程
 
 在 KMP 中，我们使用 **0-based 索引** 维护两个指针：`i`（主串指针）和 `j`（模式串指针）。
 
@@ -99,7 +101,7 @@ Pointer:          j (指向 Pattern[2] = 'A') <-- 现在 Pattern[j] == Text[i]!
 
 
 
-# 4. 深度解析：破解“跳跃”逻辑
+## 1.4 深度解析：破解“跳跃”逻辑
 
 为什么跳到 `lps[j-1]`？因为 `lps[j-1]` 的值代表了**当前已匹配部分的对称重叠长度**。跳跃后，主串的后缀与模式串的前缀自动对齐，从而避免了冗余检查。
 
@@ -171,7 +173,7 @@ print("pos matched：", index)
 
 
 
-# 5. 高级洞察：周期性与循环节
+## 1.5 高级洞察：周期性与循环节
 
 KMP 的预处理不仅用于匹配，还能揭示字符串的几何构造。
 
@@ -184,7 +186,7 @@ KMP 的预处理不仅用于匹配，还能揭示字符串的几何构造。
 
 
 
-## 5.1 最小循环元引理的证明
+### 1.5.1 最小循环元引理的证明
 
 > 关于**最小循环元引理**（Minimum Cycle Element Lemma，在 KMP 算法中常用于解决周期性字符串问题），其证明逻辑建立在 KMP 算法的 $\pi$ 表（或称 LPS 表、next 数组）的基础之上。
 >
@@ -253,7 +255,7 @@ print(is_repeated_pattern("ababab"))  # True
 
 
 
-# 6. 学习总结：KMP 的极简清单
+## 1.6 学习总结：KMP 的极简清单
 
 要掌握 KMP，记住三大支柱：
 
@@ -269,9 +271,9 @@ print(is_repeated_pattern("ababab"))  # True
 
 
 
-# 7.编程题目
+## 1.7 编程题目
 
-## 练习02406: 字符串乘方
+### 练习02406: 字符串乘方
 
 KMP, http://cs101.openjudge.cn/practice/02406/
 
@@ -338,7 +340,7 @@ while True:
 
 
 
-## 练习01961: 前缀中的周期
+### 练习01961: 前缀中的周期
 
 KMP, http://cs101.openjudge.cn/practice/01961/
 
@@ -451,6 +453,243 @@ if __name__ == "__main__":
     main()
 
 ```
+
+
+
+# 2 集合论与位运算优化
+
+
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/1712451632-VCAgyP-set2bit-2.png" alt="位运算入门位运算教程位运算技巧力扣位运算leetcode位运算 灵茶山艾府 灵神" style="zoom: 50%;" />
+
+
+
+## 2.0 引言：从数学概念到高效计算
+
+在初等数学中，我们学习了**集合论（Set Theory）**。例如，集合 $S = \{0, 2, 3\}$。在编程实现中，通常使用哈希表（`unordered_set` 或 `set`）来存储集合元素。
+
+然而，当集合中的元素范围较小且固定（如 0-63 之间的整数）时，我们可以利用**二进制位**在逻辑电路与数学运算之间的同构性，建立一座高效的“桥梁”。
+
+> 从集合论到位运算，常见位运算技巧分类总结！
+> 灵茶山艾府，https://leetcode.cn/discuss/post/3571304/cong-ji-he-lun-dao-wei-yun-suan-chang-ji-enve/
+
+
+
+## 2.1 集合与位运算的映射关系
+
+我们可以将集合中的元素 $i$ 映射到二进制数的第 $i$ 位（从低到高）。
+**形式化定义：** 包含非负整数的有限集合 $S$，可压缩为一个非负整数 $f(S)$：
+$$ f(S) = \sum_{i \in S} 2^i $$
+
+**示例：**
+
+* 集合 $\{0, 2, 3\}$ $\rightarrow$ 二进制 $1101_{(2)}$ $\rightarrow$ 十进制 $13$。
+
+* 操作优势：位运算是 CPU 的基础指令，其执行效率远高于哈希表的函数调用。
+
+  
+
+**常用集合操作对照表**
+
+| 术语       | 集合符号        | 位运算 (C++/Python) | 集合示例                                 | 位运算示例 ($1101$ 与 $0111$)  |
+| :--------- | :-------------- | :------------------ | :--------------------------------------- | :----------------------------- |
+| **交集**   | $A \cap B$      | `a & b`             | $\{0,2,3\} \cap \{0,1,2\} = \{0,2\}$     | `1101 & 0111 = 0101`           |
+| **并集**   | $A \cup B$      | `a | b`             | $\{0,2,3\} \cup \{0,1,2\} = \{0,1,2,3\}$ | `1101 | 0111 = 1111`           |
+| **差集**   | $A \setminus B$ | `a & (~b)`          | $\{0,2,3\} \setminus \{0,1,2\} = \{3\}$  | `1101 & (~0111) = 1000`        |
+| **对称差** | $A \Delta B$    | `a ^ b`             | 仅属于 A 或 B 的元素                     | `1101 ^ 0111 = 1010`           |
+| **包含于** | $A \subseteq B$ | `(a & b) == a`      | 检查 A 是否为 B 的子集                   | `(0101 & 0111) == 0101` (True) |
+
+
+
+## 2.2 实战演练：倒排索引查询
+
+倒排索引（Inverted Index）是搜索引擎的核心。给定一组词及其出现的文档列表，根据查询指令（包含、排除、无所谓）计算最终文档集。
+
+*   **1 (AND)**: 文档必须包含该词。
+*   **-1 (NOT)**: 文档必须排除该词。
+*   **0 (IGNORE)**: 无所谓。
+
+**算法策略：集合运算优化**
+
+由于文档 ID 范围较大（32位整数），无法直接使用单整数位掩码。但其底层的逻辑与上述位运算完全一致。我们利用 Python 内置的高效 `set`（基于哈希优化）来模拟位运算逻辑。
+
+**关键逻辑：**
+
+1.  **先求交：** 找到所有标记为 `1` 的集合，求其交集 $A$。
+2.  **后求差：** 找到所有标记为 `-1` 的集合，求其并集 $B$。
+3.  **最终结果：** $Result = A \setminus B$。
+
+
+
+### 练习M04093: 倒排索引查询
+
+Inverted Index, http://cs101.openjudge.cn/practice/04093/
+
+现在已经对一些文档求出了倒排索引，对于一些词得出了这些词在哪些文档中出现的列表。
+
+要求对于倒排索引实现一些简单的查询，即查询某些词同时出现，或者有些词出现有些词不出现的文档有哪些。
+
+**输入**
+
+第一行包含一个数N，1 <= N <= 100，表示倒排索引表的数目。
+接下来N行，每行第一个数ci，表示这个词出现在了多少个文档中。接下来跟着ci个数，表示出现在的文档编号，编号不一定有序。1 <= ci <= 1000，文档编号为32位整数。
+接下来一行包含一个数M，1 <= M <= 100，表示查询的数目。
+接下来M行每行N个数，每个数表示这个词要不要出现，1表示出现，-1表示不出现，0表示无所谓。数据保证每行至少出现一个1。
+
+**输出**
+
+共M行，每行对应一个查询。输出查询到的文档编号，按照编号升序输出。
+如果查不到任何文档，输出"NOT FOUND"。
+
+样例输入
+
+```
+3
+3 1 2 3
+1 2
+1 3
+3
+1 1 1
+1 -1 0
+1 -1 -1
+```
+
+样例输出
+
+```
+NOT FOUND
+1 3
+1
+```
+
+
+
+> 在实际搜索引擎在处理基于倒排索引的查询时，搜索引擎确实会优先关注各个查询词的倒排表的合并和交集处理，而不是直接准备未出现文档的集合。这种方法更有效，特别是在处理大规模数据集时，因为它允许系统动态地调整和优化查询过程，特别是在有复杂查询逻辑（如多个词的组合、词的排除等）时。详细解释一下搜索引擎如何使用倒排索引来处理查询：
+>
+> 倒排索引查询的核心概念
+>
+> 1. 倒排索引结构：
+>    - 对于每个词（token），都有一个关联的文档列表，这个列表通常是按文档编号排序的。
+>    - 每个文档在列表中可能还会有附加信息，如词频、位置信息等。
+> 2. 处理查询：
+>    - 单词查询：对于单个词的查询，搜索引擎直接返回该词的倒排列表。
+>    - 多词交集查询：对于包含多个词的查询，搜索引擎找到每个词的倒排列表，然后计算这些列表的交集。
+>      这个交集代表了所有查询词都出现的文档集合。
+>    - 复杂逻辑处理：对于包含逻辑运算（AND, OR, NOT）的查询，搜索引擎会结合使用集合的
+>      交集（AND）、并集（OR）和差集（NOT）操作来处理查询。特别是在处理 NOT 逻辑时，
+>      它并不是去查找那些未出现词的文档集合，而是从已经确定的结果集中排除含有这个词的文档。
+>
+> 更贴近实际搜索引擎的处理实现，如下：
+>
+> ```python
+> import sys
+> input = sys.stdin.read
+> data = input().split()
+> 
+> index = 0
+> N = int(data[index])
+> index += 1
+> 
+> word_documents = []
+> 
+> # 读取每个词的倒排索引
+> for _ in range(N):
+>     ci = int(data[index])
+>     index += 1
+>     documents = sorted(map(int, data[index:index + ci]))
+>     index += ci
+>     word_documents.append(documents)
+> 
+> M = int(data[index])
+> index += 1
+> 
+> results = []
+> 
+> # 处理每个查询
+> for _ in range(M):
+>     query = list(map(int, data[index:index + N]))
+>     index += N
+> 
+>     # 集合存储各词的文档集合（使用交集获取所有词都出现的文档）
+>     included_docs = []
+>     excluded_docs = set()
+> 
+>     # 解析查询条件
+>     for i in range(N):
+>         if query[i] == 1:
+>             included_docs.append(word_documents[i])
+>         elif query[i] == -1:
+>             excluded_docs.update(word_documents[i])
+> 
+>     # 仅在有包含词时计算交集
+>     if included_docs:
+>         result_set = set(included_docs[0])
+>         for docs in included_docs[1:]:
+>             result_set.intersection_update(docs)
+>         result_set.difference_update(excluded_docs)
+>         final_docs = sorted(result_set)
+>         results.append(" ".join(map(str, final_docs)) if final_docs else "NOT FOUND")
+>     else:
+>         results.append("NOT FOUND")
+> 
+> # 输出所有查询结果
+> for result in results:
+>     print(result)
+> ```
+>
+> 
+>
+> 利用集合运算来处理倒排索引查询。思路如下：
+>
+> 1. **建立倒排索引**  
+>    对于每个词，读入出现该词的文档编号，将其存入一个集合中。
+>
+> 2. **处理查询**  
+>    对于每个查询，按照查询向量（每个位置取值 1、-1、0）：
+>    - 对于标记为 1 的词（必须出现），求这些词对应集合的交集。
+>    - 对于标记为 -1 的词（必须不出现），从交集中减去这些词出现的文档编号。
+>    - 0 的词不作限制。
+>
+> 3. **输出结果**  
+>    将最终得到的候选文档集合按升序输出；如果为空，则输出 "NOT FOUND"。
+>
+
+
+
+```python
+n = int(input())
+files = [] # 储存所有单词的文档归属数据
+for i in range(n):
+    data = list(map(int,input().split()))
+    files.append(set(data[1:])) # 将每个单词对应的文档数据转化为集合，方便后续的操作
+
+m = int(input())
+for i in range(m):
+
+    data = list(map(int,input().split()))
+    t = data.index(1) # 第一个1要特殊处理，作为初始值
+    a = set(files[t]) # 所有有可能合题的文档（同样要储存在集合内）
+    for j in range(t + 1,n):
+        if data[j] == 1:
+            a = a & files[j] # 取交集（集合之间的∩、-、∪运算时间复杂度极低！）
+
+    b = set() # 所有一定不合题的文档（同样要储存在集合内）
+    for j in range(n):
+        if data[j] == -1:
+            b = b | files[j] # 取并集
+    
+    # 注意：一定要先把所有要包含的文档全部放入a，所有不能包含的文档统一放入b，最后再a-b！
+    # 否则会损失一些b中的信息，例如如果是“无所谓、不能包含2、要包含12”，
+    # 如果一步一步使用交集和差集的话，则1和2都合题，这与第二个条件矛盾！因此不能一步一步来~
+    c = a - b # a与b的差集
+    finale = list(c)
+    if finale:
+        finale.sort()
+        print(" ".join(map(str,finale)))
+    else:print("NOT FOUND")
+```
+
+
 
 
 
@@ -1140,7 +1379,9 @@ Manacher 确实比 KMP 复杂一点，原因有三：
 
 
 
-## 练习M5. 最长回文子串
+### 练习M5. 最长回文子串
 
-DP, Center Expansion, Manacher, https://leetcode.cn/problems/longest-palindromic-substring/d
+DP, Center Expansion, Manacher, https://leetcode.cn/problems/longest-palindromic-substring/
+
+
 
