@@ -1,5 +1,5 @@
 ## 2026spring 数算（DS Algo）每日选作
-*Updated 2026-03-20 08:51 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
+*Updated 2026-03-21 15:36 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
 https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spring.md
 
 题解，https://fuynaloft.github.io/sol101/ ✅
@@ -18,6 +18,7 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | 3~4月 | 3327.判断 DFS 字符串是否是回文串    | dfs, manacher  | Tough | https://leetcode.cn/problems/check-if-dfs-strings-are-palindromes/          |
 |  |       |       | Medium |          |
 | 0322 | 240.搜索二维矩阵II     | binary search    | Medium    | https://leetcode.cn/problems/search-a-2d-matrix-ii/      |
+| 0322 | E3643.垂直翻转子矩阵   | two pinters, matrix  | Easy | https://leetcode.cn/problems/flip-square-submatrix-vertically/          |
 | 0321 | 08210: 河中跳房子  | binary search, greedy  | Medium  | http://cs101.openjudge.cn/pctbook/M08210                         | 
 | 0321 | 994.腐烂的橘子     | bfs    | Medium    | https://leetcode.cn/problems/rotting-oranges/ |
 | 0320 | M3212.统计 X 和 Y 频数相等的子矩阵数量  | prefix sum  | Medium | https://leetcode.cn/problems/count-submatrices-with-equal-frequency-of-x-and-y/    |
