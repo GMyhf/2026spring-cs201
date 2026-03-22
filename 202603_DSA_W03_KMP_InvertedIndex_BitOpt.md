@@ -2,7 +2,7 @@
 
 —— 一个人能走多远不取决于顺境中能走多快，取决于在逆境中能否找回曾经的自己。
 
-*Updated 2026-03-17 21:35 GMT+8*  
+*Updated 2026-03-22 21:35 GMT+8*  
 *Compiled by Hongfei Yan (2025 Spring)*    
 
 
@@ -171,6 +171,17 @@ print("pos matched：", index)
 
 ```
 
+>  【25生科】课上学习了 KMP，个⼈认为最难理解也是最核⼼的就是这么两段代码：
+>
+> ```python
+> while length > 0 and pattern[i] != pattern[length]:
+> 	length = lps[length - 1]
+> ```
+>
+> 这⾥很巧妙地利⽤了前后缀和性质和 python 中 0-based 和 1-based 的转化，即如果⽬前前后缀对不上，则前缀的前缀再加⼀个字符有可能和后缀的后缀再加⼀个字符对上，⽽由于 length本⾝的意义是 1-based 下的⻓度，对应到 0-based ⾥“再加⼀个字符”即为判断 pattern[i] 与pattern[length] 是否相等。
+
+
+
 > 第18行 `length = lps[length - 1]` 是 KMP 算法中最精妙、也是最难理解的地方。它被称为**“状态回退”**或**“利用已知信息避免重复计算”**。
 >
 > 为了彻底理解，我们分三个层面来剖析：
@@ -235,8 +246,6 @@ print("pos matched：", index)
 > `length = lps[length - 1]` 的意义在于：**在已经匹配的前缀中，寻找下一个“最长的可能成为后缀的前缀”**。
 >
 > 这保证了 KMP 算法的时间复杂度是 $O(m)$，因为它从不回退 `i` 指针，而是通过 `lps` 数组的高效跳转，让 `length` 指针尽可能少地重复比较。
-
-
 
 
 
