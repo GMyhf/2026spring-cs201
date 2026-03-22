@@ -1,5 +1,5 @@
 ## 2026spring 数算（DS Algo）每日选作
-*Updated 2026-03-21 15:36 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
+*Updated 2026-03-22 12:36 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
 https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spring.md
 
 题解，https://fuynaloft.github.io/sol101/ ✅
@@ -16,7 +16,8 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | ---------- | ------------------------------ | ------------------------------------ | ---- | ------------------------------------------------ |
 | 4~5月 | 3600.升级后最大生成树稳定性    | <mark>binary search</mark>, <mark>minimum spanning tree</mark> | Tough | https://leetcode.cn/problems/maximize-spanning-tree-stability-with-upgrades/          |
 | 3~4月 | 3327.判断 DFS 字符串是否是回文串    | dfs, manacher  | Tough | https://leetcode.cn/problems/check-if-dfs-strings-are-palindromes/          |
-|  |       |       | Medium |          |
+| 0323 |       |       | Medium |          |
+| 0323 | 1886.判断矩阵经轮转后是否一致     | matrix  | Easy | https://leetcode.cn/problems/determine-whether-matrix-can-be-obtained-by-rotation/          |
 | 0322 | 240.搜索二维矩阵II     | binary search    | Medium    | https://leetcode.cn/problems/search-a-2d-matrix-ii/      |
 | 0322 | E3643.垂直翻转子矩阵   | two pinters, matrix  | Easy | https://leetcode.cn/problems/flip-square-submatrix-vertically/          |
 | 0321 | 08210: 河中跳房子  | binary search, greedy  | Medium  | http://cs101.openjudge.cn/pctbook/M08210                         | 
