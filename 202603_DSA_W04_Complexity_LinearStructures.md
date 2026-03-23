@@ -1303,151 +1303,9 @@ merge sort, http://cs101.openjudge.cn/practice/02299/
 
 
 
-# 3 顺序表与链表
+# 3 链表
 
-线性表（$$List$$）的定义：零个或多个数据元素的**有限**序列。
-
-线性表的数据集合为{$$a_{1}$$,$$a_{2}$$……$$a_{n}$$}，该序列有唯一的头元素和尾元素，除了头元素外，每个元素都有唯一的前驱元素，除了尾元素外，每个元素都有唯一的后继元素。
-
-线性表中的元素属于相同的数据类型，即每个元素所占的空间相同。
-
-框架：
-$$
-线性表\begin{cases}
-顺序存储——顺序表\\
-链式存储\begin{cases}
-单链表\\
-双链表\\
-循环链表
-\end{cases}
-\end{cases}
-$$
-
-## 3.1 顺序表
-
-Python中的顺序表就是列表，元素在内存中连续存放，每个元素都有唯一序号（下标），且根据序号访问（包括读取和修改）元素的时间复杂度是$$O(1)$$的（**随机访问**）。
-
-代码使用Python的内置列表来实现
-
-```python
-class SequentialList:
-    def __init__(self, n=0):
-        """
-        初始化顺序表，可以指定初始元素的数量n，默认为0。
-        如果n大于0，则初始化一个包含从0到n-1整数的顺序表。
-        """
-        self.data = list(range(n)) if n > 0 else []
-
-    def is_empty(self):
-        """检查顺序表是否为空"""
-        return len(self.data) == 0
-
-    def length(self):
-        """返回顺序表中元素的数量"""
-        return len(self.data)
-
-    def append(self, item):
-        """在顺序表末尾添加一个新元素"""
-        self.data.append(item)
-
-    def insert(self, index, item):
-        """在指定位置插入一个新元素"""
-        if not (0 <= index <= len(self.data)):
-            raise IndexError('Index out of range')
-        self.data.insert(index, item)
-
-    def delete(self, index):
-        """删除指定位置的元素"""
-        if not (0 <= index < len(self.data)):
-            raise IndexError('Index out of range')
-        del self.data[index]
-
-    def get(self, index):
-        """获取指定位置的元素"""
-        if not (0 <= index < len(self.data)):
-            raise IndexError('Index out of range')
-        return self.data[index]
-
-    def set(self, index, target):
-        """设置指定位置的元素值"""
-        if not (0 <= index < len(self.data)):
-            raise IndexError('Index out of range')
-        self.data[index] = target
-
-    def display(self):
-        """打印顺序表中的所有元素"""
-        print(self.data)
-
-# 示例用法
-if __name__ == "__main__":
-    # 创建一个空的顺序表
-    lst = SequentialList()
-    print("Initial empty list:")
-    lst.display()  # 应该输出: []
-
-    # 添加一些元素
-    lst.append(1)
-    lst.append(2)
-    lst.append(3)
-    print("After appending 1, 2, 3:")
-    lst.display()  # 应该输出: [1, 2, 3]
-
-    # 在特定位置插入元素
-    lst.insert(1, 5)
-    print("After inserting 5 at index 1:")
-    lst.display()  # 应该输出: [1, 5, 2, 3]
-
-    # 获取和设置元素
-    print(f"Element at index 2: {lst.get(2)}")  # 应该输出: Element at index 2: 2
-    lst.set(2, 7)
-    print("After setting index 2 to 7:")
-    lst.display()  # 应该输出: [1, 5, 7, 3]
-
-    # 删除元素
-    lst.delete(1)
-    print("After deleting element at index 1:")
-    lst.display()  # 应该输出: [1, 7, 3]
-
-    # 检查长度和是否为空
-    print(f"Length of the list: {lst.length()}")  # 应该输出: Length of the list: 3
-    print(f"Is the list empty? {lst.is_empty()}")  # 应该输出: Is the list empty? False
-
-    # 尝试创建一个带有初始元素的顺序表
-    lst_with_initial_elements = SequentialList(5)
-    print("List with initial elements (0 to 4):")
-    lst_with_initial_elements.display()  # 应该输出: [0, 1, 2, 3, 4]
-
-```
-
-
-
-关于线性表的时间复杂度：
-
-生成、求表中元素个数、表尾添加/删除元素、返回/修改对应下标元素，均为$$O(1)$$；
-
-而查找、删除、插入元素，均为$$O(n)$$。
-
-
-
-线性表的优缺点：
-
-优点：1、<mark>无须为表中元素之间的逻辑关系而增加额外的存储空间；</mark>
-
-​	    2、可以快速的存取表中任一位置的元素。
-
-缺点：1、插入和删除操作需要移动大量元素；
-
-​	    2、当线性表长度较大时，难以确定存储空间的容量；
-
-​	    3、造成存储空间的“碎片”。
-
-
-
-
-
-## 3.2 链表
-
-链表（Linked List）是一种常见的数据结构，用于存储和组织数据。它由一系列节点组成，每个节点包含一个数据元素和一个指向下一个节点（或前一个节点）的指针。
+链表（Linked List）是一种常见的数据结构，用于存储和组织数据。它由一系列节点组成，每个节点包含一个数据元素和一个指向下一个节点（或前一个节点）的指针。它的特点是插入与删除数据十分方便，但寻找与读取数据的表现欠佳。
 
 
 
@@ -1469,7 +1327,27 @@ if __name__ == "__main__":
 
 3. 循环链表：最后一个节点的指针指向链表的头部，形成一个环形结构。循环链表可以从任意节点开始遍历，并且可以无限地循环下去。
 
-   
+> **与数组的区别**
+>
+> 链表和数组都可用于存储数据。与链表不同，数组将所有元素按次序依次存储。不同的存储结构令它们有了不同的优势：
+>
+> 链表因其链状的结构，能方便地删除、插入数据，操作次数是 𝑂(1)。但也因为这样，寻找、读取数据的效率不如数组高，在随机访问数据中的操作次数是 𝑂(𝑛)。
+>
+> 数组可以方便地寻找并读取数据，在随机访问中操作次数是 𝑂(1)。但删除、插入的操作次数是 𝑂(𝑛) 次。
+
+> 在 Python 中，`list` 是使用动态数组（Dynamic Array）实现的，而不是链表。<mark>动态数组是一种连续的、固定大小的内存块</mark>，可以在需要时自动调整大小。这使得 `list` 支持快速的随机访问和高效的尾部操作，例如附加（append）和弹出（pop）。
+>
+> 与链表不同，动态数组中的元素在内存中是连续存储的。这允许通过索引在 `list` 中的任何位置进行常数时间O(1)的访问。此外，动态数组还具有较小的内存开销，因为它们不需要为每个元素存储额外的指针。
+>
+> 当需要在 `list` 的中间进行插入或删除操作时，动态数组需要进行元素的移动，因此这些操作的时间复杂度是线性的O(n)。如果频繁地插入或删除元素，而不仅仅是在尾部进行操作，那么链表可能更适合，因为链表的插入和删除操作在平均情况下具有常数时间复杂度。
+>
+> 总结起来，Python 中的 `list` 是使用动态数组实现的，具有支持快速随机访问和高效尾部操作的优点。但是，如果需要频繁进行插入和删除操作，可能需要考虑使用链表或其他数据结构。
+>
+> Python 中的 list 和 C++ 中的 STL（Standard Template Library）中的 vector 具有相似的实现和用法。vector 也是使用动态数组实现的，提供了类似于 list 的功能，包括随机访问、尾部插入和删除等操作。
+>
+> 链表在某种意义上可以给树打基础。
+
+
 
 ```python
 # Definition for singly-linked list.
@@ -1499,48 +1377,11 @@ class DLinkedNode:
 
 
 
-> <img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20240228230417320.png" alt="image-20240228230417320" style="zoom: 33%;" />
->
-> 在 Python 中，`list` 是使用动态数组（Dynamic Array）实现的，而不是链表。<mark>动态数组是一种连续的、固定大小的内存块</mark>，可以在需要时自动调整大小。这使得 `list` 支持快速的随机访问和高效的尾部操作，例如附加（append）和弹出（pop）。
->
-> 与链表不同，动态数组中的元素在内存中是连续存储的。这允许通过索引在 `list` 中的任何位置进行常数时间O(1)的访问。此外，动态数组还具有较小的内存开销，因为它们不需要为每个元素存储额外的指针。
->
-> 当需要在 `list` 的中间进行插入或删除操作时，动态数组需要进行元素的移动，因此这些操作的时间复杂度是线性的O(n)。如果频繁地插入或删除元素，而不仅仅是在尾部进行操作，那么链表可能更适合，因为链表的插入和删除操作在平均情况下具有常数时间复杂度。
->
-> 总结起来，Python 中的 `list` 是使用动态数组实现的，具有支持快速随机访问和高效尾部操作的优点。但是，如果需要频繁进行插入和删除操作，可能需要考虑使用链表或其他数据结构。
->
-> 
->
-> Python 中的 list 和 C++ 中的 STL（Standard Template Library）中的 vector 具有相似的实现和用法。vector 也是使用动态数组实现的，提供了类似于 list 的功能，包括随机访问、尾部插入和删除等操作。
->
-> 
->
-> 链表在某种意义上可以给树打基础。
+## 3.1 单向链表 (Singly Linked List)
 
+单向链表中包含数据域和指针域，其中数据域用于存放数据，指针域用来连接当前结点和下一节点。
 
-
-### (1) 单向链表 (Singly Linked List)
-
-**基本概念**
-
-单向链表（Singly Linked List）是由一系列节点（Node）构成的线性数据结构，每个节点包含两个部分：
-
-- 数据部分：存储节点的数据。
-- 指针部分：存储指向下一个节点的指针（或引用）。
-
-单链表的特点是每个节点只有一个指针，指向下一个节点。因此，它是单向的，只能从头到尾遍历。
-
-
-
-**单向链表结构图**
-
-```text
-Head -> Node1 -> Node2 -> Node3 -> None
-```
-
-- `Head`：指向链表的第一个节点。
-- 每个 `Node`：包含数据和指向下一个节点的指针（`next`）。
-- `NULL`：表示链表的结束，最后一个节点的 `next` 指向 `NULL`。
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/list.svg)
 
 
 
@@ -1713,9 +1554,6 @@ if __name__ == "__main__":
 
 - 动态内存管理：链表可以灵活地分配内存空间，特别适用于内存空间不固定的场景。
 - 实现队列和栈：<mark>链表能够有效地支持栈（LIFO）和队列（FIFO）的实现</mark>，因为其在插入和删除操作上有优势。
-- 动态集合管理：对于集合操作（如动态插入和删除元素）非常高效。
-
-
 
 
 
@@ -1904,23 +1742,13 @@ Q：给出python代码，实际跑起来看看。
 
 
 
-### (2) 双向链表 (Doubly Linked List)
+## 3.2 双向链表 (Doubly Linked List)
 
-**基本概念**
+双向链表中同样有数据域和指针域。不同之处在于，指针域有左右（或上一个、下一个）之分，用来连接上一个结点、当前结点、下一个结点。
 
-双向链表（Doubly Linked List）是一种数据结构，其中每个节点不仅包含指向下一个节点的指针（`next`），还包含指向前一个节点的指针（`prev`）。这样，双向链表能够在两端进行遍历：从头到尾和从尾到头。
+![img](https://raw.githubusercontent.com/GMyhf/img/main/img/double-list.svg)
 
-**双链表的结构图**
 
-```text
-None <- Node1 <-> Node2 <-> Node3 -> None
-```
-
-- 每个节点有两个指针：
-  - `next`：指向下一个节点。
-  - `prev`：指向前一个节点。
-
-- `None`：表示链表的头和尾，头节点head/Node1的 `prev` 指向 `None`，尾节点tail/Node3的 `next` 指向 `None`。
 
 **常见操作**
 
@@ -2049,7 +1877,7 @@ dll.print_list()    # 5 <-> 20 <-> 30 <-> None
 
 
 
-#### 示例M1472.设计浏览器历史记录
+### 示例M1472.设计浏览器历史记录
 
 Doubly-linked list，https://leetcode.cn/problems/design-browser-history/
 
@@ -2132,9 +1960,9 @@ Doubly-linked list，https://leetcode.cn/problems/design-browser-history/
 
 
 
-### (3) 循环链表 (Circular Linked List)
+## 3.3 循环链表 (Circular Linked List)
 
-将单链表中终端节点的指针端由空指针改为指向头结点，就使整个单链表形成一个环，这种头尾相接的单链表称为单循环链表，简称循环链表。
+将链表的头尾连接起来，链表就变成了循环链表。<mark>由于链表首尾相连，在插入数据时需要判断原链表是否为空：为空则自身循环，不为空则正常插入数据。</mark>
 
 然而这样会导致访问最后一个结点时需要$$O(n)$$的时间，所以我们可以写出**仅设尾指针的循环链表**。
 
@@ -2247,9 +2075,9 @@ if __name__ == "__main__":
 
 
 
-### (4) 核心算法技巧
+## 3.4 核心算法技巧
 
-#### 1 链表反转（Reverse Linked List）
+### 1 链表反转（Reverse Linked List）
 
 链表反转是一个经典的算法，它将链表中的节点顺序反转，使得原本指向下一个节点的指针指向前一个节点。该操作在处理栈或队列时非常有用。
 
@@ -2343,7 +2171,7 @@ linked list, https://leetcode.cn/problems/reverse-linked-list/
 
 
 
-#### 2 **合并两个排序的链表**
+### 2 **合并两个排序的链表**
 
 合并两个已经排序的链表是一种常见的操作，特别是在归并排序中。
 
@@ -2446,7 +2274,7 @@ https://leetcode.cn/problems/merge-two-sorted-lists/
 
 
 
-#### 3 **查找链表的中间节点**
+### 3 查找链表的中间节点
 
 通过<mark>快慢指针</mark>的方法，可以在 O(n) 的时间复杂度内找到链表的中间节点。
 
@@ -2548,7 +2376,7 @@ linked-list, https://leetcode.cn/problems/palindrome-linked-list/
 
 
 
-#### 4 其他示例
+### 4 其他示例
 
 **示例20.删除链表元素**
 
