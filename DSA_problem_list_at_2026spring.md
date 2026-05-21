@@ -1,5 +1,5 @@
 ## 2026spring 数算（DS Algo）每日选作
-*Updated 2026-05-19 10:25 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
+*Updated 2026-05-21 10:22 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
 https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spring.md
 
 题解，https://fuynaloft.github.io/sol101/ ✅
@@ -51,7 +51,7 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | 0419 | 3600.升级后最大生成树稳定性    | <mark>binary search</mark>, <mark>minimum spanning tree</mark>, dsu | Tough | https://leetcode.cn/problems/maximize-spanning-tree-stability-with-upgrades/          |
 | 0418 | 3327.判断 DFS 字符串是否是回文串    | tree, dfs, manacher  | Tough | https://leetcode.cn/problems/check-if-dfs-strings-are-palindromes/          |
 |  |       | one problem per day       |  |          |
-| 0417 | 22161: 哈夫曼编码树      | greedy    | Tough | http://cs101.openjudge.cn/practice/22161/          |
+| 0417 | 30894: 哈夫曼编码树      | greedy    | Tough | http://cs101.openjudge.cn/practice/30894/          |
 | 0417 | 3488.距离最小相等元素查询 | hash table, binary search  | Medium | https://leetcode.cn/problems/closest-equal-element-queries/          |
 | 0416 | 04080: Huffman编码树  | greedy   | Easy | http://cs101.openjudge.cn/practice/04080/          |
 | 0416 | 20576: printExp（逆波兰表达式建树）      | AST       | Tough | http://cs101.openjudge.cn/practice/20576/          |
