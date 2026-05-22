@@ -1,5 +1,5 @@
 ## 2026spring 数算（DS Algo）每日选作
-*Updated 2026-05-21 23:18 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
+*Updated 2026-05-22 18:46 GMT+8*  *Compiled by Hongfei Yan (2026 Spring)*  
 https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spring.md
 
 题解，https://fuynaloft.github.io/sol101/ ✅
@@ -14,6 +14,7 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 
 | 日期       | 问题编号与名称                 | 标签                                 | 难度 | 链接                                             |
 | ---------- | ------------------------------ | ------------------------------------ | ---- | ------------------------------------------------ |
+| 0523 | 1850H. The Third Letter  | dfs and similar, dsu, graphs, greedy  | 1700 | https://codeforces.com/contest/1850/problem/H          |
 | 0522 | 30901:第67个异或问题     | math, hash table, trie, bitmask  | Tough | http://cs101.openjudge.cn/practice/30901/          |
 | 0521 | P6192 【模板】最小斯坦纳树  | 状态压缩DP, Dijkstra  | 紫色 省选/NOI-   | https://www.luogu.com.cn/problem/P6192 |
 | 0520 | 30313: 0-W 最小生成树    | 补图连通块 + 缩点 Kruskal       | Tough | http://cs101.openjudge.cn/practice/T30313          |
