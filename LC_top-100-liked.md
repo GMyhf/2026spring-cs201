@@ -1,5 +1,10 @@
 # LeetCode Top 100 Liked 题解
 
+*Updated 2026-05-24 23:46 GMT+8*
+ *Compiled by Hongfei Yan (2026 Spring)*
+
+
+
 > 来源：https://leetcode.cn/studyplan/top-100-liked/
 >
 > 每题包含：题目编号、思路分析、Python代码实现（含关键注释）。
@@ -97,33 +102,7 @@ def longestConsecutive(nums):
     return longest
 ```
 
-### 560. Subarray Sum Equals K（和为 K 的子数组）
 
-**思路**：前缀和 + 哈希表。`sum[i] - sum[j] == k` 等价于 `sum[j] == sum[i] - k`。
-
-```python
-def subarraySum(nums, k):
-    prefix, s, ans = {0: 1}, 0, 0
-    for num in nums:
-        s += num
-        ans += prefix.get(s - k, 0)
-        prefix[s] = prefix.get(s, 0) + 1
-    return ans
-```
-
-### 136. Single Number（只出现一次的数字）
-
-**思路**：异或运算——相同数异或为 0，0 异或任何数等于其本身。
-
-```python
-def singleNumber(nums):
-    res = 0
-    for num in nums:
-        res ^= num
-    return res
-```
-
----
 
 ## 二、双指针
 
@@ -268,26 +247,9 @@ def moveZeroes(nums):
             pos += 1
 ```
 
-### 287. Find the Duplicate Number（寻找重复数）
 
-**思路**：将数组看作链表（值指向下标），用快慢指针找环的入口即重复数。
 
-```python
-def findDuplicate(nums):
-    slow = fast = nums[0]
-    while True:
-        slow = nums[slow]
-        fast = nums[nums[fast]]
-        if slow == fast:
-            break
-    slow = nums[0]
-    while slow != fast:
-        slow = nums[slow]
-        fast = nums[fast]
-    return slow
-```
 
----
 
 ## 三、滑动窗口
 
@@ -407,44 +369,58 @@ def maxSubArray(nums):
     return best
 ```
 
-### 152. Maximum Product Subarray（乘积最大子数组）
 
-**思路**：同时维护最大值和最小值（因为负负得正）。
+
+### M560. Subarray Sum Equals K（和为 K 的子数组）✅
+
+给你一个整数数组 `nums` 和一个整数 `k` ，请你统计并返回 *该数组中和为 `k` 的子数组的个数* 。
+
+子数组是数组中元素的连续非空序列。
+
+
+
+**思路**：前缀和 + 哈希表。`sum[i] - sum[j] == k` 等价于 `sum[j] == sum[i] - k`。
 
 ```python
-def maxProduct(nums):
-    cur_max = cur_min = ans = nums[0]
-    for num in nums[1:]:
-        candidates = (num, cur_max * num, cur_min * num)
-        cur_max, cur_min = max(candidates), min(candidates)
-        ans = max(ans, cur_max)
-    return ans
+from typing import List
+
+
+class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        from collections import defaultdict
+
+        # 哈希表用于存储每个前缀和出现的次数
+        prefix_sum_count = defaultdict(int)
+        # 初始化前缀和为0的情况出现一次，为了处理整个子数组和恰好为k的情况
+        prefix_sum_count[0] = 1
+
+        current_sum = 0
+        count = 0
+
+        for num in nums:
+            current_sum += num
+            # 查找当前前缀和减去目标值k的前缀和数量，并添加到结果计数器
+            if (current_sum - k) in prefix_sum_count:
+                count += prefix_sum_count[current_sum - k]
+            # 更新当前前缀和的数量
+            prefix_sum_count[current_sum] += 1
+
+        return count
+
+
+# test code
+if __name__ == "__main__":
+    sol = Solution()
+    nums = [1, 1, 1]
+    k = 2
+    print(sol.subarraySum(nums, k))  # expect 2
 ```
 
----
+
 
 ## 五、普通数组
 
-### 31. Next Permutation（下一个排列）
 
-**思路**：从右向左找第一个降序位置 `i`，再找右侧比 `nums[i]` 大的最小数交换，最后反转 `i` 之后的部分。
-
-```python
-def nextPermutation(nums):
-    i = len(nums) - 2
-    while i >= 0 and nums[i] >= nums[i + 1]:
-        i -= 1
-    if i >= 0:
-        j = len(nums) - 1
-        while nums[j] <= nums[i]:
-            j -= 1
-        nums[i], nums[j] = nums[j], nums[i]
-    l, r = i + 1, len(nums) - 1
-    while l < r:
-        nums[l], nums[r] = nums[r], nums[l]
-        l += 1
-        r -= 1
-```
 
 ### 41. First Missing Positive（缺失的第一个正数）
 
@@ -1976,7 +1952,15 @@ def longestPalindrome(s):
     return res
 ```
 
-### 62. Unique Paths（不同路径）
+### 62. Unique Paths（不同路径）✅
+
+一个机器人位于一个 `m x n` 网格的左上角 （起始点在下图中标记为 “Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
+
+问总共有多少条不同的路径？
+
+
 
 **思路**：`dp[i][j] = dp[i-1][j] + dp[i][j-1]`，空间可优化为一维。
 
@@ -1988,6 +1972,8 @@ def uniquePaths(m, n):
             row[j] += row[j - 1]
     return row[-1]
 ```
+
+
 
 ### 64. Minimum Path Sum（最小路径和）
 
@@ -2134,6 +2120,32 @@ def wordBreak(s, wordDict):
     return dp[-1]
 ```
 
+
+
+### M152. Maximum Product Subarray（乘积最大子数组）✅
+
+给你一个整数数组 `nums` ，请你找出数组中乘积最大的非空连续 子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+
+测试用例的答案是一个 **32-位** 整数。
+
+**请注意**，一个只包含一个元素的数组的乘积是这个元素的值。
+
+
+
+**思路**：同时维护最大值和最小值（因为负负得正）。
+
+```python
+def maxProduct(nums):
+    cur_max = cur_min = ans = nums[0]
+    for num in nums[1:]:
+        candidates = (num, cur_max * num, cur_min * num)
+        cur_max, cur_min = max(candidates), min(candidates)
+        ans = max(ans, cur_max)
+    return ans
+```
+
+
+
 ### M198. House Robber（打家劫舍）✅
 
 你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，**如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警**。
@@ -2154,7 +2166,13 @@ def rob(nums):
 
 
 
-### M279. Perfect Squares（完全平方数）
+### M279. Perfect Squares（完全平方数）✅
+
+给你一个整数 `n` ，返回 *和为 `n` 的完全平方数的最少数量* 。
+
+**完全平方数** 是一个整数，其值等于另一个整数的平方；换句话说，其值等于一个整数自乘的积。例如，`1`、`4`、`9` 和 `16` 都是完全平方数，而 `3` 和 `11` 不是。
+
+ 
 
 **思路**：`dp[i] = min(dp[i], dp[i - j*j] + 1)`。
 
@@ -2170,9 +2188,55 @@ def numSquares(n):
     return dp[n]
 ```
 
-### 300. Longest Increasing Subsequence（最长递增子序列）
 
-**思路**：`dp[i] = max(dp[i], dp[j] + 1)` 对于 `nums[j] < nums[i]`。优化：贪心 + 二分。
+
+```python
+class Solution:
+    def numSquares(self, n: int) -> int:
+        coins = [i * i for i in range(1, 101)]
+        dp = [0] + [float('inf')] * n
+        for i in range(1, n + 1):
+            dp[i] = min(dp[i - c] for c in coins if c <= i) + 1
+
+        return dp[n]
+
+if __name__ == '__main__':
+    sol = Solution()
+    print(sol.numSquares(12))
+```
+
+
+
+### M300. Longest Increasing Subsequence（最长递增子序列）✅
+
+给你一个整数数组 `nums` ，找到其中最长严格递增子序列的长度。
+
+**子序列** 是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，`[3,6,2,7]` 是数组 `[0,3,1,6,2,2,7]` 的子序列。
+
+
+
+**思路**：`dp[i] = max(dp[i], dp[j] + 1)` 对于 `nums[j] < nums[i]`。
+
+```python
+def lengthOfLIS(nums):
+    n = len(nums)
+    dp = [1] * n
+
+    for i in range(n):
+        for j in range(i):
+            if nums[j] < nums[i]:
+                dp[i] = max(dp[i], dp[j] + 1)
+
+    return max(dp)
+```
+
+
+
+优化：贪心 + 二分。tails[k] 表示：“长度为 `k+1` 的递增子序列中，结尾最小是多少”。注意：`tails` 本身不一定是真实 LIS，但它能正确维护 LIS 长度。
+
+> **为什么“结尾越小越好”？**例如：长度为 3 的递增序列：[2,5,100] 和 [2,3,4]。显然第二个更优秀。因为：4 后面更容易接新的数。
+>
+> 所以：对于相同长度的递增序列，只保留“结尾最小”的那个。这就是贪心。
 
 ```python
 def lengthOfLIS(nums):
@@ -2192,7 +2256,17 @@ def lengthOfLIS(nums):
     return len(tails)
 ```
 
-### 322. Coin Change（零钱兑换）
+
+
+### M322. Coin Change（零钱兑换）✅
+
+给你一个整数数组 `coins` ，表示不同面额的硬币；以及一个整数 `amount` ，表示总金额。
+
+计算并返回可以凑成总金额所需的 **最少的硬币个数** 。如果没有任何一种硬币组合能组成总金额，返回 `-1` 。
+
+你可以认为每种硬币的数量是无限的。
+
+
 
 **思路**：`dp[i] = min(dp[i], dp[i - coin] + 1)`。
 
@@ -2206,6 +2280,8 @@ def coinChange(coins, amount):
                 dp[i] = min(dp[i], dp[i - coin] + 1)
     return dp[amount] if dp[amount] != float('inf') else -1
 ```
+
+
 
 ### 416. Partition Equal Subset Sum（分割等和子集）
 
@@ -2312,7 +2388,109 @@ class Trie:
         return True
 ```
 
----
+
+
+## 十八、技巧
+
+### 31. Next Permutation（下一个排列）✅
+
+整数数组的一个 **排列** 就是将其所有成员以序列或线性顺序排列。
+
+- 例如，`arr = [1,2,3]` ，以下这些都可以视作 `arr` 的排列：`[1,2,3]`、`[1,3,2]`、`[3,1,2]`、`[2,3,1]` 。
+
+整数数组的 **下一个排列** 是指其整数的下一个字典序更大的排列。更正式地，如果数组的所有排列根据其字典顺序从小到大排列在一个容器中，那么数组的 **下一个排列** 就是在这个有序容器中排在它后面的那个排列。如果不存在下一个更大的排列，那么这个数组必须重排为字典序最小的排列（即，其元素按升序排列）。
+
+- 例如，`arr = [1,2,3]` 的下一个排列是 `[1,3,2]` 。
+- 类似地，`arr = [2,3,1]` 的下一个排列是 `[3,1,2]` 。
+- 而 `arr = [3,2,1]` 的下一个排列是 `[1,2,3]` ，因为 `[3,2,1]` 不存在一个字典序更大的排列。
+
+给你一个整数数组 `nums` ，找出 `nums` 的下一个排列。
+
+必须**[ 原地 ](https://baike.baidu.com/item/原地算法)**修改，只允许使用额外常数空间。
+
+
+
+**思路**：从右向左找第一个降序位置 `i`，再找右侧比 `nums[i]` 大的最小数交换，最后反转 `i` 之后的部分。
+
+```python
+def nextPermutation(nums):
+    i = len(nums) - 2
+    while i >= 0 and nums[i] >= nums[i + 1]:
+        i -= 1
+    if i >= 0:
+        j = len(nums) - 1
+        while nums[j] <= nums[i]:
+            j -= 1
+        nums[i], nums[j] = nums[j], nums[i]
+    l, r = i + 1, len(nums) - 1
+    while l < r:
+        nums[l], nums[r] = nums[r], nums[l]
+        l += 1
+        r -= 1
+```
+
+> 算法核心逻辑拆解
+>
+> 1. **找“较小数”位置 `i`**：
+>    从右往左找，找到第一个**降序**的位置（即 `nums[i] < nums[i+1]`）。这说明 `i` 位置的数拖了后腿，需要变大。
+>    - 如果没找到（整个数组是降序的），说明已经是最大排列，直接反转整个数组即可。
+> 2. **找“较大数”位置 `j`**：
+>    在 `i` 的右边，从右往左找第一个**比 `nums[i]` 大**的数。因为 `i` 右边是降序的，找到的第一个比它大的数，就是“刚好比它大”的那个数。
+> 3. **交换并反转**：
+>    交换 `nums[i]` 和 `nums[j]`。此时 `i` 右边的数依然是降序的。为了让整体排列“刚好大一点”，需要把 `i`右边的部分变成**升序**（即字典序最小），所以直接反转 `i+1` 到末尾的部分。
+
+
+
+### E136. Single Number（只出现一次的数字）✅
+
+给你一个 **非空** 整数数组 `nums` ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+
+你必须设计并实现线性时间复杂度的算法来解决此问题，且该算法只使用常量额外空间。
+
+
+
+**思路**：异或运算——相同数异或为 0，0 异或任何数等于其本身。
+
+```python
+def singleNumber(nums):
+    res = 0
+    for num in nums:
+        res ^= num
+    return res
+```
+
+
+
+### M287. Find the Duplicate Number（寻找重复数）✅
+
+给定一个包含 `n + 1` 个整数的数组 `nums` ，其数字都在 `[1, n]` 范围内（包括 `1` 和 `n`），可知至少存在一个重复的整数。
+
+假设 `nums` 只有 **一个重复的整数** ，返回 **这个重复的数** 。
+
+你设计的解决方案必须 **不修改** 数组 `nums` 且只用常量级 `O(1)` 的额外空间。
+
+
+
+**思路**：将数组看作链表（值指向下标），用快慢指针找环的入口即重复数。
+
+```python
+def findDuplicate(nums):
+    slow = fast = nums[0]
+    while True:
+        slow = nums[slow]
+        fast = nums[nums[fast]]
+        if slow == fast:
+            break
+    slow = nums[0]
+    while slow != fast:
+        slow = nums[slow]
+        fast = nums[fast]
+    return slow
+```
+
+
+
+
 
 ## 总结表
 
