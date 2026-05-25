@@ -1,6 +1,6 @@
 # LeetCode Top 100 Liked 题解
 
-*Updated 2026-05-25 09:15 GMT+8*
+*Updated 2026-05-26 01:15 GMT+8*
  *Compiled by Hongfei Yan (2026 Spring)*
 
 
@@ -1110,52 +1110,189 @@ class Solution:
 **思路**：先检查是否有 k 个节点，然后翻转这 k 个节点，递归处理剩余部分。
 
 ```python
-def reverseKGroup(head, k):
-    node = head
-    for _ in range(k):
-        if not node:
-            return head
-        node = node.next
-    prev, cur = None, head
-    for _ in range(k):
-        nxt = cur.next
-        cur.next = prev
-        prev = cur
-        cur = nxt
-    head.next = reverseKGroup(cur, k)
-    return prev
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        # 检查剩余节点是否满足 k
+        node = head
+        for _ in range(k):
+            if not node:
+                return head
+            node = node.next
+        # 翻转当前的 k 个节点
+        prev, cur = None, head
+        for _ in range(k):
+            nxt = cur.next
+            cur.next = prev
+            prev = cur
+            cur = nxt
+        # 递归连接与返回
+        head.next = self.reverseKGroup(cur, k)
+        return prev
+        
 ```
 
-### 138. Copy List with Random Pointer（复制带随机指针的链表）
+> 这段代码展示了一个经典的**递归方法**来解决“K 个一组翻转链表”的问题。以下是对该代码的详细解读、工作原理剖析以及复杂度分析。
+>
+> ---
+>
+> **一、 代码设计思路剖析**
+>
+> 该解法将问题分解为子问题，每次只处理当前长度为 $k$ 的一段链表，其余部分交给递归函数处理。整个过程可以分为三个主要步骤：
+>
+> **1. 检查剩余节点是否满足 $k$ 个**
+>
+> ```python
+> node = head
+> for _ in range(k):
+>     if not node:
+>         return head
+>     node = node.next
+> ```
+> * **作用**：在动手翻转之前，先往后数 $k$ 个节点。
+> * **逻辑**：如果中途遇到空节点（`node is None`），说明剩余节点不足 $k$ 个。根据题目要求，这些节点保持原样，直接返回当前段的头节点 `head`。如果成功循环 $k$ 次，说明后面有足够的节点可以进行翻转，此时 `node` 指向了第 $k+1$ 个节点（即下一组的起点）。
+>
+> **2. 翻转当前的 $k$ 个节点**
+>
+> ```python
+> prev, cur = None, head
+> for _ in range(k):
+>     nxt = cur.next
+>     cur.next = prev
+>     prev = cur
+>     cur = nxt
+> ```
+> * **作用**：标准的多指针迭代翻转局部链表。
+> * **状态变化**：
+>   * 在循环开始前，`cur` 指向当前组的头节点（翻转后它将变成尾节点）。
+>   * 循环执行 $k$ 次后，这一组的 $k$ 个节点的指针方向全部完成反转。
+>   * 此时 `prev` 指向翻转后的新头部（即原第 $k$ 个节点），`cur` 指向下一组的起始节点（即原第 $k+1$ 个节点）。
+>
+> **3. 递归连接与返回**
+>
+> ```python
+> head.next = reverseKGroup(cur, k)
+> return prev
+> ```
+> * **作用**：连接当前已翻转部分与后续未处理（或已处理）部分。
+> * **逻辑**：
+>   * 当前组翻转后，原来的头节点 `head` 变成了当前组的尾节点。
+>   * 它的 `next` 应该指向下一组翻转后的新头节点。因此，将 `cur`（下一组的起点）作为参数递归调用 `reverseKGroup`，并将返回值赋给 `head.next`。
+>   * 最后，返回 `prev`，因为 `prev` 是当前这组翻转后的新头节点，它将被上一层的递归调用连接。
+>
+> ---
+>
+> **二、 实例走读**
+>
+> 假设链表为 `1 -> 2 -> 3 -> 4 -> 5`，`k = 2`。
+>
+> 1. **第一层递归**：
+>    * 检查：存在 2 个节点（1 和 2）。
+>    * 翻转前 2 个节点：`1 -> 2` 变为 `2 -> 1`。此时 `prev = 2`，`cur = 3`，原头节点 `head = 1`。
+>    * 递归调用：`head.next (1.next) = reverseKGroup(3, 2)`。
+>
+> 2. **第二层递归**（输入 `head = 3`）：
+>    * 检查：存在 2 个节点（3 和 4）。
+>    * 翻转这 2 个节点：`3 -> 4` 变为 `4 -> 3`。此时 `prev = 4`，`cur = 5`，原头节点 `head = 3`。
+>    * 递归调用：`head.next (3.next) = reverseKGroup(5, 2)`。
+>
+> 3. **第三层递归**（输入 `head = 5`）：
+>    * 检查：只剩 1 个节点（5），不足 2 个。
+>    * 触发边界：直接返回 `head`（即 5）。
+>
+> 4. **回溯拼接**：
+>    * 第二层：`3.next = 5`。返回 `prev = 4`（此时这部分为 `4 -> 3 -> 5`）。
+>    * 第一层：`1.next = 4`。返回 `prev = 2`（整个链表变为 `2 -> 1 -> 4 -> 3 -> 5`）。
+>
+> ---
+>
+> **三、 复杂度分析**
+>
+> * **时间复杂度**：$O(N)$
+>   其中 $N$ 是链表的节点总数。每个节点最多被遍历两次（一次用于检查长度，一次用于翻转指针），因此时间复杂度与节点数成线性关系。
+>
+> * **空间复杂度**：$O(N/k)$
+>   由于采用了递归写法，递归栈的深度取决于链表被分成了多少组。一共会有 $N/k$ 次递归调用，因此需要 $O(N/k)$ 的系统栈空间。如果在面试中对空间复杂度有 $O(1)$ 的严格要求，则需要将递归改写为纯迭代的双指针结构。
+
+
+
+### M138. Copy List with Random Pointer（随机链表的复制）✅
+
+给你一个长度为 `n` 的链表，每个节点包含一个额外增加的随机指针 `random` ，该指针可以指向链表中的任何节点或空节点。
+
+构造这个链表的 **[深拷贝](https://baike.baidu.com/item/深拷贝/22785317?fr=aladdin)**。 深拷贝应该正好由 `n` 个 **全新** 节点组成，其中每个新节点的值都设为其对应的原节点的值。新节点的 `next` 指针和 `random` 指针也都应指向复制链表中的新节点，并使原链表和复制链表中的这些指针能够表示相同的链表状态。**复制链表中的指针都不应指向原链表中的节点** 。
+
+例如，如果原链表中有 `X` 和 `Y` 两个节点，其中 `X.random --> Y` 。那么在复制链表中对应的两个节点 `x` 和 `y` ，同样有 `x.random --> y` 。
+
+返回复制链表的头节点。
+
+用一个由 `n` 个节点组成的链表来表示输入/输出中的链表。每个节点用一个 `[val, random_index]` 表示：
+
+- `val`：一个表示 `Node.val` 的整数。
+- `random_index`：随机指针指向的节点索引（范围从 `0` 到 `n-1`）；如果不指向任何节点，则为 `null` 。
+
+你的代码 **只** 接受原链表的头节点 `head` 作为传入参数。
+
+
 
 **思路**：在原链表每个节点后插入复制节点，然后处理 random 指针，最后分离。
 
+结构变化：A -> B -> C 变为 A -> A' -> B -> B' -> C -> C'。其中带 ' 的为复制节点。
+
 ```python
-def copyRandomList(head):
-    if not head:
-        return None
-    cur = head
-    while cur:
-        node = Node(cur.val, cur.next, None)
-        cur.next = node
-        cur = node.next
-    cur = head
-    while cur:
-        if cur.random:
-            cur.next.random = cur.random.next
-        cur = cur.next.next
-    cur = head
-    new_head = head.next
-    while cur:
-        copy = cur.next
-        cur.next = copy.next
-        cur = cur.next
-        if cur:
-            copy.next = cur.next
-    return new_head
+# Definition for a Node.
+class Node:
+    def __init__(self, x: int, next: 'Node' = None, random: 'Node' = None):
+        self.val = int(x)
+        self.next = next
+        self.random = random
+
+
+class Solution:
+    def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':
+        if not head:
+            return None
+        # 1.复制节点并交错插入
+        cur = head
+        while cur:
+            # 创建新节点，新节点的 next 指向原节点的 next
+            node = Node(cur.val, cur.next, None)
+            # 将原节点的 next 指向新节点
+            cur.next = node
+            # 移动到下一个原节点（即原 cur.next，现在是 node.next）
+            cur = node.next
+
+        # 2.设置复制节点的 random 指针
+        cur = head
+        while cur:
+            if cur.random:
+                # cur.random.next 恰好就是 cur.random 对应的复制节点
+                cur.next.random = cur.random.next
+            cur = cur.next.next # 移动到下一个原节点
+
+        # 3.拆分链表（恢复原链表，提取复制链表）
+        cur = head
+        new_head = head.next # 新链表的头节点是原头节点的下一个节点
+        while cur:
+            copy = cur.next         # 定位到复制节点
+            cur.next = copy.next    # 恢复原节点的 next 指向
+            cur = cur.next          # cur 移动到下一个原节点
+            if cur:
+                copy.next = cur.next    # 复制节点的 next 指向下一个复制节点
+        return new_head
 ```
 
-### 148. Sort List（排序链表）
+
+
+### M148. Sort List（排序链表）✅
+
+给你链表的头结点 `head` ，请将其按 **升序** 排列并返回 **排序后的链表** 。
+
+
 
 **思路**：归并排序。快慢指针找中点，递归排序左右，再合并。
 
@@ -1163,14 +1300,19 @@ def copyRandomList(head):
 def sortList(head):
     if not head or not head.next:
         return head
+    # 快慢指针寻找中点并断开
     slow = fast = head
     while fast.next and fast.next.next:
         slow = slow.next
         fast = fast.next.next
     mid = slow.next
-    slow.next = None
+    slow.next = None	# 注意：必须断开链表
+    
+    # 递归排序左右子链表
     left = sortList(head)
     right = sortList(mid)
+    
+    # 合并两个有序链表
     dummy = cur = ListNode(0)
     while left and right:
         if left.val < right.val:
@@ -1183,6 +1325,15 @@ def sortList(head):
     cur.next = left or right
     return dummy.next
 ```
+
+> 这是一个经典的合并双有序链表的过程：
+>
+> - 引入一个虚拟头节点 dummy（哨兵节点），用 cur 指针来构建新的有序链表。
+> - 比较 left 和 right 节点的值，将较小的节点接在 cur.next 后面，并移动相应的指针。
+> - 当其中一个链表遍历完毕时，通过 cur.next = left or right 将另一个未遍历完的链表直接拼接到末尾。
+> - 最后返回 dummy.next，即合并后新链表的头节点。
+
+
 
 ### M146. LRU Cache（LRU 缓存）✅
 
@@ -1253,7 +1404,11 @@ class LRUCache:
 
 
 
-### 206. Reverse Linked List（反转链表）
+### E206. Reverse Linked List（反转链表）✅
+
+给你单链表的头节点 `head` ，请你反转链表，并返回反转后的链表。
+
+
 
 **思路**：迭代，用 prev 和 cur 两个指针逐步反转。
 
@@ -1269,7 +1424,17 @@ def reverseList(head):
     return prev
 ```
 
-### 141. Linked List Cycle（环形链表）
+
+
+### E141. Linked List Cycle（环形链表）✅
+
+给你一个链表的头节点 `head` ，判断链表中是否有环。
+
+如果链表中有某个节点，可以通过连续跟踪 `next` 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 `pos` 来表示链表尾连接到链表中的位置（索引从 0 开始）。**注意：`pos` 不作为参数进行传递** 。仅仅是为了标识链表的实际情况。
+
+*如果链表中存在环* ，则返回 `true` 。 否则，返回 `false` 。
+
+
 
 **思路**：快慢指针，相遇即有环。
 
@@ -1284,26 +1449,92 @@ def hasCycle(head):
     return False
 ```
 
-### 142. Linked List Cycle II（环形链表 II）
+
+
+### M142. Linked List Cycle II（环形链表 II）✅
+
+给定一个链表的头节点  `head` ，返回链表开始入环的第一个节点。 *如果链表无环，则返回 `null`。*
+
+如果链表中有某个节点，可以通过连续跟踪 `next` 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 `pos` 来表示链表尾连接到链表中的位置（**索引从 0 开始**）。如果 `pos` 是 `-1`，则在该链表中没有环。**注意：`pos` 不作为参数进行传递**，仅仅是为了标识链表的实际情况。
+
+**不允许修改** 链表。
+
+
 
 **思路**：快慢指针相遇后，一个指针从头开始，一个从相遇点，再次相遇即为入环点。
 
 ```python
 def detectCycle(head):
     slow = fast = head
+    # 1. 步骤一：判断是否有环并寻找首次相遇点
     while fast and fast.next:
         slow = slow.next
         fast = fast.next.next
+        
+        # 快慢指针相遇，说明有环
         if slow == fast:
-            slow = head
+            # 2. 步骤二：寻找环的入口
+            slow = head  # 慢指针回到起点
             while slow != fast:
-                slow = slow.next
-                fast = fast.next
-            return slow
-    return None
+                slow = slow.next  # 慢指针每次走一步
+                fast = fast.next  # 快指针此时也改为每次走一步
+            return slow  # 再次相遇点即为入环点
+            
+    return None  # 快指针指向空，说明无环
 ```
 
-### 160. Intersection of Two Linked Lists（相交链表）
+> 这是一道经典的算法题，利用**快慢指针（双指针法）**不仅可以判断链表是否有环，还能在 $O(1)$ 的额外空间复杂度下找到环的入口。
+>
+> **一、 数学原理推导**
+>
+> 为什么“快慢指针相遇后，一个指针回到起点，另一个指针留在相遇点，二者同时以相同速度出发，再次相遇的地方就是入环点”？
+>
+> 我们可以通过几何关系来进行数学推导：
+>
+> 1. **定义距离**：
+>    * 设从**链表头节点**到**环形入口节点**的距离为 $a$。
+>    * 设从**环形入口节点**到**快慢指针相遇点**的距离为 $b$。
+>    * 设从**相遇点**继续往前走回到**环形入口节点**的距离为 $c$。
+>    * 那么，环的周长为 $L = b + c$。
+>
+> 2. **相遇时快慢指针走过的路程**：
+>    * 慢指针（`slow`）走过的路程为：$s_1 = a + b$（慢指针在环内走不到一圈就会被快指针追上）。
+>    * 快指针（`fast`）走过的路程为：$s_2 = a + n(b + c) + b$，其中 $n \ge 1$ 表示快指针在环内已经转了 $n$ 圈。
+>
+> 3. **根据速度关系建立等式**：
+>    * 因为快指针的速度是慢指针的 2 倍，所以相同时间内快指针走过的路程是慢指针的 2 倍：
+>      $$s_2 = 2 \cdot s_1$$
+>      $$a + n(b + c) + b = 2(a + b)$$
+>
+> 4. **化简等式**：
+>    * 整理上述公式：
+>      $$a + n(b + c) + b = 2a + 2b$$
+>      $$a = n(b + c) - b$$
+>    * 为了更直观，我们可以拆出一项 $(b+c)$：
+>      $$a = (n - 1)(b + c) + (b + c) - b$$
+>      $$a = (n - 1)(b + c) + c$$
+>
+> 5. **结论分析**：
+>    * 表达式 $a = (n - 1)(b + c) + c$ 说明：**从链表头到入环点的距离 $a$**，等于**从相遇点到入环点的距离 $c$** 加上 **$n-1$ 圈的环长**。
+>    * 这意味着，如果让一个指针从链表头部出发（走过距离 $a$），另一个指针从相遇点出发（走过距离 $c$ 并可能绕环若干圈），它们最终一定会在**入环点**相遇。
+>
+> **二、 复杂度分析**
+>
+> * **时间复杂度**：$O(N)$
+>   * 在第一阶段，若无环，`fast` 遍历一遍链表，耗时 $O(N)$；若有环，快慢指针在慢指针走完一圈内必然相遇，耗时 $O(N)$。
+>   * 在第二阶段，指针从起点和相遇点分别走到入口，步数等于距离 $a$，耗时 $O(N)$。
+>   * 总体时间复杂度为线性级别。
+>
+> * **空间复杂度**：$O(1)$
+>   * 仅使用了 `slow` 和 `fast` 两个指针变量，没有使用额外的哈希表等数据结构，符合题目“不修改链表”且空间复杂度最小的要求。
+
+
+
+### E160. Intersection of Two Linked Lists（相交链表）✅
+
+给你两个单链表的头节点 `headA` 和 `headB` ，请你找出并返回两个单链表相交的起始节点。如果两个链表不存在相交节点，返回 `null`。
+
+
 
 **思路**：两指针分别从 a、b 开始，走完自己链表后走对方链表，相遇点即为交点。
 
@@ -1316,7 +1547,75 @@ def getIntersectionNode(headA, headB):
     return a
 ```
 
-### 234. Palindrome Linked List（回文链表）
+> 这段代码展示了解决“相交链表”问题的一种经典且空间复杂度为 $O(1)$ 的双指针解法。以下是对该思路和代码的详细解读：
+>
+> **1. 核心原理：消除长度差**
+>
+> 两个链表可能长度不同，如果直接同时遍历，它们无法同时到达相交节点。该算法的核心思想是通过**让两个指针经历相同的路程**来消除长度差。
+>
+> 我们可以把链表分成三个部分：
+> *   **$a$**：链表 A 独有的部分（长度为 $a$）
+> *   **$b$**：链表 B 独有的部分（长度为 $b$）
+> *   **$c$**：两个链表公共的相交部分（长度为 $c$，若不相交则 $c = 0$）
+>
+> **指针的移动轨迹：**
+>
+> *   **指针 `a`** 先走完链表 A（距离 $a + c$），然后指向链表 B 的头部，继续走链表 B 独有的部分（距离 $b$）。总路程为：
+>     $$\text{路程}_A = a + c + b$$
+> *   **指针 `b`** 先走完链表 B（距离 $b + c$），然后指向链表 A 的头部，继续走链表 A 独有的部分（距离 $a$）。总路程为：
+>     $$\text{路程}_B = b + c + a$$
+>
+> 因为 $a + c + b = b + c + a$，所以当两个指针各自走完这段距离时，它们会在**相交的起始节点**处相遇。
+>
+> ---
+>
+> **2. 两种情况的分析**
+>
+> 情况一：两个链表相交 ($c > 0$)
+>
+> *   指针 `a` 和 `b` 会在相交节点处相遇（此时 `a == b` 且不为 `None`），循环结束，返回相遇节点。
+>
+> 情况二：两个链表不相交 ($c = 0$)
+>
+> *   此时公共长度 $c = 0$。
+> *   指针 `a` 走了 $a$ 步到达 A 的末尾，重定向到 B，再走 $b$ 步，总共走了 $a + b$ 步，此时指向 `None`。
+> *   指针 `b` 走了 $b$ 步到达 B 的末尾，重定向到 A，再走 $a$ 步，总共走了 $b + a$ 步，此时指向 `None`。
+> *   两个指针同时变为 `None`（`a == b == None`），循环结束，返回 `None`。
+>
+> ---
+>
+> **3. 代码细节解析**
+>
+> ```python
+> def getIntersectionNode(headA, headB):
+>     a, b = headA, headB
+>     while a != b:
+>         # 如果 a 走到链表末尾（即为 None），则重定向到 headB；否则继续走下一步
+>         a = a.next if a else headB
+>         # 如果 b 走到链表末尾（即为 None），则重定向到 headA；否则继续走下一步
+>         b = b.next if b else headA
+>     return a
+> ```
+>
+> *   **`a = a.next if a else headB`**：
+>     这里的判断是 `if a`（判断当前指针是否为 `None`），而不是 `if a.next`。这样设计可以确保当链表不相交时，指针最终能够走到 `None` 并触发 `a == b == None` 从而退出循环。如果使用 `if a.next`，在不相交的情况下会导致死循环。
+>
+> ---
+>
+> **4. 复杂度分析**
+>
+> *   **时间复杂度**：$O(M + N)$
+>     其中 $M$ 和 $N$ 分别为两个链表的长度。两个指针最多各遍历两个链表一次（即走完 $M + N$ 个节点），因此时间复杂度是线性的。
+> *   **空间复杂度**：$O(1)$
+>     该算法只使用了两个指针变量 `a` 和 `b`，没有使用额外的指针容器（如哈希表），因此空间复杂度为常数级别。
+
+
+
+### E234. Palindrome Linked List（回文链表）✅
+
+给你一个单链表的头节点 `head` ，请你判断该链表是否为回文链表。如果是，返回 `true` ；否则，返回 `false` 。
+
+
 
 **思路**：快慢指针找中点，反转后半部分，比较两半。
 
@@ -1340,7 +1639,9 @@ def isPalindrome(head):
     return True
 ```
 
----
+
+
+
 
 ## 八、二叉树（15）
 
@@ -2128,7 +2429,7 @@ def isValid(s):
     return not stack
 ```
 
-### 32. Longest Valid Parentheses（最长有效括号）
+### T32. Longest Valid Parentheses（最长有效括号）✅
 
 **思路**：用栈存储下标。初始化栈为 `[-1]`。遇到 '(' 入栈，遇到 ')' 出栈，若栈空则压入当前下标。
 
@@ -2147,7 +2448,15 @@ def longestValidParentheses(s):
     return ans
 ```
 
-### 84. Largest Rectangle in Histogram（柱状图中最大的矩形）
+
+
+### T84. Largest Rectangle in Histogram（柱状图中最大的矩形）✅
+
+给定 *n* 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+
 
 **思路**：单调递增栈。遇到更矮的柱子时，弹出栈顶并计算以该高度为高的矩形面积。
 
@@ -2163,6 +2472,106 @@ def largestRectangleArea(heights):
         stack.append(i)
     return ans
 ```
+
+> 这道题是经典的单调栈应用问题。下面为您详细解读这段代码的设计思路、核心机制以及其精妙之处。
+>
+> ---
+>
+> **一、 核心思路：单调递增栈**
+>
+> 寻找直方图中的最大矩形，核心思想是：**确定以每一个柱子的高度为高（$h$）时，能向左右两边延伸的最大宽度（$w$）是多少**。
+>
+> 要找到某个柱子 $i$ 能向左右延伸的边界：
+> *   **左边界**：左边第一个比它矮的柱子。
+> *   **右边界**：右边第一个比它矮的柱子。
+>
+> **单调递增栈**（栈内元素对应的柱子高度单调递增）恰好可以高效地寻找这两侧的边界。
+>
+> ---
+>
+> **二、 关键设计：哨兵节点（Sentinel）**
+>
+> 代码中有一行非常关键的处理：
+> ```python
+> heights = [0] + heights + [0]
+> ```
+> 这里在原数组的首尾各添加了一个高度为 `0` 的柱子，作用如下：
+>
+> 1.  **首部加 `0`**：
+>     *   防止栈空。在计算宽度 `w = i - stack[-1] - 1` 时，如果栈中没有元素，计算会变得复杂。
+>     *   首部的 `0` 作为一个占位符（索引为 `0`），保证了即使前面的柱子全部被弹出，栈内也至少会剩下一个索引 `0`，从而避免了判断栈是否为空的边界处理。
+> 2.  **尾部加 `0`**：
+>     *   当遍历到最后一个高度为 `0` 的柱子时，它比栈中除了首部 `0` 以外的所有柱子都要矮。
+>     *   这会强制触发 `while` 循环，将栈中所有还未处理的柱子依次弹出并计算面积，确保没有遗漏。
+>
+> ---
+>
+> **三、 代码逐行解析**
+>
+> 结合以下代码块，来看具体的执行流程：
+>
+> ```python
+> def largestRectangleArea(heights):
+>     stack, ans = [], 0
+>     # 1. 加上哨兵，简化边界条件
+>     heights = [0] + heights + [0]
+>     
+>     for i in range(len(heights)):
+>         # 2. 如果当前高度小于栈顶高度，说明找到了栈顶元素的右边界
+>         while stack and heights[stack[-1]] > heights[i]:
+>             # 弹出栈顶，作为当前要计算矩形的高度 h
+>             h = heights[stack.pop()]
+>             
+>             # 此时新的栈顶就是该高度 h 的左边界（不含）
+>             # 当前的 i 就是该高度 h 的右边界（不含）
+>             # 宽度 w = 右边界 - 左边界 - 1
+>             w = i - stack[-1] - 1
+>             
+>             # 更新最大面积
+>             ans = max(ans, h * w)
+>             
+>         # 3. 将当前索引压入栈中
+>         stack.append(i)
+>         
+>     return ans
+> ```
+>
+> **为什么宽度是 `w = i - stack[-1] - 1`？**
+>
+> 当一个索引被弹出作为高度 `h` 时：
+> *   它的**右边界**是当前遍历到的索引 `i`（因为 `heights[i]` 比它矮，阻断了向右延伸）。
+> *   它的**左边界**是它在栈中的前一个元素 `stack[-1]`（因为栈是单调递增的，前一个元素必然是左侧第一个比它矮的柱子）。
+> *   因此，能延伸的有效区间是开区间 `(stack[-1], i)`，其宽度为 `i - stack[-1] - 1`。
+>
+> ---
+>
+> **四、 实例走读**
+>
+> 假设输入为 `heights = [2, 1, 5]`：
+> 1.  加入哨兵后：`heights = [0, 2, 1, 5, 0]`
+> 2.  **`i = 0` (h=0)**: 栈为空，`0` 入栈。`stack = [0]`
+> 3.  **`i = 1` (h=2)**: `2 > heights[stack[-1]] (0)`，不进入循环，`1` 入栈。`stack = [0, 1]`
+> 4.  **`i = 2` (h=1)**: `1 < heights[stack[-1]] (2)`，进入循环：
+>     *   弹出 `1`，高度 `h = heights[1] = 2`
+>     *   此时栈顶 `stack[-1]` 为 `0`
+>     *   宽度 `w = 2 - 0 - 1 = 1`
+>     *   面积 `ans = max(0, 2 * 1) = 2`
+>     *   再次判断，`1 > heights[0] (0)`，退出循环。`2` 入栈。`stack = [0, 2]`
+> 5.  **`i = 3` (h=5)**: `5 > heights[stack[-1]] (1)`，不进入循环，`3` 入栈。`stack = [0, 2, 3]`
+> 6.  **`i = 4` (h=0)**: 末尾哨兵触发清理：
+>     *   **第一轮循环**：弹出 `3`，`h = 5`，此时栈顶为 `2`。`w = 4 - 2 - 1 = 1`，`ans = max(2, 5 * 1) = 5`。
+>     *   **第二轮循环**：弹出 `2`，`h = 1`，此时栈顶为 `0`。`w = 4 - 0 - 1 = 3`，`ans = max(5, 1 * 3) = 5`。
+>     *   退出循环，`4` 入栈。
+> 7.  遍历结束，返回 `ans = 5`。
+>
+> ---
+>
+> ### 五、 复杂度分析
+>
+> *   **时间复杂度**：$O(N)$。虽然代码中含有双重循环（`for` 和 `while`），但每个位置的索引最多只会入栈一次、出栈一次。因此，平均每个元素的操作次数是常数级别。
+> *   **空间复杂度**：$O(N)$。最坏情况下（柱子高度单调递增），栈内会存储所有的元素。
+
+
 
 ### M155. Min Stack（最小栈）✅
 
@@ -2415,64 +2824,6 @@ def partitionLabels(s):
 
 ## 十四、动态规划（10）
 
-### 5. Longest Palindromic Substring（最长回文子串）
-
-**思路**：中心扩展。每个位置（及两位置之间）向两边扩展，找最长回文。
-
-```python
-def longestPalindrome(s):
-    def expand(l, r):
-        while l >= 0 and r < len(s) and s[l] == s[r]:
-            l -= 1; r += 1
-        return s[l + 1:r]
-    res = ''
-    for i in range(len(s)):
-        s1 = expand(i, i)
-        s2 = expand(i, i + 1)
-        res = max(res, s1, s2, key=len)
-    return res
-```
-
-### 62. Unique Paths（不同路径）✅
-
-一个机器人位于一个 `m x n` 网格的左上角 （起始点在下图中标记为 “Start” ）。
-
-机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
-
-问总共有多少条不同的路径？
-
-
-
-**思路**：`dp[i][j] = dp[i-1][j] + dp[i][j-1]`，空间可优化为一维。
-
-```python
-def uniquePaths(m, n):
-    row = [1] * n
-    for _ in range(1, m):
-        for j in range(1, n):
-            row[j] += row[j - 1]
-    return row[-1]
-```
-
-
-
-### 64. Minimum Path Sum（最小路径和）
-
-**思路**：`dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])`。
-
-```python
-def minPathSum(grid):
-    m, n = len(grid), len(grid[0])
-    for i in range(1, n):
-        grid[0][i] += grid[0][i - 1]
-    for i in range(1, m):
-        grid[i][0] += grid[i - 1][0]
-    for i in range(1, m):
-        for j in range(1, n):
-            grid[i][j] += min(grid[i - 1][j], grid[i][j - 1])
-    return grid[-1][-1]
-```
-
 ### E70. Climbing Stairs（爬楼梯）✅
 
 假设你正在爬楼梯。需要 `n` 阶你才能到达楼顶。
@@ -2543,25 +2894,6 @@ def climbStairs(n):
 
 
 
-
-### 72. Edit Distance（编辑距离）
-
-**思路**：`dp[i][j]` 表示 word1[:i] 到 word2[:j] 的最小编辑距离。
-
-```python
-def minDistance(word1, word2):
-    m, n = len(word1), len(word2)
-    dp = [[0] * (n + 1) for _ in range(m + 1)]
-    for i in range(m + 1): dp[i][0] = i
-    for j in range(n + 1): dp[0][j] = j
-    for i in range(1, m + 1):
-        for j in range(1, n + 1):
-            if word1[i - 1] == word2[j - 1]:
-                dp[i][j] = dp[i - 1][j - 1]
-            else:
-                dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
-    return dp[m][n]
-```
 
 ### E118. Pascal's Triangle（杨辉三角）✅
 
@@ -2781,6 +3113,91 @@ def canPartition(nums):
     return dp[target]
 ```
 
+
+
+## 十五、多维动态规划（5）
+
+### 5. Longest Palindromic Substring（最长回文子串）
+
+**思路**：中心扩展。每个位置（及两位置之间）向两边扩展，找最长回文。
+
+```python
+def longestPalindrome(s):
+    def expand(l, r):
+        while l >= 0 and r < len(s) and s[l] == s[r]:
+            l -= 1; r += 1
+        return s[l + 1:r]
+    res = ''
+    for i in range(len(s)):
+        s1 = expand(i, i)
+        s2 = expand(i, i + 1)
+        res = max(res, s1, s2, key=len)
+    return res
+```
+
+### 62. Unique Paths（不同路径）✅
+
+一个机器人位于一个 `m x n` 网格的左上角 （起始点在下图中标记为 “Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
+
+问总共有多少条不同的路径？
+
+
+
+**思路**：`dp[i][j] = dp[i-1][j] + dp[i][j-1]`，空间可优化为一维。
+
+```python
+def uniquePaths(m, n):
+    row = [1] * n
+    for _ in range(1, m):
+        for j in range(1, n):
+            row[j] += row[j - 1]
+    return row[-1]
+```
+
+
+
+### 64. Minimum Path Sum（最小路径和）
+
+**思路**：`dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])`。
+
+```python
+def minPathSum(grid):
+    m, n = len(grid), len(grid[0])
+    for i in range(1, n):
+        grid[0][i] += grid[0][i - 1]
+    for i in range(1, m):
+        grid[i][0] += grid[i - 1][0]
+    for i in range(1, m):
+        for j in range(1, n):
+            grid[i][j] += min(grid[i - 1][j], grid[i][j - 1])
+    return grid[-1][-1]
+```
+
+
+
+### 72. Edit Distance（编辑距离）
+
+**思路**：`dp[i][j]` 表示 word1[:i] 到 word2[:j] 的最小编辑距离。
+
+```python
+def minDistance(word1, word2):
+    m, n = len(word1), len(word2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m + 1): dp[i][0] = i
+    for j in range(n + 1): dp[0][j] = j
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if word1[i - 1] == word2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+    return dp[m][n]
+```
+
+
+
 ### 1143. Longest Common Subsequence（最长公共子序列）
 
 **思路**：`dp[i][j]` 表示 text1[:i] 和 text2[:j] 的最长公共子序列长度。
@@ -2797,10 +3214,6 @@ def longestCommonSubsequence(text1, text2):
                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
     return dp[m][n]
 ```
-
-
-
-## 十五、多维动态规划（5）
 
 
 
