@@ -1,6 +1,6 @@
 # LeetCode Top 100 Liked 题解
 
-*Updated 2026-05-24 23:46 GMT+8*
+*Updated 2026-05-25 09:15 GMT+8*
  *Compiled by Hongfei Yan (2026 Spring)*
 
 
@@ -9,31 +9,9 @@
 >
 > 每题包含：题目编号、思路分析、Python代码实现（含关键注释）。
 
----
 
-## 目录（按专题分类）
 
-1. [哈希表](#一哈希表)
-2. [双指针](#二双指针)
-3. [滑动窗口](#三滑动窗口)
-4. [子串/子数组](#四子串子数组)
-5. [普通数组](#五普通数组)
-6. [矩阵](#六矩阵)
-7. [链表](#七链表)
-8. [二叉树](#八二叉树)
-9. [二叉搜索树](#九二叉搜索树)
-10. [二分查找](#十分查找)
-11. [栈](#十一栈)
-12. [堆](#十二堆)
-13. [贪心](#十三贪心)
-14. [回溯](#十四回溯)
-15. [动态规划](#十五动态规划)
-16. [图论](#十六图论)
-17. [设计/其他](#十七设计其他)
-
----
-
-## 一、哈希表
+## 一、哈希（3）
 
 ### E1. Two Sum（两数之和）✅
 
@@ -104,7 +82,7 @@ def longestConsecutive(nums):
 
 
 
-## 二、双指针
+## 二、双指针（4）
 
 ### M11. Container With Most Water（盛最多水的容器）✅
 
@@ -209,25 +187,6 @@ def threeSum(nums):
 
 
 
-### 75. Sort Colors（颜色分类）
-
-**思路**：三指针（荷兰国旗问题）。用 `p0` 指向 0 的右边界，`p2` 指向 2 的左边界，`i` 遍历数组。
-
-```python
-def sortColors(nums):
-    p0, i, p2 = 0, 0, len(nums) - 1
-    while i <= p2:
-        if nums[i] == 0:
-            nums[i], nums[p0] = nums[p0], nums[i]
-            p0 += 1
-            i += 1
-        elif nums[i] == 2:
-            nums[i], nums[p2] = nums[p2], nums[i]
-            p2 -= 1
-        else:
-            i += 1
-```
-
 ### E283. Move Zeroes（移动零）✅
 
 给定一个数组 `nums`，编写一个函数将所有 `0` 移动到数组的末尾，同时保持非零元素的相对顺序。
@@ -251,9 +210,13 @@ def moveZeroes(nums):
 
 
 
-## 三、滑动窗口
+## 三、滑动窗口（2）
 
-### 3. Longest Substring Without Repeating Characters（无重复字符的最长子串）
+### M3. Longest Substring Without Repeating Characters（无重复字符的最长子串）✅
+
+给定一个字符串 `s` ，请你找出其中不含有重复字符的 **最长 子串** 的长度。
+
+
 
 **思路**：用哈希集合记录窗口内字符。右指针扩展窗口，遇到重复时左指针收缩。
 
@@ -268,6 +231,40 @@ def lengthOfLongestSubstring(s):
         ans = max(ans, r - l + 1)
     return ans
 ```
+
+
+
+### M438. Find All Anagrams in a String（找到字符串中所有字母异位词）✅
+
+给定两个字符串 `s` 和 `p`，找到 `s` 中所有 `p` 的 **异位词** 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
+
+
+
+**思路**：固定长度滑动窗口。用哈希表（或数组）记录窗口内字符计数，与目标串匹配。
+
+```python
+def findAnagrams(s, p):
+    from collections import Counter
+    need = Counter(p)
+    missing = len(p)
+    res = []
+    for r, ch in enumerate(s):
+        if need[ch] > 0:
+            missing -= 1
+        need[ch] -= 1
+        if r >= len(p):
+            left = s[r - len(p)]
+            if need[left] >= 0:
+                missing += 1
+            need[left] += 1
+        if missing == 0:
+            res.append(r - len(p) + 1)
+    return res
+```
+
+---
+
+## 四、子串（3）
 
 ### T76. Minimum Window Substring（最小覆盖子串）✅
 
@@ -304,7 +301,13 @@ def minWindow(s, t):
 
 
 
-### 239. Sliding Window Maximum（滑动窗口最大值）
+### T239. Sliding Window Maximum（滑动窗口最大值）✅
+
+给你一个整数数组 `nums`，有一个大小为 `k` 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 `k` 个数字。滑动窗口每次只向右移动一位。
+
+返回 *滑动窗口中的最大值* 。
+
+
 
 **思路**：单调双端队列，队首始终是当前窗口最大值。窗口滑动时维护队列。
 
@@ -322,51 +325,6 @@ def maxSlidingWindow(nums, k):
         if i >= k - 1:
             res.append(nums[dq[0]])
     return res
-```
-
-### M438. Find All Anagrams in a String（找到字符串中所有字母异位词）✅
-
-给定两个字符串 `s` 和 `p`，找到 `s` 中所有 `p` 的 **异位词** 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
-
-
-
-**思路**：固定长度滑动窗口。用哈希表（或数组）记录窗口内字符计数，与目标串匹配。
-
-```python
-def findAnagrams(s, p):
-    from collections import Counter
-    need = Counter(p)
-    missing = len(p)
-    res = []
-    for r, ch in enumerate(s):
-        if need[ch] > 0:
-            missing -= 1
-        need[ch] -= 1
-        if r >= len(p):
-            left = s[r - len(p)]
-            if need[left] >= 0:
-                missing += 1
-            need[left] += 1
-        if missing == 0:
-            res.append(r - len(p) + 1)
-    return res
-```
-
----
-
-## 四、子串/子数组
-
-### 53. Maximum Subarray（最大子数组和）
-
-**思路**：Kadane 算法。记录当前子数组和，若为负则重新开始。
-
-```python
-def maxSubArray(nums):
-    cur = best = nums[0]
-    for num in nums[1:]:
-        cur = max(num, cur + num)
-        best = max(best, cur)
-    return best
 ```
 
 
@@ -418,11 +376,15 @@ if __name__ == "__main__":
 
 
 
-## 五、普通数组
+## 五、普通数组（5）
+
+### T41. First Missing Positive（缺失的第一个正数）✅
+
+给你一个未排序的整数数组 `nums` ，请你找出其中没有出现的最小的正整数。
+
+请你实现时间复杂度为 `O(n)` 并且只使用常数级别额外空间的解决方案。
 
 
-
-### 41. First Missing Positive（缺失的第一个正数）
 
 **思路**：将每个正数 `x` 放到下标 `x - 1` 位置。遍历找第一个下标与值不对应的位置。
 
@@ -438,36 +400,83 @@ def firstMissingPositive(nums):
     return n + 1
 ```
 
-### 189. Rotate Array（轮转数组）
+> 这是一种非常高效且经典的解法，通常被称为**“原地哈希”**（In-place Hash）或**“桶排序”**思想。
+>
+> **一、 核心思路：原地哈希**
+>
+> 对于一个长度为 $n$ 的数组 `nums`，**缺失的第一个正数一定在区间 $[1, n+1]$ 之间**。
+> * 如果数组恰好包含了 $1$ 到 $n$ 的所有正整数，那么缺失的第一个正数就是 $n+1$。
+> * 否则，缺失的正数一定落在 $[1, n]$ 之间。
+>
+> 基于这个性质，我们可以尝试将数组中的每个正整数 $x$（如果 $1 \le x \le n$）放到它应该在的位置，即**下标为 $x - 1$ 的位置**（也就是让 `nums[x - 1] = x`）。
+>
+> 当所有能够安置的数字都各就各位后，我们再次遍历数组。第一个满足 `nums[i] != i + 1` 的下标 `i`，其对应的 `i + 1` 就是我们要找的缺失的第一个正数。
+>
+> ---
+>
+> **二、 代码步骤详解**
+>
+> **1. 整理数组（置换阶段）**
+>
+> ```python
+> for i in range(n):
+>     while 1 <= nums[i] <= n and nums[nums[i] - 1] != nums[i]:
+>         nums[nums[i] - 1], nums[i] = nums[i], nums[nums[i] - 1]
+> ```
+> * **为什么用 `while` 而不是 `if`？**
+>   当我们把 `nums[i]` 交换到它正确的位置 `nums[i] - 1` 时，从该位置换回来的新元素可能也是一个在 $[1, n]$ 范围内的有效正整数，但它目前还没有在正确的位置上。因此需要用 `while` 循环继续对其进行置换，直到换过来的数字不满足条件（超出边界或已经是重复值）为止。
+> * **循环条件分析**：
+>   * `1 <= nums[i] <= n`：只有当数值在合法范围内时才进行放置。
+>   * `nums[nums[i] - 1] != nums[i]`：目标位置上的值还不等于当前值。这个条件不仅能避免不必要的交换，还能**防止数组中存在重复值时导致死循环**（例如，当两个相同的数字都需要放到同一个位置时，如果不做此判断，会陷入无限交换）。
+> * **Python 的交换细节**：
+>   在 Python 中，`nums[nums[i] - 1], nums[i] = nums[i], nums[nums[i] - 1]` 能够正常工作，是因为 Python 在执行多变量赋值时，会先计算右侧的元组，然后从左到右依次赋值。
+>
+> **2. 查找缺失值**
+>
+> ```python
+> for i in range(n):
+>     if nums[i] != i + 1:
+>         return i + 1
+> return n + 1
+> ```
+> * 遍历整理后的数组：
+>   * 如果发现某个位置 `nums[i]` 的值不是 `i + 1`，说明正整数 `i + 1` 在数组中缺失，直接返回 `i + 1`。
+>   * 如果整个数组全部符合要求（即 `nums` 变成了 `[1, 2, ..., n]`），说明缺失的是下一个正整数，返回 `n + 1`。
+>
+> ---
+>
+> **三、 复杂度分析**
+>
+> * **时间复杂度：$O(n)$**
+>   虽然代码中有一层 `for` 循环嵌套了 `while` 循环，但每一次交换操作都会将至少一个元素放到它的最终正确位置。每个元素最多被交换到正确位置一次，因此总的交换次数不会超过 $n$ 次。整个置换过程的均摊时间复杂度为 $O(n)$，随后的线性扫描也是 $O(n)$，因此整体时间复杂度为 $O(n)$。
+>   
+> * **空间复杂度：$O(1)$**
+>   算法直接在原输入数组 `nums` 上进行修改，仅使用了常数级别的额外变量来记录长度和迭代，满足题目对于常数级额外空间的要求。
 
-**思路**：三次反转——反转整个数组，反转前 k 个，反转后 n-k 个。
+
+
+### M53. Maximum Subarray（最大子数组和）✅
+
+给你一个整数数组 `nums` ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+
+**子数组** 是数组中的一个连续部分。
+
+
+
+**思路**：Kadane 算法。记录当前子数组和，若为负则重新开始。
 
 ```python
-def rotate(nums, k):
-    n = len(nums)
-    k %= n
-    def rev(l, r):
-        while l < r:
-            nums[l], nums[r] = nums[r], nums[l]
-            l += 1; r -= 1
-    rev(0, n - 1)
-    rev(0, k - 1)
-    rev(k, n - 1)
+def maxSubArray(nums):
+    cur = best = nums[0]
+    for num in nums[1:]:
+        cur = max(num, cur + num)
+        best = max(best, cur)
+    return best
 ```
 
-### 48. Rotate Image（旋转图像）
 
-**思路**：先按对角线翻转，再每行反转。
 
-```python
-def rotate(matrix):
-    n = len(matrix)
-    for i in range(n):
-        for j in range(i, n):
-            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
-    for i in range(n):
-        matrix[i].reverse()
-```
+
 
 ### M56. Merge Intervals（合并区间）✅
 
@@ -491,32 +500,40 @@ def merge(intervals):
 
 
 
-### 73. Set Matrix Zeroes（矩阵置零）
 
-**思路**：用第一行和第一列作为标记位。先记录第一行/列是否有零，再标记，最后清零。
+
+### M189. Rotate Array（轮转数组）✅
+
+给定一个整数数组 `nums`，将数组中的元素向右轮转 `k` 个位置，其中 `k` 是非负数。
+
+
+
+**思路**：三次反转——反转整个数组，反转前 k 个，反转后 n-k 个。
 
 ```python
-def setZeroes(matrix):
-    m, n = len(matrix), len(matrix[0])
-    row0 = any(matrix[0][j] == 0 for j in range(n))
-    col0 = any(matrix[i][0] == 0 for i in range(m))
-    for i in range(1, m):
-        for j in range(1, n):
-            if matrix[i][j] == 0:
-                matrix[i][0] = matrix[0][j] = 0
-    for i in range(1, m):
-        for j in range(1, n):
-            if matrix[i][0] == 0 or matrix[0][j] == 0:
-                matrix[i][j] = 0
-    if row0:
-        for j in range(n):
-            matrix[0][j] = 0
-    if col0:
-        for i in range(m):
-            matrix[i][0] = 0
+def rotate(nums, k):
+    n = len(nums)
+    k %= n
+    def rev(l, r):
+        while l < r:
+            nums[l], nums[r] = nums[r], nums[l]
+            l += 1; r -= 1
+    rev(0, n - 1)
+    rev(0, k - 1)
+    rev(k, n - 1)
 ```
 
-### 238. Product of Array Except Self（除自身以外数组的乘积）
+
+
+### M238. Product of Array Except Self（除自身以外数组的乘积）✅
+
+给你一个整数数组 `nums`，返回 数组 `answer` ，其中 `answer[i]` 等于 `nums` 中除了 `nums[i]` 之外其余各元素的乘积 。
+
+题目数据 **保证** 数组 `nums`之中任意元素的全部前缀元素和后缀的乘积都在 **32 位** 整数范围内。
+
+请 **不要使用除法，**且在 `O(n)` 时间复杂度内完成此题。
+
+
 
 **思路**：先从左到右算前缀积，再从右到左乘以后缀积。
 
@@ -535,45 +552,33 @@ def productExceptSelf(nums):
     return ans
 ```
 
-### 240. Search a 2D Matrix II（搜索二维矩阵 II）
 
-**思路**：从右上角开始，利用行列有序特性，每次排除一行或一列。
 
-```python
-def searchMatrix(matrix, target):
-    if not matrix:
-        return False
-    i, j = 0, len(matrix[0]) - 1
-    while i < len(matrix) and j >= 0:
-        if matrix[i][j] == target:
-            return True
-        elif matrix[i][j] > target:
-            j -= 1
-        else:
-            i += 1
-    return False
-```
 
-### 169. Majority Element（多数元素）
 
-**思路**：Boyer-Moore 投票算法。计数，遇到相同数 +1，不同 -1，减到 0 就换候选。
+## 六、矩阵（4）
+
+### M48. Rotate Image（旋转图像）✅
+
+给定一个 *n* × *n* 的二维矩阵 `matrix` 表示一个图像。请你将图像顺时针旋转 90 度。
+
+你必须在**[ 原地](https://baike.baidu.com/item/原地算法)** 旋转图像，这意味着你需要直接修改输入的二维矩阵。**请不要** 使用另一个矩阵来旋转图像。
+
+
+
+**思路**：先按对角线翻转，再每行反转。
 
 ```python
-def majorityElement(nums):
-    candidate, count = nums[0], 1
-    for num in nums[1:]:
-        if count == 0:
-            candidate, count = num, 1
-        elif num == candidate:
-            count += 1
-        else:
-            count -= 1
-    return candidate
+def rotate(matrix):
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i, n):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    for i in range(n):
+        matrix[i].reverse()
 ```
 
----
 
-## 六、矩阵
 
 ### M54. Spiral Matrix（螺旋矩阵）✅
 
@@ -655,89 +660,144 @@ def spiralOrder(matrix):
 
 
 
-### 79. Word Search（单词搜索）
+### M73. Set Matrix Zeroes（矩阵置零）✅
 
-**思路**：DFS + 回溯。遍历每个格子，从该位置出发尝试匹配单词。
+给定一个 `m x n` 的矩阵，如果一个元素为 **0** ，则将其所在行和列的所有元素都设为 **0** 。请使用 **[原地](http://baike.baidu.com/item/原地算法)** 算法**。**
+
+
+
+**思路**：用第一行和第一列作为标记位。先记录第一行/列是否有零，再标记，最后清零。
 
 ```python
-def exist(board, word):
-    m, n = len(board), len(board[0])
-    def dfs(i, j, k):
-        if k == len(word):
-            return True
-        if i < 0 or i >= m or j < 0 or j >= n or board[i][j] != word[k]:
-            return False
-        board[i][j] = '#'
-        for di, dj in ((1,0), (-1,0), (0,1), (0,-1)):
-            if dfs(i + di, j + dj, k + 1):
-                return True
-        board[i][j] = word[k]
-        return False
-    for i in range(m):
+def setZeroes(matrix):
+    m, n = len(matrix), len(matrix[0])
+    row0 = any(matrix[0][j] == 0 for j in range(n))
+    col0 = any(matrix[i][0] == 0 for i in range(m))
+    for i in range(1, m):
+        for j in range(1, n):
+            if matrix[i][j] == 0:
+                matrix[i][0] = matrix[0][j] = 0
+    for i in range(1, m):
+        for j in range(1, n):
+            if matrix[i][0] == 0 or matrix[0][j] == 0:
+                matrix[i][j] = 0
+    if row0:
         for j in range(n):
-            if dfs(i, j, 0):
-                return True
+            matrix[0][j] = 0
+    if col0:
+        for i in range(m):
+            matrix[i][0] = 0
+```
+
+> **一、 核心思想：利用矩阵自身作为标记位**
+>
+> 在解决此问题时，最直观的方法是创建两个辅助数组（大小分别为 $m$ 和 $n$）来记录哪些行和列需要清零。但这需要 $O(m + n)$ 的额外空间。
+>
+> 为了达到 **$O(1)$ 额外空间** 的要求，该算法采用了一个巧妙的思路：**直接使用矩阵的第一行和第一列来充当这两个辅助数组**。
+>
+> *   用 `matrix[0][j]` 记录第 `j` 列是否需要清零。
+> *   用 `matrix[i][0]` 记录第 `i` 行是否需要清零。
+>
+> 因为第一行和第一列原本也包含数据，为了避免信息被覆盖，我们需要**先单独记录第一行和第一列自身是否原本就包含 `0`**。
+>
+> ---
+>
+> **二、 代码执行步骤详解**
+>
+> 1. 记录第一行和第一列的初始状态
+>
+> ```python
+> row0 = any(matrix[0][j] == 0 for j in range(n))
+> col0 = any(matrix[i][0] == 0 for i in range(m))
+> ```
+>
+> *   `row0`：检查第一行是否原本含有 `0`。
+> *   `col0`：检查第一列是否原本含有 `0`。
+> *   这两个布尔值会在算法的最后一步使用。
+>
+> 2. 遍历其余元素，并在第一行/列做标记
+>
+> ```python
+> for i in range(1, m):
+>     for j in range(1, n):
+>         if matrix[i][j] == 0:
+>             matrix[i][0] = matrix[0][j] = 0
+> ```
+>
+> *   遍历从索引 `1` 开始的子矩阵（排除第一行和第一列）。
+> *   如果发现某个元素 `matrix[i][j]` 为 `0`，则将它对应的行首 `matrix[i][0]` 和列首 `matrix[0][j]` 设为 `0`。这里的行首和列首起到了“投影”和“标记”的作用。
+>
+> 3. 根据标记更新子矩阵中的元素
+>
+> ```python
+> for i in range(1, m):
+>     for j in range(1, n):
+>         if matrix[i][0] == 0 or matrix[0][j] == 0:
+>             matrix[i][j] = 0
+> ```
+>
+> *   再次遍历该子矩阵。
+> *   如果当前元素对应的行首 `matrix[i][0]` 或列首 `matrix[0][j]` 已经被标记为 `0`，则将当前元素 `matrix[i][j]` 置为 `0`。
+>
+> 4. 处理第一行和第一列的最终状态
+>
+> ```python
+> if row0:
+>     for j in range(n):
+>         matrix[0][j] = 0
+> if col0:
+>     for i in range(m):
+>         matrix[i][0] = 0
+> ```
+>
+> *   利用第 1 步保存的 `row0` 和 `col0` 状态。
+> *   如果 `row0` 为 `True`，说明第一行原本就有 `0`，将第一行整行置为 `0`。
+> *   如果 `col0` 为 `True`，说明第一列原本就有 `0`，将第一列整列置为 `0`。
+>
+> ---
+>
+> **三、 复杂度分析**
+>
+> *   **时间复杂度**：$O(m \times n)$。
+>     矩阵被遍历了数次，但整体的遍历次数是常数级别的，每个元素的操作时间为 $O(1)$，因此总时间复杂度与矩阵大小成线性关系。
+> *   **空间复杂度**：$O(1)$。
+>     除了 `row0` 和 `col0` 两个布尔变量外，没有使用任何额外的数组或矩阵空间，完全在输入矩阵上完成修改，符合“原地”算法的要求。
+
+
+
+
+
+### M240. Search a 2D Matrix II（搜索二维矩阵 II）✅
+
+编写一个高效的算法来搜索 `m x n` 矩阵 `matrix` 中的一个目标值 `target` 。该矩阵具有以下特性：
+
+- 每行的元素从左到右升序排列。
+- 每列的元素从上到下升序排列。
+
+
+
+**思路**：从右上角开始，利用行列有序特性，每次排除一行或一列。
+
+```python
+def searchMatrix(matrix, target):
+    if not matrix:
+        return False
+    i, j = 0, len(matrix[0]) - 1
+    while i < len(matrix) and j >= 0:
+        if matrix[i][j] == target:
+            return True
+        elif matrix[i][j] > target:
+            j -= 1
+        else:
+            i += 1
     return False
 ```
 
-### 200. Number of Islands（岛屿数量）
 
-**思路**：遍历每个格子，遇到 '1' 将其连通的所有 '1' 标记为 '0'（DFS/BFS）。
 
-```python
-def numIslands(grid):
-    m, n = len(grid), len(grid[0])
-    def dfs(i, j):
-        if i < 0 or i >= m or j < 0 or j >= n or grid[i][j] != '1':
-            return
-        grid[i][j] = '0'
-        for di, dj in ((1,0), (-1,0), (0,1), (0,-1)):
-            dfs(i + di, j + dj)
-    ans = 0
-    for i in range(m):
-        for j in range(n):
-            if grid[i][j] == '1':
-                ans += 1
-                dfs(i, j)
-    return ans
-```
 
-### 994. Rotting Oranges（腐烂的橘子）
 
-**思路**：多源 BFS。将所有初始腐烂橘子入队，按层扩散。
-
-```python
-from collections import deque
-
-def orangesRotting(grid):
-    m, n = len(grid), len(grid[0])
-    q = deque()
-    fresh = 0
-    for i in range(m):
-        for j in range(n):
-            if grid[i][j] == 2:
-                q.append((i, j))
-            elif grid[i][j] == 1:
-                fresh += 1
-    if fresh == 0:
-        return 0
-    minutes = 0
-    while q:
-        for _ in range(len(q)):
-            i, j = q.popleft()
-            for di, dj in ((1,0), (-1,0), (0,1), (0,-1)):
-                ni, nj = i + di, j + dj
-                if 0 <= ni < m and 0 <= nj < n and grid[ni][nj] == 1:
-                    grid[ni][nj] = 2
-                    fresh -= 1
-                    q.append((ni, nj))
-        minutes += 1
-    return -1 if fresh else minutes - 1
-```
-
----
-
-## 七、链表
+## 七、链表（14）
 
 ### M2. Add Two Numbers（两数相加）✅
 
@@ -772,7 +832,11 @@ def addTwoNumbers(l1, l2):
 
 
 
-### 19. Remove Nth Node From End of List（删除链表的倒数第 N 个结点）
+### M19. Remove Nth Node From End of List（删除链表的倒数第 N 个结点）✅
+
+给你一个链表，删除链表的倒数第 `n` 个结点，并且返回链表的头结点。
+
+
 
 **思路**：快慢指针。快指针先走 n 步，然后快慢一起走，快到底时慢指针指向待删除节点前一个。
 
@@ -789,26 +853,93 @@ def removeNthFromEnd(head, n):
     return dummy.next
 ```
 
-### 21. Merge Two Sorted Lists（合并两个有序链表）
+
+
+### E21. Merge Two Sorted Lists（合并两个有序链表）✅
+
+将两个升序链表合并为一个新的 **升序** 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+
+
 
 **思路**：双指针归并。
 
 ```python
-def mergeTwoLists(l1, l2):
-    dummy = cur = ListNode(0)
-    while l1 and l2:
-        if l1.val < l2.val:
-            cur.next = l1
-            l1 = l1.next
-        else:
-            cur.next = l2
-            l2 = l2.next
-        cur = cur.next
-    cur.next = l1 or l2
-    return dummy.next
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+        dummy = cur = ListNode(0)
+        while list1 and list2:
+            if list1.val < list2.val:
+                cur.next = list1
+                list1 = list1.next
+            else:
+                cur.next = list2
+                list2 = list2.next
+            cur = cur.next
+        cur.next = list1 or list2
+        return dummy.next
+        
 ```
 
-### 23. Merge k Sorted Lists（合并 K 个升序链表）
+
+
+### T23. Merge k Sorted Lists（合并 K 个升序链表）✅
+
+给你一个链表数组，每个链表都已经按升序排列。
+
+请你将所有链表合并到一个升序链表中，返回合并后的链表。
+
+
+
+思路：俩俩合并
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        def merge(p, q):
+            dummy = ListNode()
+            pre = dummy
+            while p and q:
+                if p.val <= q.val:
+                    pre.next = p
+                    pre = p
+                    p = p.next
+                elif p.val > q.val:
+                    pre.next = q
+                    pre = q
+                    q = q.next
+
+            pre.next = p if p else q
+
+            return dummy.next
+
+        if not lists:
+            return None
+
+        n = len(lists)
+        while n > 1:
+            new_lists = []
+            for i in range(0, n, 2):
+                if i < n - 1:
+                    new_lists.append(merge(lists[i], lists[i + 1]))
+                else:
+                    new_lists.append(lists[i])
+            lists = new_lists
+            n = len(lists)
+
+        return lists[0] if lists else None
+```
+
+
 
 **思路**：用最小堆（优先队列）每次取出最小节点。
 
@@ -830,21 +961,151 @@ def mergeKLists(lists):
     return dummy.next
 ```
 
-### 24. Swap Nodes in Pairs（两两交换链表中的节点）
+
+
+### M24. Swap Nodes in Pairs（两两交换链表中的节点）✅
+
+给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。
+
+
 
 **思路**：递归或迭代。每次交换两个节点，递归处理后续。
 
 ```python
-def swapPairs(head):
-    if not head or not head.next:
-        return head
-    nxt = head.next
-    head.next = swapPairs(nxt.next)
-    nxt.next = head
-    return nxt
+class Solution:
+    def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head or not head.next:
+            return head
+        nxt = head.next # 暂存第二个节点
+        head.next = self.swapPairs(nxt.next) # 递归处理后续节点，并建立连接
+        nxt.next = head # 翻转当前两个节点
+        return nxt
 ```
 
-### 25. Reverse Nodes in k-Group（K 个一组翻转链表）
+> 使用**递归（Recursion）**方法来解决“两两交换链表中的节点”问题。
+>
+> **一、 核心思路**
+>
+> 递归的核心思想是将大问题分解为性质相同的子问题。
+> 对于链表 `1 -> 2 -> 3 -> 4`：
+>
+> 1. 先考虑前两个节点 `1` 和 `2`。
+> 2. 将 `3 -> 4` 看作是一个子链表，通过递归调用 `swapPairs` 完成它们的两两交换。
+> 3. 得到子链表交换后的结果后，再将 `1` 和 `2` 进行交换，并与子链表的结果拼接起来。
+>
+> **二、 代码步骤剖析**
+>
+> ```python
+> def swapPairs(head):
+>     # 1. 基准条件（Base Case）
+>     if not head or not head.next:
+>         return head
+> ```
+> * **作用**：如果链表为空（`not head`）或者只有一个节点（`not head.next`），则无需交换，直接返回当前节点。这同时也是递归的终止条件。
+>
+> ```python
+>     # 2. 暂存第二个节点
+>     nxt = head.next
+> ```
+> * **作用**：记录当前成对节点中的第二个节点（即 `nxt`）。交换后，`nxt` 将成为当前这组节点的头部。
+>
+> ```python
+>     # 3. 递归处理后续节点，并建立连接
+>     head.next = swapPairs(nxt.next)
+> ```
+> * **作用**：`nxt.next` 是下一对节点的起点。把这一起点传入递归函数 `swapPairs`。
+> * 递归返回的结果是后续所有节点交换完毕后的新头节点。将当前组的第一个节点 `head` 的 `next` 指向这个返回的结果。
+>
+> ```python
+>     # 4. 翻转当前两个节点
+>     nxt.next = head
+> ```
+> * **作用**：将第二个节点 `nxt` 的指针指向第一个节点 `head`，完成当前这一对节点的交换。
+>
+> ```python
+>     # 5. 返回交换后的新头节点
+>     return nxt
+> ```
+> * **作用**：此时 `nxt` 已经变成了这一对节点的新头部，将其返回给上一层调用。
+>
+> **三、 实例走读（Trace）**
+>
+> 以输入链表 `1 -> 2 -> 3 -> 4 -> None` 为例：
+>
+> 1. **第一层递归**：`head` 为 `1`，`nxt` 为 `2`。
+>    * 需要计算 `1.next = swapPairs(3)`。此时进入第二层递归。
+> 2. **第二层递归**：`head` 为 `3`，`nxt` 为 `4`。
+>    * 需要计算 `3.next = swapPairs(None)`。此时进入第三层递归。
+> 3. **第三层递归**：传入的是 `None`。
+>    * 触发基准条件 `if not head`，直接返回 `None`。
+> 4. **回到第二层递归**：
+>    * `3.next` 接住返回值 `None`。
+>    * 执行 `4.next = 3`。
+>    * 返回 `4` 给第一层。此时这一段结构变为 `4 -> 3 -> None`。
+> 5. **回到第一层递归**：
+>    * `1.next` 接住返回值 `4`（即 `1.next = 4`）。
+>    * 执行 `2.next = 1`。
+>    * 返回 `2`。整个链表结构变为 `2 -> 1 -> 4 -> 3 -> None`。
+>
+> 最终返回的新头节点为 `2`。
+>
+> **四、 复杂度分析**
+>
+> * **时间复杂度**：$O(N)$，其中 $N$ 是链表中的节点数量。每个节点都会被访问并处理一次。
+> * **空间复杂度**：$O(N)$。由于使用的是递归，会占用系统栈空间。在最坏情况下，递归深度为 $N/2$。
+>
+> **五、 补充：迭代法的对比**
+>
+> 如果需要将空间复杂度优化至 $O(1)$，通常可以使用**迭代法**（通过设置一个虚拟头节点 `dummy` 和一个指针，利用循环每次更新节点指向）。虽然迭代法的代码相对繁琐一些，但它不需要消耗额外的栈空间。
+
+
+
+迭代法（Iterative Approach）通常通过引入一个**虚拟头节点（Dummy Node）**来简化边界条件的处理，并通过循环和指针移动来实现两两交换。这种方法可以将空间复杂度降低到 $O(1)$。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        # 1. 创建虚拟头节点，指向真实的链表头
+        dummy = ListNode(0)
+        dummy.next = head
+        
+        # 2. prev 指针用于指向要交换的两个节点的前驱节点
+        prev = dummy
+        
+        # 3. 只有当后面至少还有两个节点时，才进行交换
+        while prev.next and prev.next.next:
+            # 确定要交换的两个节点
+            first = prev.next
+            second = prev.next.next
+            
+            # 开始调整指针进行交换
+            first.next = second.next  # 步骤 A：第一个节点指向第三个节点（或后续节点）
+            second.next = first       # 步骤 B：第二个节点指向第一个节点
+            prev.next = second        # 步骤 C：前驱节点指向原来的第二个节点
+            
+            # 4. 将 prev 指针向后移动两位，准备处理下一对节点
+            # 交换后，first 节点已经变成了这一对节点的后一个，所以 prev 移动到 first
+            prev = first
+            
+        return dummy.next
+```
+
+
+
+### T25. Reverse Nodes in k-Group（K 个一组翻转链表）✅
+
+给你链表的头节点 `head` ，每 `k` 个节点一组进行翻转，请你返回修改后的链表。
+
+`k` 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 `k` 的整数倍，那么请将最后剩余的节点保持原有顺序。
+
+你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
+
+
 
 **思路**：先检查是否有 k 个节点，然后翻转这 k 个节点，递归处理剩余部分。
 
@@ -1081,7 +1342,7 @@ def isPalindrome(head):
 
 ---
 
-## 八、二叉树
+## 八、二叉树（15）
 
 ### 94. Binary Tree Inorder Traversal（二叉树的中序遍历）
 
@@ -1319,7 +1580,7 @@ def diameterOfBinaryTree(root):
 
 ---
 
-## 九、二叉搜索树
+
 
 ### 98. Validate Binary Search Tree（验证二叉搜索树）
 
@@ -1351,9 +1612,360 @@ def kthSmallest(root, k):
         root = root.right
 ```
 
----
 
-## 十、二分查找
+
+## 九、图论（4）
+
+### M200. Number of Islands（岛屿数量）✅
+
+给你一个由 `'1'`（陆地）和 `'0'`（水）组成的的二维网格，请你计算网格中岛屿的数量。
+
+岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+
+此外，你可以假设该网格的四条边均被水包围。
+
+
+
+**思路**：遍历每个格子，遇到 '1' 将其连通的所有 '1' 标记为 '0'（DFS/BFS）。
+
+```python
+def numIslands(grid):
+    m, n = len(grid), len(grid[0])
+    def dfs(i, j):
+        if i < 0 or i >= m or j < 0 or j >= n or grid[i][j] != '1':
+            return
+        grid[i][j] = '0'
+        for di, dj in ((1,0), (-1,0), (0,1), (0,-1)):
+            dfs(i + di, j + dj)
+    ans = 0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == '1':
+                ans += 1
+                dfs(i, j)
+    return ans
+```
+
+
+
+### M207. Course Schedule（课程表）✅
+
+你这个学期必须选修 `numCourses` 门课程，记为 `0` 到 `numCourses - 1` 。
+
+在选修某些课程之前需要一些先修课程。 先修课程按数组 `prerequisites` 给出，其中 `prerequisites[i] = [ai, bi]` ，表示如果要学习课程 `ai` 则 **必须** 先学习课程 `bi` 。
+
+- 例如，先修课程对 `[0, 1]` 表示：想要学习课程 `0` ，你需要先完成课程 `1` 。
+
+请你判断是否可能完成所有课程的学习？如果可以，返回 `true` ；否则，返回 `false` 。
+
+
+
+**思路**：拓扑排序（Kahn 算法）。统计入度，入度为 0 的节点入队。
+
+```python
+def canFinish(numCourses, prerequisites):
+    from collections import deque
+    indeg = [0] * numCourses
+    graph = [[] for _ in range(numCourses)]
+    for u, v in prerequisites:
+        graph[v].append(u)
+        indeg[u] += 1
+    q = deque([i for i in range(numCourses) if indeg[i] == 0])
+    cnt = 0
+    while q:
+        node = q.popleft()
+        cnt += 1
+        for nei in graph[node]:
+            indeg[nei] -= 1
+            if indeg[nei] == 0:
+                q.append(nei)
+    return cnt == numCourses
+```
+
+
+
+### M208. Implement Trie (Prefix Tree)（实现 Trie 前缀树）✅
+
+**[Trie](https://baike.baidu.com/item/字典树/9825209?fr=aladdin)**（发音类似 "try"）或者说 **前缀树** 是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补全和拼写检查。
+
+请你实现 Trie 类：
+
+- `Trie()` 初始化前缀树对象。
+- `void insert(String word)` 向前缀树中插入字符串 `word` 。
+- `boolean search(String word)` 如果字符串 `word` 在前缀树中，返回 `true`（即，在检索之前已经插入）；否则，返回 `false` 。
+- `boolean startsWith(String prefix)` 如果之前已经插入的字符串 `word` 的前缀之一为 `prefix` ，返回 `true` ；否则，返回 `false` 。
+
+
+
+**思路**：每个节点包含一个长度为 26 的子节点数组和一个结束标志。
+
+```python
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for ch in word:
+            if ch not in node.children:
+                node.children[ch] = TrieNode()
+            node = node.children[ch]
+        node.is_end = True
+
+    def search(self, word):
+        node = self.root
+        for ch in word:
+            if ch not in node.children:
+                return False
+            node = node.children[ch]
+        return node.is_end
+
+    def startsWith(self, prefix):
+        node = self.root
+        for ch in prefix:
+            if ch not in node.children:
+                return False
+            node = node.children[ch]
+        return True
+```
+
+
+
+### M994. Rotting Oranges（腐烂的橘子）✅
+
+在给定的 `m x n` 网格 `grid` 中，每个单元格可以有以下三个值之一：
+
+- 值 `0` 代表空单元格；
+- 值 `1` 代表新鲜橘子；
+- 值 `2` 代表腐烂的橘子。
+
+每分钟，腐烂的橘子 **周围 4 个方向上相邻** 的新鲜橘子都会腐烂。
+
+返回 *直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 `-1`* 。
+
+
+
+**思路**：多源 BFS。将所有初始腐烂橘子入队，按层扩散。
+
+```python
+from collections import deque
+
+def orangesRotting(grid):
+    m, n = len(grid), len(grid[0])
+    q = deque()
+    fresh = 0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == 2:
+                q.append((i, j))
+            elif grid[i][j] == 1:
+                fresh += 1
+    if fresh == 0:
+        return 0
+    minutes = 0
+    while q:
+        for _ in range(len(q)):
+            i, j = q.popleft()
+            for di, dj in ((1,0), (-1,0), (0,1), (0,-1)):
+                ni, nj = i + di, j + dj
+                if 0 <= ni < m and 0 <= nj < n and grid[ni][nj] == 1:
+                    grid[ni][nj] = 2
+                    fresh -= 1
+                    q.append((ni, nj))
+        minutes += 1
+    return -1 if fresh else minutes - 1
+```
+
+
+
+## 十、回溯（8）
+
+### 17. Letter Combinations of a Phone Number（电话号码的字母组合）
+
+**思路**：回溯。逐位递归生成所有组合。
+
+```python
+def letterCombinations(digits):
+    if not digits: return []
+    mapping = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+               '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
+    res = []
+    def backtrack(i, cur):
+        if i == len(digits):
+            res.append(cur)
+            return
+        for ch in mapping[digits[i]]:
+            backtrack(i + 1, cur + ch)
+    backtrack(0, '')
+    return res
+```
+
+### 22. Generate Parentheses（括号生成）
+
+**思路**：回溯。只当左括号数 < n 时加左括号，右括号数 < 左括号数时加右括号。
+
+```python
+def generateParenthesis(n):
+    res = []
+    def backtrack(l, r, cur):
+        if l == n and r == n:
+            res.append(cur)
+            return
+        if l < n:
+            backtrack(l + 1, r, cur + '(')
+        if r < l:
+            backtrack(l, r + 1, cur + ')')
+    backtrack(0, 0, '')
+    return res
+```
+
+### 39. Combination Sum（组合总和）
+
+**思路**：回溯。候选可重复使用，每次从当前下标开始尝试。
+
+```python
+def combinationSum(candidates, target):
+    res = []
+    def backtrack(start, cur, total):
+        if total == target:
+            res.append(cur[:])
+            return
+        if total > target: return
+        for i in range(start, len(candidates)):
+            cur.append(candidates[i])
+            backtrack(i, cur, total + candidates[i])
+            cur.pop()
+    backtrack(0, [], 0)
+    return res
+```
+
+### 46. Permutations（全排列）
+
+**思路**：回溯。用 visited 标记已选元素。
+
+```python
+def permute(nums):
+    res = []
+    def backtrack(cur, used):
+        if len(cur) == len(nums):
+            res.append(cur[:])
+            return
+        for i in range(len(nums)):
+            if not used[i]:
+                used[i] = True
+                cur.append(nums[i])
+                backtrack(cur, used)
+                cur.pop()
+                used[i] = False
+    backtrack([], [False] * len(nums))
+    return res
+```
+
+### 78. Subsets（子集）
+
+**思路**：回溯。每个元素选或不选。
+
+```python
+def subsets(nums):
+    res = []
+    def backtrack(start, cur):
+        res.append(cur[:])
+        for i in range(start, len(nums)):
+            cur.append(nums[i])
+            backtrack(i + 1, cur)
+            cur.pop()
+    backtrack(0, [])
+    return res
+```
+
+### 51. N-Queens（N 皇后）
+
+**思路**：回溯。用列、主对角线、副对角线的集合判断是否可放置。
+
+```python
+def solveNQueens(n):
+    res = []
+    cols, diag1, diag2 = set(), set(), set()
+    board = [['.'] * n for _ in range(n)]
+    def backtrack(row):
+        if row == n:
+            res.append([''.join(r) for r in board])
+            return
+        for col in range(n):
+            if col in cols or (row - col) in diag1 or (row + col) in diag2:
+                continue
+            board[row][col] = 'Q'
+            cols.add(col); diag1.add(row - col); diag2.add(row + col)
+            backtrack(row + 1)
+            board[row][col] = '.'
+            cols.remove(col); diag1.remove(row - col); diag2.remove(row + col)
+    backtrack(0)
+    return res
+```
+
+
+
+### M79. Word Search（单词搜索）✅
+
+给定一个 `m x n` 二维字符网格 `board` 和一个字符串单词 `word` 。如果 `word` 存在于网格中，返回 `true` ；否则，返回 `false`。
+
+单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母不允许被重复使用。
+
+
+
+**思路**：DFS + 回溯。遍历每个格子，从该位置出发尝试匹配单词。
+
+```python
+def exist(board, word):
+    m, n = len(board), len(board[0])
+    def dfs(i, j, k):
+        if k == len(word):
+            return True
+        if i < 0 or i >= m or j < 0 or j >= n or board[i][j] != word[k]:
+            return False
+        board[i][j] = '#'
+        for di, dj in ((1,0), (-1,0), (0,1), (0,-1)):
+            if dfs(i + di, j + dj, k + 1):
+                return True
+        board[i][j] = word[k]
+        return False
+    for i in range(m):
+        for j in range(n):
+            if dfs(i, j, 0):
+                return True
+    return False
+```
+
+
+
+### 131. Palindrome Partitioning（分割回文串）
+
+**思路**：回溯。在每步检查当前前缀是否为回文。
+
+```python
+def partition(s):
+    res = []
+    def backtrack(start, cur):
+        if start == len(s):
+            res.append(cur[:])
+            return
+        for end in range(start + 1, len(s) + 1):
+            if s[start:end] == s[start:end][::-1]:
+                cur.append(s[start:end])
+                backtrack(end, cur)
+                cur.pop()
+    backtrack(0, [])
+    return res
+```
+
+
+
+## 十一、二分查找（6）
 
 ### 4. Median of Two Sorted Arrays（寻找两个正序数组的中位数）
 
@@ -1496,7 +2108,7 @@ def findMin(nums):
 
 ---
 
-## 十一、栈
+## 十二、栈（5）
 
 ### 20. Valid Parentheses（有效的括号）
 
@@ -1614,7 +2226,13 @@ def decodeString(s):
     return cur_str
 ```
 
-### 739. Daily Temperatures（每日温度）
+
+
+### M739. Daily Temperatures（每日温度）✅
+
+给定一个整数数组 `temperatures` ，表示每天的温度，返回一个数组 `answer` ，其中 `answer[i]` 是指对于第 `i` 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 `0` 来代替。
+
+
 
 **思路**：单调递减栈（存下标）。遇到更高的温度则出栈并计算结果。
 
@@ -1631,9 +2249,11 @@ def dailyTemperatures(temperatures):
     return ans
 ```
 
----
 
-## 十二、堆
+
+
+
+## 十三、堆（3）
 
 ### 215. Kth Largest Element in an Array（数组中的第 K 个最大元素）
 
@@ -1693,7 +2313,7 @@ def topKFrequent(nums, k):
 
 ---
 
-## 十三、贪心
+## 十三、贪心算法（4）
 
 ### M45. Jump Game II（跳跃游戏 II）✅
 
@@ -1766,7 +2386,15 @@ def maxProfit(prices):
     return ans
 ```
 
-### 763. Partition Labels（划分字母区间）
+### M763. Partition Labels（划分字母区间）✅
+
+给你一个字符串 `s` 。我们要把这个字符串划分为尽可能多的片段，同一字母最多出现在一个片段中。例如，字符串 `"ababcc"` 能够被分为 `["abab", "cc"]`，但类似 `["aba", "bcc"]` 或 `["ab", "ab", "cc"]` 的划分是非法的。
+
+注意，划分结果需要满足：将所有划分结果按顺序连接，得到的字符串仍然是 `s` 。
+
+返回一个表示每个字符串片段的长度的列表。
+
+
 
 **思路**：先记录每个字母最后出现的位置。然后遍历，维护当前段右边界，到达边界时切分。
 
@@ -1783,156 +2411,9 @@ def partitionLabels(s):
     return ans
 ```
 
----
 
-## 十四、回溯
 
-### 17. Letter Combinations of a Phone Number（电话号码的字母组合）
-
-**思路**：回溯。逐位递归生成所有组合。
-
-```python
-def letterCombinations(digits):
-    if not digits: return []
-    mapping = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
-               '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
-    res = []
-    def backtrack(i, cur):
-        if i == len(digits):
-            res.append(cur)
-            return
-        for ch in mapping[digits[i]]:
-            backtrack(i + 1, cur + ch)
-    backtrack(0, '')
-    return res
-```
-
-### 22. Generate Parentheses（括号生成）
-
-**思路**：回溯。只当左括号数 < n 时加左括号，右括号数 < 左括号数时加右括号。
-
-```python
-def generateParenthesis(n):
-    res = []
-    def backtrack(l, r, cur):
-        if l == n and r == n:
-            res.append(cur)
-            return
-        if l < n:
-            backtrack(l + 1, r, cur + '(')
-        if r < l:
-            backtrack(l, r + 1, cur + ')')
-    backtrack(0, 0, '')
-    return res
-```
-
-### 39. Combination Sum（组合总和）
-
-**思路**：回溯。候选可重复使用，每次从当前下标开始尝试。
-
-```python
-def combinationSum(candidates, target):
-    res = []
-    def backtrack(start, cur, total):
-        if total == target:
-            res.append(cur[:])
-            return
-        if total > target: return
-        for i in range(start, len(candidates)):
-            cur.append(candidates[i])
-            backtrack(i, cur, total + candidates[i])
-            cur.pop()
-    backtrack(0, [], 0)
-    return res
-```
-
-### 46. Permutations（全排列）
-
-**思路**：回溯。用 visited 标记已选元素。
-
-```python
-def permute(nums):
-    res = []
-    def backtrack(cur, used):
-        if len(cur) == len(nums):
-            res.append(cur[:])
-            return
-        for i in range(len(nums)):
-            if not used[i]:
-                used[i] = True
-                cur.append(nums[i])
-                backtrack(cur, used)
-                cur.pop()
-                used[i] = False
-    backtrack([], [False] * len(nums))
-    return res
-```
-
-### 78. Subsets（子集）
-
-**思路**：回溯。每个元素选或不选。
-
-```python
-def subsets(nums):
-    res = []
-    def backtrack(start, cur):
-        res.append(cur[:])
-        for i in range(start, len(nums)):
-            cur.append(nums[i])
-            backtrack(i + 1, cur)
-            cur.pop()
-    backtrack(0, [])
-    return res
-```
-
-### 51. N-Queens（N 皇后）
-
-**思路**：回溯。用列、主对角线、副对角线的集合判断是否可放置。
-
-```python
-def solveNQueens(n):
-    res = []
-    cols, diag1, diag2 = set(), set(), set()
-    board = [['.'] * n for _ in range(n)]
-    def backtrack(row):
-        if row == n:
-            res.append([''.join(r) for r in board])
-            return
-        for col in range(n):
-            if col in cols or (row - col) in diag1 or (row + col) in diag2:
-                continue
-            board[row][col] = 'Q'
-            cols.add(col); diag1.add(row - col); diag2.add(row + col)
-            backtrack(row + 1)
-            board[row][col] = '.'
-            cols.remove(col); diag1.remove(row - col); diag2.remove(row + col)
-    backtrack(0)
-    return res
-```
-
-### 131. Palindrome Partitioning（分割回文串）
-
-**思路**：回溯。在每步检查当前前缀是否为回文。
-
-```python
-def partition(s):
-    res = []
-    def backtrack(start, cur):
-        if start == len(s):
-            res.append(cur[:])
-            return
-        for end in range(start + 1, len(s) + 1):
-            if s[start:end] == s[start:end][::-1]:
-                cur.append(s[start:end])
-                backtrack(end, cur)
-                cur.pop()
-    backtrack(0, [])
-    return res
-```
-
----
-
-## 十五、动态规划
+## 十四、动态规划（10）
 
 ### 5. Longest Palindromic Substring（最长回文子串）
 
@@ -2317,80 +2798,21 @@ def longestCommonSubsequence(text1, text2):
     return dp[m][n]
 ```
 
----
 
-## 十六、图论
 
-### 207. Course Schedule（课程表）
-
-**思路**：拓扑排序（Kahn 算法）。统计入度，入度为 0 的节点入队。
-
-```python
-def canFinish(numCourses, prerequisites):
-    from collections import deque
-    indeg = [0] * numCourses
-    graph = [[] for _ in range(numCourses)]
-    for u, v in prerequisites:
-        graph[v].append(u)
-        indeg[u] += 1
-    q = deque([i for i in range(numCourses) if indeg[i] == 0])
-    cnt = 0
-    while q:
-        node = q.popleft()
-        cnt += 1
-        for nei in graph[node]:
-            indeg[nei] -= 1
-            if indeg[nei] == 0:
-                q.append(nei)
-    return cnt == numCourses
-```
-
----
-
-## 十七、设计/其他
-
-### 208. Implement Trie (Prefix Tree)（实现 Trie 前缀树）
-
-**思路**：每个节点包含一个长度为 26 的子节点数组和一个结束标志。
-
-```python
-class TrieNode:
-    def __init__(self):
-        self.children = {}
-        self.is_end = False
-
-class Trie:
-    def __init__(self):
-        self.root = TrieNode()
-
-    def insert(self, word):
-        node = self.root
-        for ch in word:
-            if ch not in node.children:
-                node.children[ch] = TrieNode()
-            node = node.children[ch]
-        node.is_end = True
-
-    def search(self, word):
-        node = self.root
-        for ch in word:
-            if ch not in node.children:
-                return False
-            node = node.children[ch]
-        return node.is_end
-
-    def startsWith(self, prefix):
-        node = self.root
-        for ch in prefix:
-            if ch not in node.children:
-                return False
-            node = node.children[ch]
-        return True
-```
+## 十五、多维动态规划（5）
 
 
 
-## 十八、技巧
+
+
+
+
+
+
+
+
+## 十六、技巧（5）
 
 ### 31. Next Permutation（下一个排列）✅
 
@@ -2441,6 +2863,35 @@ def nextPermutation(nums):
 
 
 
+### M75. Sort Colors（颜色分类）✅
+
+给定一个包含红色、白色和蓝色、共 `n` 个元素的数组 `nums` ，**[原地](https://baike.baidu.com/item/原地算法)** 对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。
+
+我们使用整数 `0`、 `1` 和 `2` 分别表示红色、白色和蓝色。
+
+必须在不使用库内置的 sort 函数的情况下解决这个问题。
+
+
+
+**思路**：三指针（荷兰国旗问题）。用 `p0` 指向 0 的右边界，`p2` 指向 2 的左边界，`i` 遍历数组。
+
+```python
+def sortColors(nums):
+    p0, i, p2 = 0, 0, len(nums) - 1
+    while i <= p2:
+        if nums[i] == 0:
+            nums[i], nums[p0] = nums[p0], nums[i]
+            p0 += 1
+            i += 1
+        elif nums[i] == 2:
+            nums[i], nums[p2] = nums[p2], nums[i]
+            p2 -= 1
+        else:
+            i += 1
+```
+
+
+
 ### E136. Single Number（只出现一次的数字）✅
 
 给你一个 **非空** 整数数组 `nums` ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
@@ -2457,6 +2908,33 @@ def singleNumber(nums):
     for num in nums:
         res ^= num
     return res
+```
+
+
+
+### E169. Majority Element（多数元素）✅
+
+给定一个大小为 `n` 的数组 `nums` ，返回其中的多数元素。多数元素是指在数组中出现次数 **大于** `⌊ n/2 ⌋` 的元素。
+
+你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+
+**进阶：**尝试设计时间复杂度为 O(n)、空间复杂度为 O(1) 的算法解决此问题。
+
+
+
+**思路**：Boyer-Moore 投票算法。计数，遇到相同数 +1，不同 -1，减到 0 就换候选。
+
+```python
+def majorityElement(nums):
+    candidate, count = nums[0], 1
+    for num in nums[1:]:
+        if count == 0:
+            candidate, count = num, 1
+        elif num == candidate:
+            count += 1
+        else:
+            count -= 1
+    return candidate
 ```
 
 
