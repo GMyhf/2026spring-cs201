@@ -2623,33 +2623,90 @@ def partition(s):
 
 ## 十一、二分查找（binary search, 6）
 
-### 4. Median of Two Sorted Arrays（寻找两个正序数组的中位数）
+### T4. Median of Two Sorted Arrays（寻找两个正序数组的中位数）✅
+
+给定两个大小分别为 `m` 和 `n` 的正序（从小到大）数组 `nums1` 和 `nums2`。请你找出并返回这两个正序数组的 **中位数** 。
+
+算法的时间复杂度应该为 `O(log (m+n))` 。
+
+
 
 **思路**：二分较短的数组，保证两个数组的前半部分元素个数相等。
 
 ```python
 def findMedianSortedArrays(nums1, nums2):
+    # 确保 nums1 是较短的数组
+    # 这样可以保证二分查找的时间复杂度为 O(log(min(m, n)))
+    # 同时也保证了 j = (m + n + 1) // 2 - i 的计算结果不会为负数
     if len(nums1) > len(nums2):
         nums1, nums2 = nums2, nums1
+        
     m, n = len(nums1), len(nums2)
+    
+    # 在较短数组 nums1 的索引范围 [0, m] 内进行二分查找
     lo, hi = 0, m
+    
     while lo <= hi:
+        # i 为 nums1 的划分位置
         i = (lo + hi) // 2
+        # j 为 nums2 的划分位置，保证左右两边的总元素个数平衡
         j = (m + n + 1) // 2 - i
+        
+        # 获取划分点两侧的元素值，并处理边界情况：
+        # 如果划分点在数组最左侧（i==0 或 j==0），左侧值设为负无穷
+        # 如果划分点在数组最右侧（i==m 或 j==n），右侧值设为正无穷
         left1 = nums1[i - 1] if i > 0 else -float('inf')
         right1 = nums1[i] if i < m else float('inf')
+        
         left2 = nums2[j - 1] if j > 0 else -float('inf')
         right2 = nums2[j] if j < n else float('inf')
+        
+        # 验证当前划分是否符合中位数条件
         if left1 <= right2 and left2 <= right1:
+            # 情况 A: 总元素个数为偶数
+            # 中位数是左边最大值和右边最小值的平均数
             if (m + n) % 2 == 0:
                 return (max(left1, left2) + min(right1, right2)) / 2
+            # 情况 B: 总元素个数为奇数
+            # 中位数是左半部分的最大值
             else:
                 return max(left1, left2)
+                
+        # 如果 nums1 左边的元素大于 nums2 右边的元素，说明 i 偏大，需要向左移动
         elif left1 > right2:
             hi = i - 1
+        # 如果 nums2 左边的元素大于 nums1 右边的元素，说明 i 偏小，需要向右移动
         else:
             lo = i + 1
 ```
+
+> 通过**二分查找（Binary Search）**在 $O(\log(\min(m, n)))$ 的时间复杂度内找到两个渐增排序数组的中位数。
+>
+> **1. 算法思路解读**
+>
+> 中位数的本质是将一个集合划分为两个等长的子集，且左半部分的所有元素都小于或等于右半部分的所有元素。
+>
+> 对于两个已排序数组 `nums1` 和 `nums2`，我们的目标是找到两个划分点 `i` 和 `j`，将它们分别切成两部分：
+> * `nums1` 分为：`nums1[0 ... i-1]` | `nums1[i ... m-1]`
+> * `nums2` 分为：`nums2[0 ... j-1]` | `nums2[j ... n-1]`
+>
+> 为了使划分满足中位数的定义，我们需要满足两个条件：
+> 1. **左右两边元素个数相等（或左边比右边多一个）**： 
+>    $i + j = (m + n + 1) // 2$ 
+>    这意味着只要确定了 `i`，`j` 的位置也就随之确定了。
+> 2. **左半部分的最大值小于等于右半部分的最小值**：
+>    $nums1[i-1] \le nums2[j]$ 且 $nums2[j-1] \le nums1[i]$。
+>
+> 由于两数组已排序，我们只需在较短的数组（假设为 `nums1`）上对 `i` 进行二分查找。如果发现不满足条件，则调整二分查找的边界：
+> * 如果 $nums1[i-1] > nums2[j]$：说明 `nums1` 左边分过去的元素太大了，`i` 需要向左移动（减小）。
+> * 如果 $nums2[j-1] > nums1[i]$：说明 `nums1` 左边分过去的元素太小了，`i` 需要向右移动（增大）。
+>
+> **3. 复杂度分析**
+>
+> * **时间复杂度**：$O(\log(\min(m, n)))$。我们只在较短的数组上进行二分查找，查找范围的大小为 $m$（其中 $m \le n$），因此折半查找的次数为 $\log(m)$。
+> * **空间复杂度**：$O(1)$。算法只使用了常数个指针和变量，没有使用额外的存储空间。
+
+
 
 ### M33. Search in Rotated Sorted Array（搜索旋转排序数组）✅
 
@@ -2692,7 +2749,15 @@ def search(nums, target):
 
 
 
-### 34. Find First and Last Position of Element in Sorted Array（在排序数组中查找元素的第一个和最后一个位置）
+### M34. Find First and Last Position of Element in Sorted Array（在排序数组中查找元素的第一个和最后一个位置）✅
+
+给你一个按照非递减顺序排列的整数数组 `nums`，和一个目标值 `target`。请你找出给定目标值在数组中的开始位置和结束位置。
+
+如果数组中不存在目标值 `target`，返回 `[-1, -1]`。
+
+你必须设计并实现时间复杂度为 `O(log n)` 的算法解决此问题。
+
+
 
 **思路**：二分查找左边界和右边界。
 
@@ -2711,9 +2776,67 @@ def searchRange(nums, target):
     if l == n or nums[l] != target: return [-1, -1]
     r = bisect(0, n - 1, False) - 1
     return [l, r]
+def searchRange(nums, target):
+    # 定义一个辅助的二分查找函数
+    # lo: 查找区间左起点，hi: 查找区间右终点
+    # left_bound: 布尔值，若为 True 则寻找左边界；若为 False 则寻找右边界的右邻居
+    def bisect(lo, hi, left_bound):
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            # 情况1：当前值大于 target 
+            # 情况2：当前值等于 target，且我们正在寻找左边界 (left_bound 为 True)
+            # 在这两种情况下，我们需要往左半部分继续寻找，因此收缩右指针 hi
+            if nums[mid] > target or (left_bound and nums[mid] == target):
+                hi = mid - 1
+            # 否则（当前值小于 target，或者当前值等于 target 但我们在寻找右边界）
+            # 我们需要往右半部分继续寻找，因此增大左指针 lo
+            else:
+                lo = mid + 1
+        # 循环结束时，lo 指针指向符合条件的目标索引
+        return lo
+
+    n = len(nums)
+    
+    # 1. 寻找左边界 (第一个等于 target 的位置)
+    l = bisect(0, n - 1, True)
+    
+    # 如果左边界索引越界（l == n），或者找到的位置对应的值不是 target，
+    # 说明数组中不存在目标值，直接返回 [-1, -1]
+    if l == n or nums[l] != target: 
+        return [-1, -1]
+    
+    # 2. 寻找右边界
+    # bisect(0, n - 1, False) 返回的是第一个大于 target 的元素索引
+    # 该索引减去 1，即为 target 最后一次出现的位置
+    r = bisect(0, n - 1, False) - 1
+    
+    return [l, r]
 ```
 
-### 35. Search Insert Position（搜索插入位置）
+> 这道题的核心要求是在一个排好序的数组中，以 $O(\log n)$ 的时间复杂度找到目标值 `target` 的起始和结束位置。这表明我们需要使用**二分查找（Binary Search）**。
+>
+> **核心思路解读**
+>
+> 这段代码通过一个巧妙的辅助函数 `bisect` 实现了两种查找逻辑：
+> 1. **寻找左边界（起始位置）**：
+>    当 `left_bound=True` 时，如果遇到 `nums[mid] == target`，不停止查找，而是继续向左收缩区间（即令 `hi = mid - 1`）。这样，循环结束后返回的 `lo` 就是 `target` 第一次出现的位置。
+> 2. **寻找右边界的下一个位置**：
+>    当 `left_bound=False` 时，如果遇到 `nums[mid] == target`，向右收缩区间（即令 `lo = mid + 1`）。循环结束后返回的 `lo` 是**第一个大于 `target` 的元素的位置**。因此，`lo - 1` 就是 `target` 最后一次出现的位置。
+>
+> **复杂度分析**
+>
+> * **时间复杂度**：$O(\log n)$。我们调用了两次二分查找，每次查找的时间复杂度均为 $O(\log n)$，因此总体时间复杂度依然是 $O(\log n)$，符合题目要求。
+> * **空间复杂度**：$O(1)$。算法只使用了常数个指针变量（`lo`, `hi`, `mid`, `l`, `r`），未消耗额外的内存空间。
+
+
+
+### E35. Search Insert Position（搜索插入位置）✅
+
+给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+
+请必须使用时间复杂度为 `O(log n)` 的算法。
+
+
 
 **思路**：标准二分查找。
 
@@ -2729,7 +2852,18 @@ def searchInsert(nums, target):
     return l
 ```
 
-### 74. Search a 2D Matrix（搜索二维矩阵）
+
+
+### M74. Search a 2D Matrix（搜索二维矩阵）✅
+
+给你一个满足下述两条属性的 `m x n` 整数矩阵：
+
+- 每行中的整数从左到右按非严格递增顺序排列。
+- 每行的第一个整数大于前一行的最后一个整数。
+
+给你一个整数 `target` ，如果 `target` 在矩阵中，返回 `true` ；否则，返回 `false` 。
+
+
 
 **思路**：将二维矩阵拉直成一维数组进行二分。
 
@@ -2746,7 +2880,22 @@ def searchMatrix(matrix, target):
     return False
 ```
 
-### 153. Find Minimum in Rotated Sorted Array（寻找旋转排序数组中的最小值）
+
+
+### M153. Find Minimum in Rotated Sorted Array（寻找旋转排序数组中的最小值）✅
+
+已知一个长度为 `n` 的数组，预先按照升序排列，经由 `1` 到 `n` 次 **旋转** 后，得到输入数组。例如，原数组 `nums = [0,1,2,4,5,6,7]` 在变化后可能得到：
+
+- 若旋转 `4` 次，则可以得到 `[4,5,6,7,0,1,2]`
+- 若旋转 `7` 次，则可以得到 `[0,1,2,4,5,6,7]`
+
+注意，数组 `[a[0], a[1], a[2], ..., a[n-1]]` **旋转一次** 的结果为数组 `[a[n-1], a[0], a[1], a[2], ..., a[n-2]]` 。
+
+给你一个元素值 **互不相同** 的数组 `nums` ，它原来是一个升序排列的数组，并按上述情形进行了多次旋转。请你找出并返回数组中的 **最小元素** 。
+
+你必须设计一个时间复杂度为 `O(log n)` 的算法解决此问题。
+
+
 
 **思路**：二分。如果 `nums[mid] > nums[r]`，最小值在右边；否则在左边（含 mid）。
 
@@ -2755,18 +2904,28 @@ def findMin(nums):
     l, r = 0, len(nums) - 1
     while l < r:
         mid = (l + r) // 2
-        if nums[mid] > nums[r]:
+        if nums[mid] > nums[r]:	# 如果中间值大于右边界值，说明最小值在右边
             l = mid + 1
         else:
-            r = mid
-    return nums[l]
+            r = mid	# 否则最小元素在左边
+    return nums[l]	# 最后left和right会指向最小元素
 ```
 
----
+
 
 ## 十二、栈（stack, 5）
 
-### 20. Valid Parentheses（有效的括号）
+### E20. Valid Parentheses（有效的括号）✅
+
+给定一个只包括 `'('`，`')'`，`'{'`，`'}'`，`'['`，`']'` 的字符串 `s` ，判断字符串是否有效。
+
+有效字符串需满足：
+
+1. 左括号必须用相同类型的右括号闭合。
+2. 左括号必须以正确的顺序闭合。
+3. 每个右括号都有一个对应的相同类型的左括号。
+
+
 
 **思路**：用栈匹配。遇到左括号入栈，遇到右括号检查栈顶是否匹配。
 
@@ -2783,6 +2942,8 @@ def isValid(s):
             stack.append(ch)
     return not stack
 ```
+
+
 
 ### T32. Longest Valid Parentheses（最长有效括号）✅
 
@@ -2967,7 +3128,19 @@ class MinStack:
 
 
 
-### 394. Decode String（字符串解码）
+### M394. Decode String（字符串解码）✅
+
+给定一个经过编码的字符串，返回它解码后的字符串。
+
+编码规则为: `k[encoded_string]`，表示其中方括号内部的 `encoded_string` 正好重复 `k` 次。注意 `k` 保证为正整数。
+
+你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+
+此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 `k` ，例如不会出现像 `3a` 或 `2[4]` 的输入。
+
+测试用例保证输出的长度不会超过 `10^5`。
+
+
 
 **思路**：用栈存储数字和当前字符串。遇到 '[' 入栈，遇到 ']' 出栈并重复拼接。
 
@@ -3019,7 +3192,15 @@ def dailyTemperatures(temperatures):
 
 ## 十三、堆（heap, 3）
 
-### 215. Kth Largest Element in an Array（数组中的第 K 个最大元素）
+### M215. Kth Largest Element in an Array（数组中的第 K 个最大元素）✅
+
+给定整数数组 `nums` 和整数 `k`，请返回数组中第 `k` 个最大的元素。
+
+请注意，你需要找的是数组排序后的第 `k` 个最大的元素，而不是第 `k` 个不同的元素。
+
+你必须设计并实现时间复杂度为 `O(n)` 的算法解决此问题。
+
+
 
 **思路**：快速选择（Quick Select）或最小堆。
 
@@ -3034,7 +3215,13 @@ def findKthLargest(nums, k):
     return heap[0]
 ```
 
-### 295. Find Median from Data Stream（数据流的中位数）
+
+
+### T295. Find Median from Data Stream（数据流的中位数）✅
+
+**中位数**是有序整数列表中的中间值。如果列表的大小是偶数，则没有中间值，中位数是两个中间值的平均值。
+
+
 
 **思路**：一个大根堆存较小一半，一个小根堆存较大一半。保持两堆平衡。
 
@@ -3043,22 +3230,48 @@ import heapq
 
 class MedianFinder:
     def __init__(self):
-        self.small = []   # 大根堆（存负数）
-        self.large = []   # 小根堆
+        # small 是一个大根堆，用于存储较小的一半元素。
+        # 在 Python 中通过存储负数来模拟大根堆。
+        self.small = []   
+        
+        # large 是一个小根堆，用于存储较大的一半元素。
+        self.large = []   
 
-    def addNum(self, num):
+    def addNum(self, num: int) -> None:
+        # 步骤 1：先将新元素放入大根堆 small 中。
+        # 因为 Python 的 heapq 是小根堆，所以放入相反数 -num。
         heapq.heappush(self.small, -num)
+        
+        # 步骤 2：为了保证 small 中的元素始终小于或等于 large 中的元素，
+        # 我们将 small 中的最大值（即堆顶）弹出，并放入小根堆 large 中。
+        # 注意：从 small 弹出的值是负数，取反后变为正数放入 large。
         heapq.heappush(self.large, -heapq.heappop(self.small))
+        
+        # 步骤 3：平衡两个堆的大小。
+        # 我们的目标是让 small 的元素个数大于或等于 large 的元素个数，
+        # 且两者数量差不超过 1（即 len(small) >= len(large)）。
+        # 如果 large 的元素比 small 多了，就从 large 中弹出一个最小值放入 small 中。
         if len(self.large) > len(self.small):
             heapq.heappush(self.small, -heapq.heappop(self.large))
 
-    def findMedian(self):
+    def findMedian(self) -> float:
+        # 如果 small 的元素个数多于 large，说明总元素个数为奇数。
+        # 此时中位数就是 small 的堆顶元素（取反恢复为正数）。
         if len(self.small) > len(self.large):
             return -self.small[0]
+        
+        # 如果两个堆的元素个数相等，说明总元素个数为偶数。
+        # 此时中位数是 small 的堆顶（最大值）与 large 的堆顶（最小值）的平均值。
         return (-self.small[0] + self.large[0]) / 2
 ```
 
-### 347. Top K Frequent Elements（前 K 个高频元素）
+
+
+### M347. Top K Frequent Elements（前 K 个高频元素）✅
+
+给你一个整数数组 `nums` 和一个整数 `k` ，请你返回其中出现频率前 `k` 高的元素。你可以按 **任意顺序** 返回答案。
+
+
 
 **思路**：先用哈希表统计频率，再用最小堆维护前 k 高频。
 
@@ -3075,7 +3288,7 @@ def topKFrequent(nums, k):
     return [num for _, num in heap]
 ```
 
----
+
 
 ## 十三、贪心算法（greedy, 4）
 
@@ -3272,19 +3485,37 @@ def generate(numRows):
 
 
 
-### 139. Word Break（单词拆分）
+### M139. Word Break（单词拆分）✅
+
+给你一个字符串 `s` 和一个字符串列表 `wordDict` 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 `s` 则返回 `true`。
+
+**注意：**不要求字典中出现的单词全部都使用，并且字典中的单词可以重复使用。
+
+
 
 **思路**：`dp[i]` 表示 s[:i] 是否能被拆分。枚举拆分点 j，若 `dp[j]` 且 `s[j:i] in wordDict` 则 `dp[i] = True`。
 
 ```python
-def wordBreak(s, wordDict):
+def wordBreak(s: str, wordDict: list[str]) -> bool:
+    # 将列表转换为集合（Set），将查找操作的时间复杂度从 O(k) 降低到 O(1)
     words = set(wordDict)
+    
+    # dp[i] 表示 s 的前 i 个字符 s[:i] 是否能被拆分
+    # 初始化 dp 数组，dp[0] 为 True（空字符串），其余初始化为 False
     dp = [True] + [False] * len(s)
+    
+    # 遍历子串的结束位置 i（从 1 到 len(s)）
     for i in range(1, len(s) + 1):
+        # 遍历分割点 j（从 0 到 i-1）
         for j in range(i):
+            # 如果 s[:j] 可以被拆分（dp[j] 为 True）
+            # 并且剩余部分 s[j:i] 是一个在字典中的单词
             if dp[j] and s[j:i] in words:
                 dp[i] = True
+                # 只要找到一种可行的分割方式，即可确定 dp[i] = True，无需继续尝试其他分割点
                 break
+                
+    # 返回整个字符串 s 是否可以被拆分
     return dp[-1]
 ```
 
@@ -3451,22 +3682,72 @@ def coinChange(coins, amount):
 
 
 
-### 416. Partition Equal Subset Sum（分割等和子集）
+### M416. Partition Equal Subset Sum（分割等和子集）✅
+
+给你一个 **只包含正整数** 的 **非空** 数组 `nums` 。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。
+
+
 
 **思路**：0-1 背包问题。`dp[i]` 表示是否能够凑出和为 i 的子集。
 
 ```python
 def canPartition(nums):
     total = sum(nums)
-    if total % 2: return False
+    
+    # 如果数组总和是奇数，无法平分成两个整数和，直接返回 False
+    if total % 2: 
+        return False
+    
+    # 目标和为总和的一半
     target = total // 2
+    
+    # dp[i] 表示是否能够凑出和为 i 的子集
+    # 初始化大小为 target + 1 的数组，默认都为 False
     dp = [False] * (target + 1)
+    
+    # 基础情况：凑出和为 0 是可以实现的（即不选择任何元素）
     dp[0] = True
+    
+    # 遍历每一个数字
     for num in nums:
+        # 逆序遍历背包容量，从 target 到 num 结束
+        # 逆序的原因：为了防止同一个数字被重复使用。
+        # 如果正序遍历，dp[i] 依赖的 dp[i-num] 可能是当前轮次刚刚更新过的值（即同一个 num 被计算了多次）。
         for i in range(target, num - 1, -1):
+            # 状态转移方程：
+            # 不选择当前的 num：维持原状态 dp[i]
+            # 选择当前的 num：取决于之前能否凑出 i - num，即 dp[i - num]
             dp[i] = dp[i] or dp[i - num]
+            
+    # 返回是否能凑出目标和 target
     return dp[target]
 ```
+
+> **分割等和子集**问题可以转化为标准的 **0-1 背包问题**。
+>
+> 1. **等和切分的要求**：要将数组分割成两个和相等的子集，意味着每个子集的和必须等于整个数组总和的一半（记为 `target`）。
+>    * 如果数组的总和 `total` 是奇数，显然无法平分为两个整数和，直接返回 `False`。
+>    * 如果 `total` 是偶数，我们的目标就是从数组中挑选出若干个数字，使其累加和恰好等于 `target = total // 2`。
+> 2. **0-1 背包的对应关系**：
+>    * 背包的容量：`target`。
+>    * 物品：数组中的每个数字 `num`，每个数字只能使用一次（即 0-1 背包）。
+>    * 状态定义：`dp[i]` 表示是否可以挑选出若干个数字，使其和恰好为 `i`（布尔值）。
+>
+> **关键点解析**
+>
+> 1. **为什么从后往前遍历 `i`？**
+>    在 0-1 背包问题中，如果使用一维数组进行空间优化，必须采用**逆序**遍历。
+>    例如，假设 `num = 3`：
+>    * 如果正序更新 `dp[3] = dp[3] or dp[0]`（变为 `True`），接着更新 `dp[6] = dp[6] or dp[3]`。此时 `dp[6]` 会因为刚刚被更新为 `True`的 `dp[3]` 而变成 `True`。这相当于数字 `3` 被使用了两次（$3 + 3 = 6$）。
+>    * 如果逆序更新，在计算 `dp[6]` 时，使用的是上一轮尚未被 `num = 3` 污染的 `dp[3]` 值，从而保证每个数字只被使用一次。
+>
+> 2. **边界条件优化 `num - 1`**：
+>    第二层循环的下界是 `num - 1`（即循环到 `num` 停止）。因为当背包容量 `i < num` 时，当前数字 `num` 太大，无法放入容量为 `i` 的背包中，因此 `dp[i]` 的状态不会发生改变，无需更新。
+>
+> **复杂度分析**
+>
+> * **时间复杂度**：$O(n \times \text{target})$，其中 $n$ 是数组 `nums` 的长度，$\text{target}$ 是整个数组元素和的一半。外层循环执行 $n$ 次，内层循环执行 $\text{target}$ 次。
+> * **空间复杂度**：$O(\text{target})$，只需要一个大小为 $\text{target} + 1$ 的一维数组来存储中间状态。
 
 
 
