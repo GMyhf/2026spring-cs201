@@ -1,6 +1,6 @@
 # LeetCode Top 100 Liked 题解
 
-*Updated 2026-05-26 01:15 GMT+8*
+*Updated 2026-05-26 09:11 GMT+8*
  *Compiled by Hongfei Yan (2026 Spring)*
 
 
@@ -11,7 +11,7 @@
 
 
 
-## 一、哈希（3）
+## 一、哈希（hash, 3）
 
 ### E1. Two Sum（两数之和）✅
 
@@ -82,7 +82,7 @@ def longestConsecutive(nums):
 
 
 
-## 二、双指针（4）
+## 二、双指针（two pointers, 4）
 
 ### M11. Container With Most Water（盛最多水的容器）✅
 
@@ -210,7 +210,7 @@ def moveZeroes(nums):
 
 
 
-## 三、滑动窗口（2）
+## 三、滑动窗口（sliding window, 2）
 
 ### M3. Longest Substring Without Repeating Characters（无重复字符的最长子串）✅
 
@@ -264,7 +264,7 @@ def findAnagrams(s, p):
 
 ---
 
-## 四、子串（3）
+## 四、子串（substring, 3）
 
 ### T76. Minimum Window Substring（最小覆盖子串）✅
 
@@ -376,7 +376,7 @@ if __name__ == "__main__":
 
 
 
-## 五、普通数组（5）
+## 五、普通数组（array, 5）
 
 ### T41. First Missing Positive（缺失的第一个正数）✅
 
@@ -556,7 +556,7 @@ def productExceptSelf(nums):
 
 
 
-## 六、矩阵（4）
+## 六、矩阵（matrix, 4）
 
 ### M48. Rotate Image（旋转图像）✅
 
@@ -797,7 +797,7 @@ def searchMatrix(matrix, target):
 
 
 
-## 七、链表（14）
+## 七、链表（linked list, 14）
 
 ### M2. Add Two Numbers（两数相加）✅
 
@@ -1643,9 +1643,13 @@ def isPalindrome(head):
 
 
 
-## 八、二叉树（15）
+## 八、二叉树（binary tree, 15）
 
-### 94. Binary Tree Inorder Traversal（二叉树的中序遍历）
+### E94. Binary Tree Inorder Traversal（二叉树的中序遍历）✅
+
+给定一个二叉树的根节点 `root` ，返回 *它的 **中序** 遍历* 。
+
+
 
 **思路**：递归（左-根-右）或栈模拟。
 
@@ -1661,7 +1665,13 @@ def inorderTraversal(root):
     return res
 ```
 
-### 101. Symmetric Tree（对称二叉树）
+
+
+### E101. Symmetric Tree（对称二叉树）✅
+
+给你一个二叉树的根节点 `root` ， 检查它是否轴对称。
+
+
 
 **思路**：递归比较左子树的左孩子与右子树的右孩子，左子树的右孩子与右子树的左孩子。
 
@@ -1674,7 +1684,11 @@ def isSymmetric(root):
     return check(root.left, root.right) if root else True
 ```
 
-### 102. Binary Tree Level Order Traversal（二叉树的层序遍历）
+### M102. Binary Tree Level Order Traversal（二叉树的层序遍历）✅
+
+给你二叉树的根节点 `root` ，返回其节点值的 **层序遍历** 。 （即逐层地，从左到右访问所有节点）。
+
+
 
 **思路**：BFS 用队列，每层一次性处理全部节点。
 
@@ -1695,7 +1709,15 @@ def levelOrder(root):
     return res
 ```
 
-### 104. Maximum Depth of Binary Tree（二叉树的最大深度）
+
+
+### E104. Maximum Depth of Binary Tree（二叉树的最大深度）✅
+
+给定一个二叉树 `root` ，返回其最大深度。
+
+二叉树的 **最大深度** 是指从根节点到最远叶子节点的最长路径上的节点数。
+
+
 
 **思路**：递归求左右子树最大深度 + 1。
 
@@ -1705,25 +1727,122 @@ def maxDepth(root):
     return 1 + max(maxDepth(root.left), maxDepth(root.right))
 ```
 
-### 105. Construct Binary Tree from Preorder and Inorder Traversal（从前序与中序遍历序列构造二叉树）
+
+
+### M105. Construct Binary Tree from Preorder and Inorder Traversal（从前序与中序遍历序列构造二叉树）✅
+
+给定两个整数数组 `preorder` 和 `inorder` ，其中 `preorder` 是二叉树的**先序遍历**， `inorder` 是同一棵树的**中序遍历**，请构造二叉树并返回其根节点。
+
+
 
 **思路**：前序第一个为根，在中序中找到根的位置，左右部分递归构建。
 
 ```python
-def buildTree(preorder, inorder):
-    idx_map = {val: i for i, val in enumerate(inorder)}
-    def build(pl, pr, il, ir):
-        if pl > pr: return None
-        root = TreeNode(preorder[pl])
-        i = idx_map[root.val]
-        left_len = i - il
-        root.left = build(pl + 1, pl + left_len, il, i - 1)
-        root.right = build(pl + left_len + 1, pr, i + 1, ir)
-        return root
-    return build(0, len(preorder) - 1, 0, len(inorder) - 1)
+from typing import List, Optional
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+        # 思路：前序第一个为根，在中序中找到根的位置，左右部分递归构建。
+
+        # 缓存中序遍历的值与索引的关系，避免每次重复查找
+        idx_map = {val: i for i, val in enumerate(inorder)}
+
+        # pl, pr: 当前子树在前序遍历中的左右边界
+        # il, ir: 当前子树在中序遍历中的左右边界
+        def build(pl, pr, il, ir):
+            # 递归终止条件
+            if pl > pr:
+                return None
+
+            # 前序遍历的第一个元素为当前子树的根节点
+            root = TreeNode(preorder[pl])
+
+            # 找到根节点在中序遍历中的位置
+            i = idx_map[root.val]
+
+            # 计算左子树的长度
+            left_len = i - il
+
+            # 递归构建左子树：
+            # 前序遍历区间缩小为：[pl + 1, pl + left_len]
+            # 中序遍历区间缩小为：[il, i - 1]
+            root.left = build(pl + 1, pl + left_len, il, i - 1)
+
+            # 递归构建右子树：
+            # 前序遍历区间缩小为：[pl + left_len + 1, pr]
+            # 中序遍历区间缩小为：[i + 1, ir]
+            root.right = build(pl + left_len + 1, pr, i + 1, ir)
+
+            return root
+
+        return build(0, len(preorder) - 1, 0, len(inorder) - 1)
 ```
 
-### 108. Convert Sorted Array to Binary Search Tree（将有序数组转换为二叉搜索树）
+
+
+```python
+from typing import List, Optional
+
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+        # 边界情况：如果前序或中序遍历序列为空，说明当前子树为空，返回 None
+        if not preorder or not inorder:
+            return None
+
+        # 前序遍历的第一个元素即为当前子树的根节点值
+        root_val = preorder[0]
+        root = TreeNode(root_val)
+
+        # 在中序遍历中定位根节点的位置，用以划分左右子树
+        root_index = inorder.index(root_val)
+
+        # 递归构建左子树和右子树
+        # 1. 左子树：
+        #    - 前序序列取根节点后的 root_index 个元素: preorder[1 : 1 + root_index]
+        #    - 中序序列取根节点左侧的所有元素: inorder[:root_index]
+        root.left = self.buildTree(preorder[1:1 + root_index], inorder[:root_index])
+
+        # 2. 右子树：
+        #    - 前序序列取剩余部分: preorder[1 + root_index:]
+        #    - 中序序列取根节点右侧的所有元素: inorder[root_index + 1:]
+        root.right = self.buildTree(preorder[1 + root_index:], inorder[root_index + 1:])
+
+        # 返回当前构建好的子树根节点
+        return root
+
+
+if __name__ == '__main__':
+    solution = Solution()
+    # 测试样例数据
+    preorder = [3, 9, 20, 15, 7]
+    inorder = [9, 3, 15, 20, 7]
+
+    # 构建二叉树
+    root = solution.buildTree(preorder, inorder)
+    # 输出的二叉树结构对应为: [3, 9, 20, None, None, 15, 7]
+```
+
+
+
+### E108. Convert Sorted Array to Binary Search Tree（将有序数组转换为二叉搜索树）✅
+
+给你一个整数数组 `nums` ，其中元素已经按 **升序** 排列，请你将其转换为一棵 平衡 二叉搜索树。
+
+
 
 **思路**：取中间元素为根，左右递归构建。
 
@@ -1738,6 +1857,8 @@ def sortedArrayToBST(nums):
         return root
     return build(0, len(nums) - 1)
 ```
+
+
 
 ### M114. Flatten Binary Tree to Linked List（二叉树展开为链表）✅
 
@@ -1777,7 +1898,15 @@ def flatten(root):
 
 
 
-### 124. Binary Tree Maximum Path Sum（二叉树中的最大路径和）
+### T124. Binary Tree Maximum Path Sum（二叉树中的最大路径和）✅
+
+二叉树中的 **路径** 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中 **至多出现一次** 。该路径 **至少包含一个** 节点，且不一定经过根节点。
+
+**路径和** 是路径中各节点值的总和。
+
+给你一个二叉树的根节点 `root` ，返回其 **最大路径和** 。
+
+
 
 **思路**：后序遍历。对每个节点，计算经过该节点的最大路径和，同时返回以该节点为端点的最大单边和。
 
@@ -1790,12 +1919,18 @@ def maxPathSum(root):
         left = max(dfs(node.left), 0)
         right = max(dfs(node.right), 0)
         ans = max(ans, left + right + node.val)
-        return node.val + max(left, right)
+        return node.val + max(left, right) # 返回该节点能提供给父节点的最大增益
     dfs(root)
     return ans
 ```
 
-### 199. Binary Tree Right Side View（二叉树的右视图）
+
+
+### M199. Binary Tree Right Side View（二叉树的右视图）✅
+
+给定一个二叉树的 **根节点** `root`，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+
+
 
 **思路**：层序遍历，每层取最右节点。
 
@@ -1814,7 +1949,13 @@ def rightSideView(root):
     return res
 ```
 
-### 226. Invert Binary Tree（翻转二叉树）
+
+
+### E226. Invert Binary Tree（翻转二叉树）✅
+
+给你一棵二叉树的根节点 `root` ，翻转这棵二叉树，并返回其根节点。
+
+
 
 **思路**：递归交换左右子树。
 
@@ -1825,43 +1966,142 @@ def invertTree(root):
     return root
 ```
 
-### 236. Lowest Common Ancestor of a Binary Tree（二叉树的最近公共祖先）
+
+
+### M236. Lowest Common Ancestor of a Binary Tree（二叉树的最近公共祖先）✅
+
+给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+
+[百度百科](https://baike.baidu.com/item/最近公共祖先/8918834?fr=aladdin)中最近公共祖先的定义为：“对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（**一个节点也可以是它自己的祖先**）。”
+
+
 
 **思路**：递归查找。若当前节点是 p 或 q 则返回；左右子树都找到则当前为 LCA。
 
 ```python
-def lowestCommonAncestor(root, p, q):
-    if not root or root == p or root == q:
-        return root
-    left = lowestCommonAncestor(root.left, p, q)
-    right = lowestCommonAncestor(root.right, p, q)
-    if left and right:
-        return root
-    return left or right
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        # 1. 如果 root 为空，或者 root 就是我们要找的节点之一，直接返回 root
+        if not root or root == p or root == q:
+            return root
+        
+        # 2. 递归在左子树和右子树中查找
+        left = self.lowestCommonAncestor(root.left, p, q)
+        right = self.lowestCommonAncestor(root.right, p, q)
+        
+        # 3. 如果左子树找到了一个，右子树也找到了一个
+        # 说明 p 和 q 分居 root 的两侧，root 就是 LCA
+        if left and right:
+            return root
+        
+        # 4. 如果只有左子树找到了，返回左子树的结果
+        if left:
+            return left
+        
+        # 5. 如果只有右子树找到了，返回右子树的结果
+        if right:
+            return right
+        
+        # 6. 如果都没找到，返回 None
+        return None
 ```
 
-### 437. Path Sum III（路径总和 III）
+
+
+### M437. Path Sum III（路径总和 III）✅
+
+给定一个二叉树的根节点 `root` ，和一个整数 `targetSum` ，求该二叉树里节点值之和等于 `targetSum` 的 **路径** 的数目。
+
+**路径** 不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。
+
+
 
 **思路**：前缀和 + DFS。用哈希表记录从根到当前节点的路径和出现次数。
 
 ```python
 def pathSum(root, targetSum):
+    # prefix 哈希表记录当前路径中各个前缀和出现的次数
+    # 初始化 {0: 1} 是为了处理“从根节点开始的路径和恰好等于 targetSum”的情况
     prefix = {0: 1}
     ans = 0
+
     def dfs(node, cur):
         nonlocal ans
-        if not node: return
+        # 递归终止条件：空节点直接返回
+        if not node: 
+            return
+        
+        # 累加当前节点的值，得到从根节点到当前节点的前缀和
         cur += node.val
+        
+        # 如果当前路径上存在某个历史前缀和等于 cur - targetSum，
+        # 说明从那个历史节点到当前节点的子路径和为 targetSum，将其出现次数累加到 ans 中
         ans += prefix.get(cur - targetSum, 0)
+        
+        # 将当前前缀和 cur 存入哈希表，次数加 1
         prefix[cur] = prefix.get(cur, 0) + 1
+        
+        # 递归遍历左子树
         dfs(node.left, cur)
+        # 递归遍历右子树
         dfs(node.right, cur)
+        
+        # 【回溯】
+        # 在返回父节点之前，需要将当前节点的前缀和计数减 1
+        # 防止当前节点的前缀和干扰到其他非子树路径的计算
         prefix[cur] -= 1
+
+    # 从根节点开始 DFS 遍历，初始前缀和为 0
     dfs(root, 0)
     return ans
 ```
 
-### 543. Diameter of Binary Tree（二叉树的直径）
+> 这是一道经典的二叉树问题，采用**前缀和 + DFS（深度优先搜索）**的方法可以高效解决。
+>
+> **算法解读**
+>
+> **1. 为什么引入“前缀和”？**
+>
+> 在一维数组中，如果我们想求区间 `[i, j]` 的元素和，可以通过两个前缀和的差值来计算：
+> $$\text{Sum}(i, j) = \text{PrefixSum}(j) - \text{PrefixSum}(i-1)$$
+> 同理，在二叉树中，如果一条向下的路径起点为 `A`，终点为 `B`（`A` 是 `B` 的祖先节点），那么这条路径的和可以表示为：
+> $$\text{PathSum}(A \rightarrow B) = \text{PrefixSum}(B) - \text{PrefixSum}(\text{parent of } A)$$
+> 其中 $\text{PrefixSum}(X)$ 表示从根节点 `root` 到节点 `X` 的路径节点值之和。
+>
+> **2. 哈希表的作用**
+>
+> 在 DFS 遍历二叉树的过程中，我们用一个哈希表 `prefix` 记录**从根节点到当前节点的路径上，所有前缀和出现的次数**。
+> * 当遍历到某个节点时，当前路径的前缀和为 `cur`。
+> * 需要寻找有多少个祖先节点的前缀和等于 `cur - targetSum`。因为如果存在这样的祖先节点，那么从该祖先节点到当前节点的路径和就正好是 `targetSum`。
+> * 此时，我们直接从哈希表中查询 `cur - targetSum` 出现的次数，并累加到结果 `ans` 中。
+>
+> **3. 回溯（Backtracking）的必要性**
+>
+> 因为在遍历整棵树，当一个节点的左右子树都遍历完毕、准备返回其父节点时，该节点就超出了当前处理的路径范围。为了不影响其他分支的计算，需要在回溯时将当前节点的前缀和从哈希表 `prefix` 中恢复（即计数减 1）。
+>
+> **复杂度分析**
+>
+> * **时间复杂度**：$\mathcal{O}(N)$，其中 $N$ 是二叉树的节点数。每个节点仅被访问一次，在哈希表中插入和查询的时间复杂度为 $\mathcal{O}(1)$。
+> * **空间复杂度**：$\mathcal{O}(N)$。主要开销为递归调用的栈空间以及哈希表的大小。在最坏情况下（树退化为链表），递归栈深度和哈希表大小均为 $N$。
+
+
+
+### E543. Diameter of Binary Tree（二叉树的直径）✅
+
+给你一棵二叉树的根节点，返回该树的 **直径** 。
+
+二叉树的 **直径** 是指树中任意两个节点之间最长路径的 **长度** 。这条路径可能经过也可能不经过根节点 `root` 。
+
+两节点之间路径的 **长度** 由它们之间边数表示。
+
+
 
 **思路**：后序遍历，对每个节点求左右子树深度和，取最大值。
 
@@ -1879,11 +2119,19 @@ def diameterOfBinaryTree(root):
     return ans
 ```
 
----
 
 
+### M98. Validate Binary Search Tree（验证二叉搜索树）✅
 
-### 98. Validate Binary Search Tree（验证二叉搜索树）
+给你一个二叉树的根节点 `root` ，判断其是否是一个有效的二叉搜索树。
+
+**有效** 二叉搜索树定义如下：
+
+- 节点的左子树只包含 **严格小于** 当前节点的数。
+- 节点的右子树只包含 **严格大于** 当前节点的数。
+- 所有左子树和右子树自身必须也是二叉搜索树。
+
+
 
 **思路**：中序遍历递增。或递归传入 min/max 边界。
 
@@ -1896,7 +2144,13 @@ def isValidBST(root):
     return valid(root, -float('inf'), float('inf'))
 ```
 
-### 230. Kth Smallest Element in a BST（二叉搜索树中第 K 小的元素）
+
+
+### M230. Kth Smallest Element in a BST（二叉搜索树中第 K 小的元素）✅
+
+给定一个二叉搜索树的根节点 `root` ，和一个整数 `k` ，请你设计一个算法查找其中第 `k` 小的元素（`k` 从 1 开始计数）。
+
+
 
 **思路**：中序遍历（BST 的中序为升序），遍历到第 k 个即结果。
 
@@ -1915,7 +2169,7 @@ def kthSmallest(root, k):
 
 
 
-## 九、图论（4）
+## 九、图论（graph, 4）
 
 ### M200. Number of Islands（岛屿数量）✅
 
@@ -2084,9 +2338,15 @@ def orangesRotting(grid):
 
 
 
-## 十、回溯（8）
+## 十、回溯（backtracking, 8）
 
-### 17. Letter Combinations of a Phone Number（电话号码的字母组合）
+### M17. Letter Combinations of a Phone Number（电话号码的字母组合）✅
+
+给定一个仅包含数字 `2-9` 的字符串，返回所有它能表示的字母组合。答案可以按 **任意顺序** 返回。
+
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+
+
 
 **思路**：回溯。逐位递归生成所有组合。
 
@@ -2106,7 +2366,13 @@ def letterCombinations(digits):
     return res
 ```
 
-### 22. Generate Parentheses（括号生成）
+
+
+### M22. Generate Parentheses（括号生成）✅
+
+数字 `n` 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 **有效的** 括号组合。
+
+
 
 **思路**：回溯。只当左括号数 < n 时加左括号，右括号数 < 左括号数时加右括号。
 
@@ -2114,7 +2380,7 @@ def letterCombinations(digits):
 def generateParenthesis(n):
     res = []
     def backtrack(l, r, cur):
-        if l == n and r == n:
+        if l == n and r == n: # 或者 len(cur) == 2 * n
             res.append(cur)
             return
         if l < n:
@@ -2125,7 +2391,17 @@ def generateParenthesis(n):
     return res
 ```
 
-### 39. Combination Sum（组合总和）
+
+
+### M39. Combination Sum（组合总和）✅
+
+给你一个 **无重复元素** 的整数数组 `candidates` 和一个目标整数 `target` ，找出 `candidates` 中可以使数字和为目标数 `target` 的 所有 **不同组合** ，并以列表形式返回。你可以按 **任意顺序** 返回这些组合。
+
+`candidates` 中的 **同一个** 数字可以 **无限制重复被选取** 。如果至少一个数字的被选数量不同，则两种组合是不同的。 
+
+对于给定的输入，保证和为 `target` 的不同组合数少于 `150` 个。
+
+
 
 **思路**：回溯。候选可重复使用，每次从当前下标开始尝试。
 
@@ -2145,7 +2421,13 @@ def combinationSum(candidates, target):
     return res
 ```
 
-### 46. Permutations（全排列）
+
+
+### M46. Permutations（全排列）✅
+
+给定一个不含重复数字的数组 `nums` ，返回其 *所有可能的全排列* 。你可以 **按任意顺序** 返回答案。
+
+
 
 **思路**：回溯。用 visited 标记已选元素。
 
@@ -2153,21 +2435,29 @@ def combinationSum(candidates, target):
 def permute(nums):
     res = []
     def backtrack(cur, used):
-        if len(cur) == len(nums):
-            res.append(cur[:])
+        if len(cur) == len(nums):		# 终止条件：当前排列已满
+            res.append(cur[:])			# 深拷贝
             return
-        for i in range(len(nums)):
+        for i in range(len(nums)):	# 尝试每个未被使用的数
             if not used[i]:
-                used[i] = True
-                cur.append(nums[i])
-                backtrack(cur, used)
-                cur.pop()
+                used[i] = True			# 避免重复使用
+                cur.append(nums[i])	# 旋转
+                backtrack(cur, used)# 递归
+                cur.pop()						# 回溯
                 used[i] = False
     backtrack([], [False] * len(nums))
     return res
 ```
 
-### 78. Subsets（子集）
+
+
+### M78. Subsets（子集）✅
+
+给你一个整数数组 `nums` ，数组中的元素 **互不相同** 。返回该数组所有可能的子集（幂集）。
+
+解集 **不能** 包含重复的子集。你可以按 **任意顺序** 返回解集。
+
+
 
 **思路**：回溯。每个元素选或不选。
 
@@ -2184,26 +2474,87 @@ def subsets(nums):
     return res
 ```
 
-### 51. N-Queens（N 皇后）
+
+
+```python
+class Solution:
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        n = len(nums)
+        ans, sol = [], []
+        
+        def backtrack(i):
+            # 终止条件：处理完所有元素
+            if i == n:
+                ans.append(sol[:])
+                return
+            
+            # 分支1：不选择 nums[i]
+            backtrack(i + 1)
+            
+            # 分支2：选择 nums[i]
+            sol.append(nums[i])
+            backtrack(i + 1)
+            sol.pop()  # 回溯
+        
+        backtrack(0)
+        return ans
+```
+
+
+
+```python
+from typing import List
+
+class Solution:
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        n = len(nums)
+        ans = []
+        for i in range(1 << n):  # 等价于 2**n，但更快
+            subset = []
+            for j in range(n):
+                if i & (1 << j):  # 检查第 j 位是否为 1
+                    subset.append(nums[j])
+            ans.append(subset)
+        return ans
+```
+
+
+
+### T51. N-Queens（N 皇后）✅
+
+按照国际象棋的规则，皇后可以攻击与之处在同一行或同一列或同一斜线上的棋子。
+
+**n 皇后问题** 研究的是如何将 `n` 个皇后放置在 `n×n` 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+给你一个整数 `n` ，返回所有不同的 **n 皇后问题** 的解决方案。
+
+每一种解法包含一个不同的 **n 皇后问题** 的棋子放置方案，该方案中 `'Q'` 和 `'.'` 分别代表了皇后和空位。
+
+
 
 **思路**：回溯。用列、主对角线、副对角线的集合判断是否可放置。
 
 ```python
 def solveNQueens(n):
     res = []
-    cols, diag1, diag2 = set(), set(), set()
+    cols, diag1, diag2 = set(), set(), set()	# 已占用的列，主对角线（r - c），副对角线（r + c）
     board = [['.'] * n for _ in range(n)]
     def backtrack(row):
         if row == n:
             res.append([''.join(r) for r in board])
             return
-        for col in range(n):
+        for col in range(n):	# 尝试每一列
             if col in cols or (row - col) in diag1 or (row + col) in diag2:
-                continue
+                continue			# 剪枝：冲突
+            
+            # 选择
             board[row][col] = 'Q'
             cols.add(col); diag1.add(row - col); diag2.add(row + col)
-            backtrack(row + 1)
-            board[row][col] = '.'
+            
+            backtrack(row + 1)	# 递归
+            
+            # 回溯
+            board[row][col] = '.'	
             cols.remove(col); diag1.remove(row - col); diag2.remove(row + col)
     backtrack(0)
     return res
@@ -2244,7 +2595,11 @@ def exist(board, word):
 
 
 
-### 131. Palindrome Partitioning（分割回文串）
+### M131. Palindrome Partitioning（分割回文串）✅
+
+给你一个字符串 `s`，请你将 `s` 分割成一些 子串，使每个子串都是 **回文串** 。返回 `s` 所有可能的分割方案。
+
+
 
 **思路**：回溯。在每步检查当前前缀是否为回文。
 
@@ -2253,20 +2608,20 @@ def partition(s):
     res = []
     def backtrack(start, cur):
         if start == len(s):
-            res.append(cur[:])
+            res.append(cur[:])		# 复制当前路径
             return
         for end in range(start + 1, len(s) + 1):
-            if s[start:end] == s[start:end][::-1]:
+            if s[start:end] == s[start:end][::-1]:	# 只在是回文的地方切割
                 cur.append(s[start:end])
                 backtrack(end, cur)
-                cur.pop()
+                cur.pop()					# 撤销选择
     backtrack(0, [])
     return res
 ```
 
 
 
-## 十一、二分查找（6）
+## 十一、二分查找（binary search, 6）
 
 ### 4. Median of Two Sorted Arrays（寻找两个正序数组的中位数）
 
@@ -2409,7 +2764,7 @@ def findMin(nums):
 
 ---
 
-## 十二、栈（5）
+## 十二、栈（stack, 5）
 
 ### 20. Valid Parentheses（有效的括号）
 
@@ -2662,7 +3017,7 @@ def dailyTemperatures(temperatures):
 
 
 
-## 十三、堆（3）
+## 十三、堆（heap, 3）
 
 ### 215. Kth Largest Element in an Array（数组中的第 K 个最大元素）
 
@@ -2722,7 +3077,7 @@ def topKFrequent(nums, k):
 
 ---
 
-## 十三、贪心算法（4）
+## 十三、贪心算法（greedy, 4）
 
 ### M45. Jump Game II（跳跃游戏 II）✅
 
@@ -2822,7 +3177,7 @@ def partitionLabels(s):
 
 
 
-## 十四、动态规划（10）
+## 十四、动态规划（dp, 10）
 
 ### E70. Climbing Stairs（爬楼梯）✅
 
@@ -3115,7 +3470,7 @@ def canPartition(nums):
 
 
 
-## 十五、多维动态规划（5）
+## 十五、多维动态规划（dp, 5）
 
 ### 5. Longest Palindromic Substring（最长回文子串）
 
@@ -3225,7 +3580,7 @@ def longestCommonSubsequence(text1, text2):
 
 
 
-## 十六、技巧（5）
+## 十六、技巧（trick, 5）
 
 ### 31. Next Permutation（下一个排列）✅
 
