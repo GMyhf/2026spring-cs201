@@ -15,7 +15,7 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 | 日期       | 问题编号与名称                 | 标签                                 | 难度 | 链接                                             |
 | ---------- | ------------------------------ | ------------------------------------ | ---- | ------------------------------------------------ |
 | 0528 | 3093.最长公共后缀查询 | Trie   | Tough | https://leetcode.cn/problems/longest-common-suffix-queries/          |
-| 0527 | 24686:树的重量    | lazy tag, Segment Tree, Fenwick/Binary Indexed Tree  | tough | http://cs101.openjudge.cn/practice/24686/          |
+| 0527 | 24686:树的重量    | lazy tag, Segment Tree, Fenwick/Binary Indexed Tree  | Tough | http://cs101.openjudge.cn/practice/24686/          |
 | 0526 | P3403 跳楼机      | 同余最短路   | 蓝色 提高+/省选 | https://www.luogu.com.cn/problem/P3403          |
 | 0525 | M1871.跳跃游戏 VII      | dp+sliding window | Medium | https://leetcode.cn/problems/jump-game-vii/          |
 | 0524 | P2515 [HAOI2010] 软件安装  | SCC, tree DP   | 蓝色 提高+/省选- | https://www.luogu.com.cn/problem/P2515          |
