@@ -1,6 +1,6 @@
 ## **2026 数算B模拟考试 gw班**
 
-*Updated 2026-05-23 12:46 GMT+8* 
+*Updated 2026-05-28 12:46 GMT+8* 
 
 *Compiled by Hongfei Yan (2026 Spring)*
 
@@ -704,9 +704,9 @@ if __name__ == "__main__":
 
 
 
-## 009:最优爬山路径
+## M30909: 最优爬山路径
 
-binary search, bfs, http://dsbpython.openjudge.cn/2026moni1re/009/
+binary search, bfs, http://cs101.openjudge.cn/practice/30909/
 
 > 小P要从一块山地的一头走到另一头。山地可以看作是一个由n×m个单元构成的网格，每个单元有一个高度值。
 > 小P要从左上角的单元走到右下角的单元。小P只能沿着东西南北四个方向走。小P有恐高症，又讨厌爬升，所以他想要找一条路，使得路上高度差的绝对值最大的相邻两个单元格的高度差的绝对值H尽可能小。问H最小可以是多少。
@@ -739,7 +739,7 @@ binary search, bfs, http://dsbpython.openjudge.cn/2026moni1re/009/
 
 这个问题可以通过**二分查找（Binary Search）结合广度优先搜索（BFS）**来解决。
 
-### 解题思路
+**解题思路**
 
 1. **二分查找高度差 $H$：**
    * 最小可能的高度差 $H$ 为 $0$，最大可能的高度差为网格中最大高度与最小高度之差（不超过 $10000$）。
@@ -753,7 +753,7 @@ binary search, bfs, http://dsbpython.openjudge.cn/2026moni1re/009/
    * 如果当前 `mid` 可行，尝试寻找更小的 $H$，即在左半区间继续查找（`high = mid - 1`），并记录当前可行解。
    * 如果不可行，说明限制太小，需要增加 $H$，在右半区间继续查找（`low = mid + 1`）。
 
-### Python 3 实现代码
+**Python 3 实现代码**
 
 ```python
 import sys
@@ -826,7 +826,7 @@ if __name__ == "__main__":
     solve()
 ```
 
-### 复杂度分析
+**复杂度分析**
 
 * **时间复杂度：** 
   二分查找的范围为 $[0, 10000]$，最多需要进行 $\log_2(10000) \approx 14$ 次迭代。在每次迭代中，BFS 最多遍历网格中的所有节点和边，时间复杂度为 $O(V + E)$，其中节点数 $V = n \times m \le 10000$，边数 $E \approx 4 \times n \times m$。因此，整体时间复杂度为 $O(n \times m \log(\max\_height))$。对于 $100 \times 100$ 的网格，运算次数大约为 $14 \times 10000 \approx 1.4 \times 10^5$，在 Python 中可以在 100ms 内轻松完成，远低于 1000ms 的限制。
@@ -920,9 +920,9 @@ if __name__ == "__main__":
 
 
 
-## 011:最大连续答案
+## M30942: 最大连续答案
 
-slideing window, http://dsbpython.openjudge.cn/2026moni1re/011/
+sliding window, http://cs101.openjudge.cn/practice/30942/
 
 > 给定一个长度不超过20000的由'T'或'F'构成的字符串，允许修改字符最多k次（将'T'改成'F'或将'F'改成'T')，问能得到的最长的连续相同字符字串长度是多少。
 >
@@ -976,9 +976,9 @@ if __name__ == "__main__":
 
 
 
-## 012:多少人知道秘密
+## T30911: 多少人知道秘密
 
-dp, http://dsbpython.openjudge.cn/2026moni1re/012/
+dp, http://cs101.openjudge.cn/practice/30911/
 
 > 在第 1 天，有一个人发现了一个秘密。
 > 给你一个整数 delay ，表示每个人会在发现秘密后的 第delay 天及以后，每天将秘密告诉给一个新人。同时给你一个整数 forget ，表示每个人在发现秘密的后的第 forget 天及之后会忘记这个秘密。一个人不能 在忘记秘密那一天及之后的日子里把秘密告诉别人。
@@ -1024,7 +1024,7 @@ dp, http://dsbpython.openjudge.cn/2026moni1re/012/
 
 这是一个经典的动态规划（Dynamic Programming）问题。可以通过维护每天“新知道秘密的人数”来解决。
 
-### 算法思路
+**算法思路**
 
 设 `dp[i]` 表示在第 `i` 天**新发现/得知**秘密的人数。
 
@@ -1041,7 +1041,7 @@ dp, http://dsbpython.openjudge.cn/2026moni1re/012/
      $$\text{Total} = \sum_{j = \max(1, n - \text{forget} + 1)}^{n} dp[j]$$
    * 每次累加时需要对 $1000000007$ 取模。
 
-### Python 3 实现代码
+**Python 3 实现代码**
 
 ```python
 import sys
@@ -1069,9 +1069,9 @@ def solve():
         end = i - delay
         
         current_shares = 0
-        if start <= end:
-            for j in range(start, end + 1):
-                current_shares = (current_shares + dp[j]) % MOD
+        # # 如果 start > end，这里会自动跳过，不影响结果
+        for j in range(start, end + 1):
+            current_shares = (current_shares + dp[j]) % MOD
         dp[i] = current_shares
         
     # 计算在第 n 天结束时，还没忘记秘密的人数之和
@@ -1088,7 +1088,7 @@ if __name__ == '__main__':
     solve()
 ```
 
-### 复杂度分析
+**复杂度分析**
 
 - **时间复杂度**：对于每一天 $i$，我们需要累加长度最多为 $\text{forget}$ 的区间。由于 $n \le 100$，双重循环的最大计算量约为 $100 \times 100 = 10^4$ 次操作，运行时间远低于 1000ms 限制。
 - **空间复杂度**：使用了大小为 $n + 1$ 的 `dp` 数组，空间复杂度为 $O(n)$，在 $n \le 100$ 的情况下消耗内存极少，符合 65536kB 的限制。
