@@ -1,6 +1,6 @@
 # HW-2026上机练习6
 
-*Updated 2026-05-24 16:51 GMT+8*
+*Updated 2026-05-28 16:51 GMT+8*
  *Compiled by Hongfei Yan (2026 Spring)*
 
 http://forhuwei.openjudge.cn/2026practice6/
@@ -225,8 +225,8 @@ int main() {
 
 **思路：**
 选择若干边构成一棵以 1 为根的树。边 (a,b) 代价 = 单价 × 远离根一侧的子树权重和。
-等价于：总代价 = sum_{v ≠ 1} weight_subtree(v) × price(parent(v),v) = sum_v w_v × (sum_{e on path 1→v} price_e)。
-因此只需以单价为边权，从根 1 运行 Dijkstra 求最短路径，最终总代价 = sum_v weight_v × dist[v]。若图不连通则输出 "No Answer"。
+等价于：总代价 = `sum_{v ≠ 1} weight_subtree(v) × price(parent(v),v) = sum_v w_v × (sum_{e on path 1→v} price_e)`。
+因此只需以单价为边权，从根 1 运行 Dijkstra 求最短路径，最终总代价 = `sum_v weight_v × dist[v]`。若图不连通则输出 "No Answer"。
 
 **代码：**
 ```cpp
@@ -343,7 +343,7 @@ int main() {
 
 **思路：**
 有向图，从 1 到 n。到达 1 和离开 n 的时间必须是 k 的倍数，每条边只能在不早于 a_i 时刻通过，且任何地点不可停留。
-dist[node][mod] = 当前在 node 且已走步数 mod k = mod 时的最早时刻。用 Dijkstra 扩展：对边 (u,v,a)，若当前时刻 t ≥ a 则直接走，否则需将出发时间"延后"至下一个满足 ≥ a 的 k 的倍数时刻（即加 wait = ceil((a-t)/k)*k）。最终答案为 dist[n-1][0]（长度是 k 的倍数）。
+`dist[node][mod]` = 当前在 node 且已走步数 mod k = mod 时的最早时刻。用 Dijkstra 扩展：对边 (u,v,a)，若当前时刻 t ≥ a 则直接走，否则需将出发时间"延后"至下一个满足 ≥ a 的 k 的倍数时刻（即加 wait = ceil((a-t)/k)*k）。最终答案为 `dist[n-1][0]`（长度是 k 的倍数）。
 
 **代码：**
 ```cpp
@@ -433,9 +433,10 @@ int main() {
 
 **思路：**
 最少修改 S 中的多少个字符，使得 T 是 S 的子序列。
-dp[i][j] = 用 S 的前 i 个字符匹配 T 的前 j 个字符所需的最少修改次数。
-- 若 S[i-1] == T[j-1]：dp[i][j] = dp[i-1][j-1]（直接匹配）
-- 否则：dp[i][j] = min(dp[i-1][j]（跳过 S[i-1]）, dp[i-1][j-1] + 1（修改 S[i-1]）)
+`dp[i][j]` = 用 S 的前 i 个字符匹配 T 的前 j 个字符所需的最少修改次数。
+
+- 若 S[i-1] == T[j-1]：`dp[i][j] = dp[i-1][j-1]`（直接匹配）
+- 否则：`dp[i][j] = min(dp[i-1][j]（跳过 S[i-1]）, dp[i-1][j-1] + 1（修改 S[i-1]）)`
 
 **代码：**
 ```cpp
@@ -471,7 +472,7 @@ int main() {
 
 **思路：**
 m 个村庄在一条直线上，选择 n 个建小学，使所有村到最近小学的距离和最小。
-预处理 cost[i][j] = 村庄 i~j 只建一所小学的最小距离和（选在中位数位置）。dp[k][i] = 前 i 个村庄建 k 所小学的最小距离和。转移：dp[k][i] = min_{j < i} dp[k-1][j] + cost[j+1][i]。
+预处理 `cost[i][j]` = 村庄 i~j 只建一所小学的最小距离和（选在中位数位置）。`dp[k][i]` = 前 i 个村庄建 k 所小学的最小距离和。转移：`dp[k][i] = min_{j < i} dp[k-1][j] + cost[j+1][i]`。
 
 **代码：**
 ```cpp
@@ -658,6 +659,8 @@ int main() {
     return 0;
 }
 ```
+
+
 
 ## 12: [USACO 2024 Open Gold P3] Smaller Averages
 
