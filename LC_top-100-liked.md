@@ -1,6 +1,6 @@
 # LeetCode Top 100 Liked 题解
 
-*Updated 2026-05-26 09:11 GMT+8*
+*Updated 2026-05-30 19:10 GMT+8*
  *Compiled by Hongfei Yan (2026 Spring)*
 
 
@@ -3334,7 +3334,13 @@ def jump(nums):
 
 
 
-### 55. Jump Game（跳跃游戏）
+### M55. Jump Game（跳跃游戏）✅
+
+给你一个非负整数数组 `nums` ，你最初位于数组的 **第一个下标** 。数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+判断你是否能够到达最后一个下标，如果可以，返回 `true` ；否则，返回 `false` 。
+
+
 
 **思路**：维护能到达的最远位置。若当前 i 超过了最远位置则失败。
 
@@ -3347,7 +3353,15 @@ def canJump(nums):
     return True
 ```
 
-### 121. Best Time to Buy and Sell Stock（买卖股票的最佳时机）
+### E121. Best Time to Buy and Sell Stock（买卖股票的最佳时机）✅
+
+给定一个数组 `prices` ，它的第 `i` 个元素 `prices[i]` 表示一支给定股票第 `i` 天的价格。
+
+你只能选择 **某一天** 买入这只股票，并选择在 **未来的某一个不同的日子** 卖出该股票。设计一个算法来计算你所能获取的最大利润。
+
+返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 `0` 。
+
+
 
 **思路**：遍历，记录历史最低价，每天计算利润。
 
@@ -3753,7 +3767,11 @@ def canPartition(nums):
 
 ## 十五、多维动态规划（dp, 5）
 
-### 5. Longest Palindromic Substring（最长回文子串）
+### M5. Longest Palindromic Substring（最长回文子串）✅
+
+给你一个字符串 `s`，找到 `s` 中最长的 回文 子串。
+
+
 
 **思路**：中心扩展。每个位置（及两位置之间）向两边扩展，找最长回文。
 
@@ -3765,13 +3783,228 @@ def longestPalindrome(s):
         return s[l + 1:r]
     res = ''
     for i in range(len(s)):
-        s1 = expand(i, i)
-        s2 = expand(i, i + 1)
+        s1 = expand(i, i)			# 情况1：奇数长度回文中心（以 s[i] 为中心）
+        s2 = expand(i, i + 1)	# 情况2：偶数长度回文中心（以 s[i] 和 s[i+1] 之间的空隙为中心）
         res = max(res, s1, s2, key=len)
     return res
 ```
 
-### 62. Unique Paths（不同路径）✅
+> [5. 最长回文子串](https://leetcode.cn/problems/longest-palindromic-substring/)
+>
+> 给你一个字符串 `s`，找到 `s` 中最长的 回文 子串。
+>
+>  
+>
+> **示例 1：**
+>
+> ```
+> 输入：s = "babad"
+> 输出："bab"
+> 解释："aba" 同样是符合题意的答案。
+> ```
+>
+> **示例 2：**
+>
+> ```
+> 输入：s = "cbbd"
+> 输出："bb"
+> ```
+>
+>  
+>
+> **提示：**
+>
+> - `1 <= s.length <= 1000`
+> - `s` 仅由数字和英文字母组成
+>
+> 
+>
+> 
+>
+> 针对“最长回文子串”这一经典问题，以下提供三种常见的解决方法：**动态规划**、**中心扩展算法**以及**Manacher（马拉车）算法**。
+>
+> ---
+>
+> ### 方法一：动态规划 (Dynamic Programming)
+>
+> **1. 思路**
+>
+> 动态规划的核心思想是将一个大问题分解为若干个相互联系的子问题。
+> 对于一个子串 $s[i..j]$（表示从索引 $i$ 到 $j$ 的子串），它是否是回文串取决于：
+>
+> 1. 其两端字符是否相等，即 $s[i] == s[j]$。
+> 2. 内部的子串 $s[i+1..j-1]$ 是否是回文串。
+>
+> 定义 `dp[i][j]` 表示子串 $s[i..j]$ 是否为回文串。
+> 状态转移方程如下：
+>
+> - 当 $s[i] \neq s[j]$ 时，`dp[i][j] = False`。
+> - 当 $s[i] == s[j]$ 时：
+>   - 如果子串长度小于 3（即 $j - i < 3$，例如 "aba" 除去两端剩下 "b"，或者 "aa" 除去两端剩下空串），则一定是回文串：`dp[i][j] = True`。
+>   - 否则，取决于内部子串：`dp[i][j] = dp[i + 1][j - 1]`。
+>
+> **2. 代码实现**
+>
+> ```python
+> class Solution:
+>     def longestPalindrome(self, s: str) -> str:
+>         n = len(s)
+>         if n < 2:
+>             return s
+>         
+>         max_len = 1
+>         begin = 0
+>         # dp[i][j] 表示 s[i..j] 是否是回文
+>         dp = [[False] * n for _ in range(n)]
+>         
+>         # 长度为 1 的子串都是回文
+>         for i in range(n):
+>             dp[i][i] = True
+>         
+>         # 递推，L 为当前枚举的子串长度
+>         for L in range(2, n + 1):
+>             for i in range(n):
+>                 # 由 L 和左边界 i 可以确定右边界 j
+>                 j = L + i - 1
+>                 if j >= n:
+>                     break
+>                 
+>                 if s[i] != s[j]:
+>                     dp[i][j] = False
+>                 else:
+>                     if j - i < 3:
+>                         dp[i][j] = True
+>                     else:
+>                         dp[i][j] = dp[i + 1][j - 1]
+>                 
+>                 # 记录最长回文子串的起始位置和长度
+>                 if dp[i][j] and L > max_len:
+>                     max_len = L
+>                     begin = i
+>                     
+>         return s[begin : begin + max_len]
+> ```
+>
+> **3. 复杂度分析**
+>
+> - **时间复杂度**：$O(N^2)$，其中 $N$ 是字符串的长度。需要枚举所有可能的区间起点和终点。
+> - **空间复杂度**：$O(N^2)$，需要维护一个二维的 DP 状态表格。
+>
+> ---
+>
+> ### 方法二：中心扩展算法 (Center Expansion)
+>
+> **1. 思路**
+>
+> 动态规划的空间复杂度较高。由于回文串是对称的，我们可以枚举所有可能的“对称中心”，并尝试向两边进行扩展。
+> 由于回文串的长度可能是奇数或偶数：
+>
+> - 奇数长度的回文串对称中心是一个字符，如 "aba" 的中心是 "b"。
+> - 偶数长度的回文串对称中心是两个字符之间的间隙，如 "abba" 的中心是两个 "b" 之间。
+>
+> 因此，对于一个长度为 $N$ 的字符串，共有 $2N - 1$ 个可能的对称中心。我们依次以这些中心向外扩展，记录最长的回文子串。
+>
+> **2. 代码实现**
+>
+> ```python
+> class Solution:
+>     def longestPalindrome(self, s: str) -> str:
+>         if not s:
+>             return ""
+>         
+>         start, end = 0, 0
+>         
+>         def expandAroundCenter(left: int, right: int) -> int:
+>             while left >= 0 and right < len(s) and s[left] == s[right]:
+>                 left -= 1
+>                 right += 1
+>             # 退出循环时，s[left] != s[right]，实际回文长度为 (right - 1) - (left + 1) + 1
+>             return right - left - 1
+> 
+>         for i in range(len(s)):
+>             # 奇数长度，中心是一个字符
+>             len1 = expandAroundCenter(i, i)
+>             # 偶数长度，中心是两个字符之间
+>             len2 = expandAroundCenter(i, i + 1)
+>             
+>             max_len = max(len1, len2)
+>             if max_len > end - start:
+>                 start = i - (max_len - 1) // 2
+>                 end = i + max_len // 2
+>                 
+>         return s[start : end + 1]
+> ```
+>
+> **3. 复杂度分析**
+>
+> - **时间复杂度**：$O(N^2)$，其中 $N$ 是字符串的长度。每个中心最多扩展 $O(N)$ 次，共有 $2N-1$ 个中心。
+> - **空间复杂度**：$O(1)$，仅需常数级别的变量保存边界。
+>
+> ---
+>
+> ### 方法三：Manacher（马拉车）算法
+>
+> **1. 思路**
+>
+> Manacher 算法可以在线性时间内解决最长回文子串问题。它在中心扩展法的基础上，利用了回文串的对称性质，避免了重复的计算。
+>
+> 1. **预处理**：由于奇数和偶数长度的处理方式不同，算法通过在字符之间插入特殊字符（如 `#`），使得所有回文串统一变成奇数长度。
+>    - 例如，`"babad"` 转化为 `"#b#a#b#a#d#"`。
+> 2. **利用已知信息辅助计算**：
+>    - 维护一个数组 `p`，其中 `p[i]` 表示以 `t[i]` 为中心的最大回文半径（包含 `t[i]` 本身）。
+>    - 维护当前已知的“最右回文边界” `max_right` 以及对应的中心 `center`。
+>    - 遍历到 $i$ 时，如果 $i$ 在 `max_right` 内部，可以通过对称点 `mirror = 2 * center - i` 的 `p[mirror]` 值来初始化 `p[i]` 的大小，从而减少后续的中心扩展次数。
+>
+> **2. 代码实现**
+>
+> ```python
+> class Solution:
+>     def longestPalindrome(self, s: str) -> str:
+>         if not s:
+>             return ""
+>         
+>         # 预处理：插入 "#" 以处理偶数长度的回文
+>         t = "#" + "#".join(s) + "#"
+>         n = len(t)
+>         p = [0] * n  # p[i] 存储以 t[i] 为中心的回文半径
+>         
+>         center = 0
+>         max_right = 0
+>         max_len = 0
+>         start = 0
+>         
+>         for i in range(n):
+>             if i < max_right:
+>                 mirror = 2 * center - i
+>                 p[i] = min(max_right - i, p[mirror])
+>             else:
+>                 p[i] = 1
+>             
+>             # 尝试向两边扩展
+>             while i - p[i] >= 0 and i + p[i] < n and t[i - p[i]] == t[i + p[i]]:
+>                 p[i] += 1
+>             
+>             # 更新中心和最右边界
+>             if i + p[i] - 1 > max_right:
+>                 center = i
+>                 max_right = i + p[i] - 1
+>             
+>             # 记录最长回文子串在原字符串中的起始位置和长度
+>             if p[i] - 1 > max_len:
+>                 max_len = p[i] - 1
+>                 start = (i - p[i] + 1) // 2
+>                 
+>         return s[start : start + max_len]
+> ```
+>
+> **3. 复杂度分析**
+>
+> - **时间复杂度**：$O(N)$。由于 `max_right` 在遍历过程中单调递增，内部 `while` 循环的总执行次数与整个数组的长度成线性关系。
+> - **空间复杂度**：$O(N)$，需要创建一个长度约为 $2N$ 的预处理字符串及对应的半径数组 `p`。
+
+
+
+### M62. Unique Paths（不同路径）✅
 
 一个机器人位于一个 `m x n` 网格的左上角 （起始点在下图中标记为 “Start” ）。
 
@@ -3794,7 +4027,13 @@ def uniquePaths(m, n):
 
 
 
-### 64. Minimum Path Sum（最小路径和）
+### M64. Minimum Path Sum（最小路径和）✅
+
+给定一个包含非负整数的 `m x n` 网格 `grid` ，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+
+**说明：**每次只能向下或者向右移动一步。
+
+
 
 **思路**：`dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])`。
 
@@ -3813,7 +4052,17 @@ def minPathSum(grid):
 
 
 
-### 72. Edit Distance（编辑距离）
+### M72. Edit Distance（编辑距离）✅
+
+给你两个单词 `word1` 和 `word2`， *请返回将 `word1` 转换成 `word2` 所使用的最少操作数* 。
+
+你可以对一个单词进行如下三种操作：
+
+- 插入一个字符
+- 删除一个字符
+- 替换一个字符
+
+
 
 **思路**：`dp[i][j]` 表示 word1[:i] 到 word2[:j] 的最小编辑距离。
 
@@ -3821,12 +4070,12 @@ def minPathSum(grid):
 def minDistance(word1, word2):
     m, n = len(word1), len(word2)
     dp = [[0] * (n + 1) for _ in range(m + 1)]
-    for i in range(m + 1): dp[i][0] = i
-    for j in range(n + 1): dp[0][j] = j
+    for i in range(m + 1): dp[i][0] = i	# 将 word1 变为空串需要 i 次删除操作
+    for j in range(n + 1): dp[0][j] = j	# 将空串变成 word2 需要 j 次插入操作
     for i in range(1, m + 1):
         for j in range(1, n + 1):
             if word1[i - 1] == word2[j - 1]:
-                dp[i][j] = dp[i - 1][j - 1]
+                dp[i][j] = dp[i - 1][j - 1]	# 如果当前字符相同，则不需要操作
             else:
                 dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
     return dp[m][n]
@@ -3834,7 +4083,17 @@ def minDistance(word1, word2):
 
 
 
-### 1143. Longest Common Subsequence（最长公共子序列）
+### M1143. Longest Common Subsequence（最长公共子序列）✅
+
+给定两个字符串 `text1` 和 `text2`，返回这两个字符串的最长 **公共子序列** 的长度。如果不存在 **公共子序列** ，返回 `0` 。
+
+一个字符串的 **子序列** 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。
+
+- 例如，`"ace"` 是 `"abcde"` 的子序列，但 `"aec"` 不是 `"abcde"` 的子序列。
+
+两个字符串的 **公共子序列** 是这两个字符串所共同拥有的子序列。
+
+
 
 **思路**：`dp[i][j]` 表示 text1[:i] 和 text2[:j] 的最长公共子序列长度。
 
@@ -3845,17 +4104,12 @@ def longestCommonSubsequence(text1, text2):
     for i in range(1, m + 1):
         for j in range(1, n + 1):
             if text1[i - 1] == text2[j - 1]:
-                dp[i][j] = dp[i - 1][j - 1] + 1
+                dp[i][j] = dp[i - 1][j - 1] + 1	# 如果当前字符相同，则 LCS 长度加1
             else:
+              	# 如果不同，则取两者中较大的LCS长度
                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
     return dp[m][n]
 ```
-
-
-
-
-
-
 
 
 
