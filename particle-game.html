@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Particle Game</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: none;
+    background: rgba(0,0,0,0.03);
+  }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+const PALETTE = [
+  '#F472B6', '#FB923C', '#FBBF24', '#A3E635', '#38BDF8',
+  '#C084FC', '#FB7185', '#818CF8', '#34D399', '#F97316',
+  '#E879F9', '#FDA4AF', '#86EFAC', '#93C5FD', '#FDE68A',
+  '#D946EF', '#F87171', '#7DD3FC', '#BEF264', '#FCA5A5',
+  '#A78BFA', '#FACC15', '#4ADE80', '#60A5FA', '#F0ABFC',
+]
+
+const PARTICLE_COUNT = 25
+const PARTICLE_RADIUS = 4
+const BASE_RADIUS = 10
+const GROWTH_PER_ABSORB = 0.5
+const GRAVITY_STRENGTH = 1400
+const DAMPING = 0.996
+const BASE_TRAIL = 12
+const MAX_TRAIL = 35
+
+const canvas = document.getElementById('canvas')
+const ctx = canvas.getContext('2d')
+
+let particles = []
+let mouse = { x: 0, y: 0, radius: BASE_RADIUS, active: false, pulse: 0, pulseTime: 0, lastX: 0, lastY: 0 }
+
+function initParticles(w, h) {
+  particles = []
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const homeX = w * 0.15 + Math.random() * w * 0.7
+    const homeY = h * 0.15 + Math.random() * h * 0.7
+    const baseSpeed = 2.2 + Math.random() * 2.8
+    const angle = Math.random() * Math.PI * 2
+    particles.push({
+      x: homeX, y: homeY,
+      vx: Math.cos(angle) * baseSpeed,
+      vy: Math.sin(angle) * baseSpeed,
+      baseSpeed,
+      color: PALETTE[i % PALETTE.length],
+      trail: [],
+      absorbed: false,
+      radius: PARTICLE_RADIUS,
+      homeX, homeY,
+      driftAngle: Math.random() * Math.PI * 2,
+      driftPhase: Math.random() * Math.PI * 2,
+    })
+  }
+  mouse = { x: w / 2, y: h / 2, radius: BASE_RADIUS, active: false, pulse: 0, pulseTime: 0, lastX: w / 2, lastY: h / 2 }
+}
+
+function resize() {
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+  if (particles.length === 0) initParticles(canvas.width, canvas.height)
+}
+
+function releaseParticles() {
+  for (const p of particles) {
+    if (!p.absorbed) continue
+    const angle = Math.random() * Math.PI * 2
+    const speed = p.baseSpeed
+    p.absorbed = false
+    p.x = mouse.lastX + (Math.random() - 0.5) * 14
+    p.y = mouse.lastY + (Math.random() - 0.5) * 14
+    p.vx = Math.cos(angle) * speed
+    p.vy = Math.sin(angle) * speed
+    p.trail = []
+  }
+  mouse.radius = BASE_RADIUS
+  mouse.pulse = 0
+}
+
+canvas.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX
+  mouse.y = e.clientY
+  mouse.lastX = mouse.x
+  mouse.lastY = mouse.y
+  mouse.active = true
+})
+
+canvas.addEventListener('mouseleave', () => {
+  if (particles.every(p => p.absorbed)) releaseParticles()
+  mouse.active = false
+})
+
+window.addEventListener('resize', resize)
+resize()
+
+function animate() {
+  const w = canvas.width
+  const h = canvas.height
+  const now = performance.now()
+
+  for (const p of particles) {
+    if (p.absorbed) continue
+
+    const currentSpeed = Math.sqrt(p.vx * p.vx + p.vy * p.vy)
+    const speedRatio = Math.min(currentSpeed / p.baseSpeed, 4)
+    const dynamicTrailLen = Math.floor(BASE_TRAIL + (MAX_TRAIL - BASE_TRAIL) * Math.min(speedRatio / 2, 1))
+
+    p.trail.push({ x: p.x, y: p.y })
+    while (p.trail.length > dynamicTrailLen) p.trail.shift()
+
+    if (mouse.active) {
+      const dx = mouse.x - p.x
+      const dy = mouse.y - p.y
+      const dist = Math.sqrt(dx * dx + dy * dy) + 15
+      const force = GRAVITY_STRENGTH / dist
+      p.vx += (dx / dist) * force * 0.016
+      p.vy += (dy / dist) * force * 0.016
+      p.vx *= DAMPING
+      p.vy *= DAMPING
+    }
+
+    const sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy)
+    if (sp < p.baseSpeed * 0.5) {
+      const a = Math.atan2(p.vy, p.vx) || Math.random() * Math.PI * 2
+      p.vx = Math.cos(a) * p.baseSpeed * 0.5
+      p.vy = Math.sin(a) * p.baseSpeed * 0.5
+    }
+
+    p.x += p.vx
+    p.y += p.vy
+
+    if (p.x - p.radius < 0) { p.x = p.radius; p.vx = Math.abs(p.vx) }
+    if (p.x + p.radius > w) { p.x = w - p.radius; p.vx = -Math.abs(p.vx) }
+    if (p.y - p.radius < 0) { p.y = p.radius; p.vy = Math.abs(p.vy) }
+    if (p.y + p.radius > h) { p.y = h - p.radius; p.vy = -Math.abs(p.vy) }
+
+    if (mouse.active) {
+      const dx = mouse.x - p.x
+      const dy = mouse.y - p.y
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      if (dist < mouse.radius + p.radius + 2) {
+        p.absorbed = true
+        mouse.radius += GROWTH_PER_ABSORB
+        mouse.pulse = 0.6
+        mouse.pulseTime = now
+      }
+    }
+  }
+
+  ctx.clearRect(0, 0, w, h)
+
+  // Analyzing watermark + spinner
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.09)'
+  ctx.font = 'bold 48px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('Analyzing', w / 2, h / 2)
+
+  const spinnerX = w / 2 + ctx.measureText('Analyzing').width / 2 + 26
+  const spinnerAngle = now * 0.003
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.09)'
+  ctx.lineWidth = 2.5
+  ctx.lineCap = 'round'
+  ctx.beginPath()
+  ctx.arc(spinnerX, h / 2, 12, spinnerAngle, spinnerAngle + Math.PI * 1.5)
+  ctx.stroke()
+
+  for (const p of particles) {
+    if (p.absorbed) continue
+
+    if (p.trail.length > 1) {
+      for (let i = 0; i < p.trail.length - 1; i++) {
+        const from = p.trail[i]
+        const to = p.trail[i + 1]
+        const progressStart = i / p.trail.length
+        const progressEnd = (i + 1) / p.trail.length
+        const alpha = progressEnd * 0.7
+        const widthStart = p.radius * 2 * (0.15 + progressStart * 0.85)
+        const widthEnd = p.radius * 2 * (0.15 + progressEnd * 0.85)
+
+        ctx.beginPath()
+        ctx.moveTo(from.x, from.y)
+        ctx.lineTo(to.x, to.y)
+        ctx.strokeStyle = p.color + Math.round(alpha * 255).toString(16).padStart(2, '0')
+        ctx.lineWidth = (widthStart + widthEnd) / 2
+        ctx.lineCap = 'round'
+        ctx.stroke()
+      }
+
+      if (p.trail.length > 0) {
+        const lastTrail = p.trail[p.trail.length - 1]
+        ctx.beginPath()
+        ctx.moveTo(lastTrail.x, lastTrail.y)
+        ctx.lineTo(p.x, p.y)
+        ctx.strokeStyle = p.color + Math.round(0.7 * 255).toString(16).padStart(2, '0')
+        ctx.lineWidth = p.radius * 2 * 0.95
+        ctx.lineCap = 'round'
+        ctx.stroke()
+      }
+    }
+
+    ctx.beginPath()
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
+    ctx.fillStyle = p.color
+    ctx.fill()
+  }
+
+  const pulseElapsed = now - mouse.pulseTime
+  const pulseDecay = 250
+  const pulseScale = mouse.pulse > 0 && pulseElapsed < pulseDecay
+    ? 1 + mouse.pulse * (1 - pulseElapsed / pulseDecay) * 0.35
+    : 1
+  if (pulseElapsed >= pulseDecay) mouse.pulse = 0
+
+  if (mouse.active) {
+    ctx.beginPath()
+    ctx.arc(mouse.x, mouse.y, mouse.radius * pulseScale + 4, 0, Math.PI * 2)
+    ctx.fillStyle = 'rgba(17, 17, 17, 0.08)'
+    ctx.fill()
+
+    ctx.beginPath()
+    ctx.arc(mouse.x, mouse.y, mouse.radius * pulseScale, 0, Math.PI * 2)
+    ctx.fillStyle = '#111'
+    ctx.fill()
+  }
+
+  requestAnimationFrame(animate)
+}
+
+requestAnimationFrame(animate)
+</script>
+</body>
+</html>
