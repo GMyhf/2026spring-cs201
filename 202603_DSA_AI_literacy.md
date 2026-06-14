@@ -2664,6 +2664,54 @@ AI → 游戏: w | a | s | d
 
 按照说明，训练了 cpp_ai_70min_16384.bin模型。还有socket通信，属于网络编程了。
 
+> %./cpp_ai/2048_ai train --episodes 100000 --threads 16 --alpha 0.1 --save test.bin
+>
+> Training: 100000 episodes, 16 threads, alpha=0.1
+> Done! 100000 episodes in 346.8s (288 eps/s)steps=3657     
+>
+> Best tile: 8192 Avg score: 65382 Avg steps: 2986
+> Weights saved to test.bin (8 MB)
+>
+>
+> hfyan@HongfeideMac-Studio 2048-game % python3
+>
+> Python 3.14.3 (main, Feb 3 2026, 15:32:20) [Clang 17.0.0 (clang-1700.6.3.2)] on darwin
+> Type "help", "copyright", "credits" or "license" for more information.
+> \>>> 100000*2400/360
+> 666666.6666666666
+> \>>> exit()
+>
+>
+> % ./cpp_ai/2048_ai train \
+>  --episodes 1000000 \
+>  --threads 16 \
+>  --alpha 0.1 \
+>  --save cpp_ai_40min_16384.bin
+>
+> Training: 1000000 episodes, 16 threads, alpha=0.1
+> Done! 1000000 episodes in 4229.3s (236 eps/s) steps=3900     
+>
+> Best tile: 16384 Avg score: 82970 Avg steps: 3633
+> Weights saved to cpp_ai_40min_16384.bin (8 MB)
+>
+>
+> % mv cpp_ai_40min_16384.bin cpp_ai_70min_16384.bin
+>
+>
+> % ./cpp_ai/2048_ai eval
+> episodes 100 \
+> depth 3tt-size 512
+> load cpp_ai_70min_16384.bin
+> Weights loaded from cpp_ai_70min_16384.bin
+> Evaluating:100 games,depth=3, TT=512MB
+> Done! 100games in 2155.3s (0.0 games/s)
+>
+> Max tile distribution:
+> 2048:1(1.0%)
+> 4096:1(1.0%)
+> 8192:98 (98.0%)
+> Average score: 137696
+
 ![e205a3dba35087e4baca4820188c1c16](https://raw.githubusercontent.com/GMyhf/img/main/img/e205a3dba35087e4baca4820188c1c16.png)
 
 
