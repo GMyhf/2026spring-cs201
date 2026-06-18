@@ -2,7 +2,7 @@
 
 Updated 1122 GMT+8 May 27, 2025
 
-2025 spring, Complied by Hongfei Yan
+2025 spring, Compiled by Hongfei Yan
 
 
 
@@ -711,7 +711,6 @@ def generate_result():
 result = generate_result()
 print(*result)
 ```
-
 
 
 

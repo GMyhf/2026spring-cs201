@@ -824,7 +824,7 @@ NOT FOUND
 
 ```python
 n = int(input())
-files = [] # 储存所有单词的文档归属数据
+files = [] # 存储所有单词的文档归属数据
 for i in range(n):
     data = list(map(int,input().split()))
     files.append(set(data[1:])) # 将每个单词对应的文档数据转化为集合，方便后续的操作
@@ -834,12 +834,12 @@ for i in range(m):
 
     data = list(map(int,input().split()))
     t = data.index(1) # 第一个1要特殊处理，作为初始值
-    a = set(files[t]) # 所有有可能合题的文档（同样要储存在集合内）
+    a = set(files[t]) # 所有有可能合题的文档（同样要存储在集合内）
     for j in range(t + 1,n):
         if data[j] == 1:
             a = a & files[j] # 取交集（集合之间的∩、-、∪运算时间复杂度极低！）
 
-    b = set() # 所有一定不合题的文档（同样要储存在集合内）
+    b = set() # 所有一定不合题的文档（同样要存储在集合内）
     for j in range(n):
         if data[j] == -1:
             b = b | files[j] # 取并集
@@ -1548,6 +1548,5 @@ Manacher 确实比 KMP 复杂一点，原因有三：
 ### 练习M5. 最长回文子串
 
 DP, Center Expansion, Manacher, https://leetcode.cn/problems/longest-palindromic-substring/
-
 
 

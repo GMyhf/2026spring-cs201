@@ -60,7 +60,7 @@ https://github.com/GMyhf/2026spring-cs201/blob/main/DSA_problem_list_at_2026spri
 |  |       | one problem per day       |  |          |
 | 0417 | 30894: 哈夫曼编码树      | greedy    | Tough | http://cs101.openjudge.cn/practice/30894/          |
 | 0417 | 3488.距离最小相等元素查询 | hash table, binary search  | Medium | https://leetcode.cn/problems/closest-equal-element-queries/          |
-| 0416 | 04080: Huffman编码树  | greedy   | Easy | http://cs101.openjudge.cn/practice/04080/          |
+| 0416 | 04080: Huffman 编码树 | greedy   | Easy | http://cs101.openjudge.cn/practice/04080/          |
 | 0416 | 20576: printExp（逆波兰表达式建树）      | AST       | Tough | http://cs101.openjudge.cn/practice/20576/          |
 | 0415 | 02775: 文件结构“图”  | tree   | Tough | http://cs101.openjudge.cn/practice/02775/          |
 | 0415 | 116.填充每个节点的下一个右侧节点指针  | dfs, linked list, binary tree | Medium | https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/   |
